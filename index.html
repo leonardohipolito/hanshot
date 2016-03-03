@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello World!</title>
+</head>
+<body>
+
+  <video autoplay style="display: none"></video>
+  <canvas width="1920" height="1080" style="display: none"></canvas>
+  <button>Shot</button>
+
+  <script type="text/javascript">
+
+    var video = document.querySelector('video');
+    var canvas = document.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+    var localMediaStream = null;
+
+    var desktopCapturer = require('electron').desktopCapturer;
+
+    desktopCapturer.getSources({ types: ['window', 'screen'] }, function (error, sources) {
+
+      if (error) throw error;
+
+      for (var i = 0; i < sources.length; ++i) {
+
+        if (sources[i].id == 'screen:0:0') {
+          navigator.webkitGetUserMedia({
+            audio: false,
+            video: {
+              mandatory: {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: sources[i].id,
+                minWidth: 1920,
+                maxWidth: 1920,
+                minHeight: 1080,
+                maxHeight: 1080
+              }
+            }
+          }, gotStream, getUserMediaError);
+        }
+
+      }
+
+    });
+
+    function gotStream(stream) {
+      document.querySelector('video').src = URL.createObjectURL(stream);
+      localMediaStream = stream;
+    }
+
+    document.querySelector('button').addEventListener('click', function () {
+      if (localMediaStream) {
+        ctx.drawImage(video, 0, 0);
+        var img = document.createElement('img');
+        img.src = canvas.toDataURL('image/webp');
+        document.body.appendChild(img);
+      }
+
+    }, false);
+
+    function getUserMediaError(e) {
+      console.log('err', e);
+    }
+
+  </script>
+</body>
+</html>
