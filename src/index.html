@@ -7,24 +7,31 @@
 <body>
 
   <video autoplay style="display: none"></video>
-  <canvas width="1920" height="1080" style="display: none"></canvas>
-  <button>Shot</button>
+  <canvas width="1920" height="1080"></canvas>
 
   <script type="text/javascript">
+
+    'use strict';
+
+    const electron = require('electron');
+
+    const desktopCapturer = electron.desktopCapturer;
+    const ipcRenderer = electron.ipcRenderer;
+
 
     var video = document.querySelector('video');
     var canvas = document.querySelector('canvas');
     var ctx = canvas.getContext('2d');
-    var localMediaStream = null;
 
-    var desktopCapturer = require('electron').desktopCapturer;
 
     desktopCapturer.getSources({ types: ['window', 'screen'] }, function (error, sources) {
 
       if (error) throw error;
 
-      for (var i = 0; i < sources.length; ++i) {
+      for (let i = 0; i < sources.length; ++i) {
 
+        // TODO: pick screens
+        // TODO: multiple screens
         if (sources[i].id == 'screen:0:0') {
           navigator.webkitGetUserMedia({
             audio: false,
@@ -32,6 +39,7 @@
               mandatory: {
                 chromeMediaSource: 'desktop',
                 chromeMediaSourceId: sources[i].id,
+                // TODO: dynamic
                 minWidth: 1920,
                 maxWidth: 1920,
                 minHeight: 1080,
@@ -46,19 +54,21 @@
     });
 
     function gotStream(stream) {
-      document.querySelector('video').src = URL.createObjectURL(stream);
-      localMediaStream = stream;
-    }
+      console.log('got stream');
 
-    document.querySelector('button').addEventListener('click', function () {
-      if (localMediaStream) {
+      video.src = URL.createObjectURL(stream);
+
+      video.addEventListener('loadeddata', function () {
+
         ctx.drawImage(video, 0, 0);
-        var img = document.createElement('img');
-        img.src = canvas.toDataURL('image/webp');
-        document.body.appendChild(img);
-      }
 
-    }, false);
+        var dataURL = canvas.toDataURL('image/png');
+
+        ipcRenderer.send('snapshot', dataURL);
+
+      }, false);
+
+    }
 
     function getUserMediaError(e) {
       console.log('err', e);

@@ -1,7 +1,11 @@
 {
   "name": "hanshot",
   "version": "0.0.0",
+  "main": "src/main.js",
   "devDependencies": {
     "electron-prebuilt": "^0.36.9"
+  },
+  "scripts": {
+    "start": "electron ."
   }
 }
