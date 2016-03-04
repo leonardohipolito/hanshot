@@ -20,25 +20,7 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
 
-  // "printscreen" is not supported yet. FUCK
-  // https://github.com/atom/electron/issues/4663
-  var isNowRegistered = globalShortcut.register('ctrl+p', function () {
-    snapshot();
-  });
-
-  if (!isNowRegistered) {
-    console.log('registration failed');
-  }
-
-});
-
-function snapshot() {
-
-  mainWindow = new BrowserWindow({
-    show: false
-  });
-
-  ipcMain.once('snapshot', onSnapshot);
+  mainWindow = new BrowserWindow();
 
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
@@ -46,16 +28,37 @@ function snapshot() {
     mainWindow = null;
   });
 
-}
+  ipcMain.on('snapshot-initiated', function (event) {
+    mainWindow.hide();
 
-function onSnapshot(event, dataURL) {
-
-  var image = nativeImage.createFromDataURL(dataURL);
-  var buf = image.toPng();
-
-  fs.writeFile('tmp.png', buf, function (err) {
-    if (err) throw err;
-
-    console.log('Shot');
+    setTimeout(function () {
+      event.sender.send('snapshot-window-hidden');
+    }, 100);
   });
-}
+
+  ipcMain.on('snapshot-shot', function (event, dataURL) {
+
+    mainWindow.show();
+
+    var image = nativeImage.createFromDataURL(dataURL);
+    var buf = image.toPng();
+
+    fs.writeFile('tmp.png', buf, function (err) {
+      if (err) throw err;
+
+      console.log('Shot');
+    });
+  });
+
+
+  // "printscreen" is not supported yet. FUCK
+  // https://github.com/atom/electron/issues/4663
+  // var isNowRegistered = globalShortcut.register('ctrl+p', function () {
+  //   snapshot();
+  // });
+
+  // if (!isNowRegistered) {
+  //   console.log('registration failed');
+  // }
+
+});

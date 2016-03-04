@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hello World!</title>
+  <title>hanshot</title>
 </head>
 <body>
+
+  <button data-desktop>Dekstop</button>
+
+  <hr>
 
   <video autoplay style="display: none"></video>
   <canvas width="1920" height="1080"></canvas>
@@ -15,6 +19,7 @@
 
     const electron = require('electron');
 
+    const remote = electron.remote;
     const desktopCapturer = electron.desktopCapturer;
     const ipcRenderer = electron.ipcRenderer;
 
@@ -22,7 +27,19 @@
     var video = document.querySelector('video');
     var canvas = document.querySelector('canvas');
     var ctx = canvas.getContext('2d');
+    var loadedStream = null;
 
+    var btnDesktop = document.querySelector('[data-desktop]');
+
+    btnDesktop.addEventListener('click', function () {
+      ipcRenderer.send('snapshot-initiated');
+    }, false);
+
+    ipcRenderer.on('snapshot-window-hidden', function () {
+      ctx.drawImage(video, 0, 0);
+      var dataURL = canvas.toDataURL('image/png');
+      ipcRenderer.send('snapshot-shot', dataURL);
+    });
 
     desktopCapturer.getSources({ types: ['window', 'screen'] }, function (error, sources) {
 
@@ -54,20 +71,10 @@
     });
 
     function gotStream(stream) {
-      console.log('got stream');
-
       video.src = URL.createObjectURL(stream);
-
       video.addEventListener('loadeddata', function () {
-
-        ctx.drawImage(video, 0, 0);
-
-        var dataURL = canvas.toDataURL('image/png');
-
-        ipcRenderer.send('snapshot', dataURL);
-
+        loadedStream = stream;
       }, false);
-
     }
 
     function getUserMediaError(e) {
