@@ -71,23 +71,46 @@
         screenshotDesktop();
       } else if (options.type === 'selection') {
         screenshotSelection();
+      } else if (options.type === 'window') {
+        screenshotWindow(options.id);
       } else {
         console.log('Unknown screenshot type');
       }
     });
 
-    function setupStream(callback) {
+    ipcRenderer.on('load-windows-initiated', function (event) {
+      desktopCapturer.getSources({ types: ['window', 'screen'] }, function (err, sources) {
+        if (err) throw err;
+
+        var windows = sources.map(function (source) {
+
+          // debugger;
+
+          return {
+            id: source.id,
+            name: source.name
+          };
+        });
+
+        ipcRenderer.send('windows-loaded', windows);
+
+      });
+    });
+
+    function setupStream(windowId, callback) {
+      windowId = windowId || 'screen:0:0';
+
       desktopCapturer.getSources(
         { types: ['window', 'screen'] },
-        function (error, sources) {
+        function (err, sources) {
 
-        if (error) throw error;
+        if (err) throw err;
 
         for (let i = 0; i < sources.length; ++i) {
 
           // TODO: pick screens
           // TODO: multiple screens
-          if (sources[i].id == 'screen:0:0') {
+          if (sources[i].id == windowId) {
             navigator.webkitGetUserMedia({
               audio: false,
               video: {
@@ -95,9 +118,9 @@
                   chromeMediaSource: 'desktop',
                   chromeMediaSourceId: sources[i].id,
                   // TODO: dynamic
-                  minWidth: 1920,
+                  // minWidth: 1920,
                   maxWidth: 1920,
-                  minHeight: 1080,
+                  // minHeight: 1080,
                   maxHeight: 1080
                 }
               }
@@ -129,7 +152,7 @@
 
     function screenshotDesktop() {
 
-      setupStream(function (err, stream) {
+      setupStream(null, function (err, stream) {
 
         ctx.drawImage(video, 0, 0);
 
@@ -159,7 +182,7 @@
         document.querySelector('.cropper-container').style.visibility = 'hidden';
         document.body.classList.add('no-cursor');
 
-        setupStream(function (err, stream) {
+        setupStream(null, function (err, stream) {
 
           ctx.drawImage(video, 0, 0);
 
@@ -190,6 +213,24 @@
       }
 
       document.addEventListener('keyup', onEnter, true);
+    }
+
+    function screenshotWindow(windowId) {
+
+      setupStream(windowId, function (err, stream) {
+
+        ctx.drawImage(video, 0, 0);
+
+        var dataURL = canvas.toDataURL('image/png');
+        ipcRenderer.send('snapshot-shot', {
+          dataURL: dataURL,
+          autocrop: true
+        });
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        destroyStream();
+      });
+
     }
 
   </script>

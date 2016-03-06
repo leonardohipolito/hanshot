@@ -1,7 +1,10 @@
 'use strict';
 
-const electron = require('electron');
 const fs = require('fs');
+
+const electron = require('electron');
+const Jimp = require('jimp');
+
 
 const app = electron.app;
 const globalShortcut = electron.globalShortcut;
@@ -76,11 +79,37 @@ app.on('ready', function () {
     var image = nativeImage.createFromDataURL(data.dataURL);
     var buf = image.toPng();
 
-    fs.writeFile('tmp.png', buf, function (err) {
-      if (err) throw err;
+    if (data.autocrop) {
 
-      console.log('Shot');
-    });
+      Jimp.read(buf, function (err, image) {
+        if (err) throw err;
+
+        image.autocrop(function (err, image) {
+          if (err) throw err;
+
+          image.autocrop(function (err, image) {
+            if (err) throw err;
+
+            image.write('tmp.png');
+          });
+        });
+      });
+
+    } else {
+      fs.writeFile('tmp.png', buf, function (err) {
+        if (err) throw err;
+
+        console.log('Shot');
+      });
+    }
+  });
+
+  ipcMain.on('load-windows-initiated', function (event) {
+    captureWindow.webContents.send('load-windows-initiated');
+  });
+
+  ipcMain.on('windows-loaded', function (event, data) {
+    mainWindow.webContents.send('windows-loaded', data);
   });
 
 

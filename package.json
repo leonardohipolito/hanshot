@@ -9,6 +9,7 @@
     "start": "electron ."
   },
   "dependencies": {
-    "cropperjs": "^0.6.0"
+    "cropperjs": "^0.6.0",
+    "jimp": "^0.2.21"
   }
 }

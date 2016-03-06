@@ -8,6 +8,9 @@
 
   <button data-desktop>Desktop</button>
   <button data-selection>Selection</button>
+  <button data-load-windows>Load windows</button>
+  <select data-windows></select>
+
 
   <script type="text/javascript">
 
@@ -19,6 +22,8 @@
 
     var btnDesktop = document.querySelector('[data-desktop]');
     var btnSelection = document.querySelector('[data-selection]');
+    var btnLoadWindows = document.querySelector('[data-load-windows]');
+    var selectWindows = document.querySelector('[data-windows]');
 
     btnDesktop.addEventListener('click', function () {
       ipcRenderer.send('snapshot-initiated', {
@@ -30,7 +35,46 @@
       ipcRenderer.send('snapshot-initiated', {
         type: 'selection'
       });
+    }, false);
+
+    btnLoadWindows.addEventListener('click', function () {
+      empty(selectWindows);
+
+      var option = document.createElement('option');
+      option.appendChild(document.createTextNode('Loading...'));
+      selectWindows.appendChild(option);
+
+      ipcRenderer.send('load-windows-initiated');
+    }, false);
+
+    selectWindows.addEventListener('change', function () {
+
+      var windowId = selectWindows.options[selectWindows.selectedIndex].value;
+
+      ipcRenderer.send('snapshot-initiated', {
+        type: 'window',
+        id: windowId
+      });
+    }, false);
+
+    ipcRenderer.on('windows-loaded', function (event, windows) {
+
+      empty(selectWindows);
+
+      windows.forEach(function (wind) {
+        var option = document.createElement('option');
+        option.appendChild(document.createTextNode(wind.name));
+        option.value = wind.id;
+        selectWindows.appendChild(option);
+      });
+
     });
+
+    function empty(el) {
+      while (el.childNodes[0]) {
+        el.removeChild(el.childNodes[0]);
+      }
+    }
 
   </script>
 </body>
