@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>hanshot</title>
+</head>
+<body>
+
+  <button data-desktop>Desktop</button>
+  <button data-selection>Selection</button>
+
+  <script type="text/javascript">
+
+    'use strict';
+
+    const electron = require('electron');
+
+    const ipcRenderer = electron.ipcRenderer;
+
+    var btnDesktop = document.querySelector('[data-desktop]');
+    var btnSelection = document.querySelector('[data-selection]');
+
+    btnDesktop.addEventListener('click', function () {
+      ipcRenderer.send('snapshot-initiated', {
+        type: 'desktop'
+      });
+    }, false);
+
+    btnSelection.addEventListener('click', function () {
+      ipcRenderer.send('snapshot-initiated', {
+        type: 'selection'
+      });
+    });
+
+  </script>
+</body>
+</html>
