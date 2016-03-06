@@ -31,6 +31,7 @@ app.on('ready', function () {
 
   mainWindow = new BrowserWindow();
   mainWindow.loadURL('file://' + __dirname + '/main.html');
+  // mainWindow.webContents.openDevTools();
   mainWindow.on('closed', function () {
     if (captureWindow) {
       captureWindow.close();
@@ -53,9 +54,9 @@ app.on('ready', function () {
   ipcMain.on('snapshot-initiated', function (event, options) {
     mainWindow.hide();
 
-    // if (options.type === 'selection') {
+    if (options.type === 'selection') {
       captureWindow.show();
-    // }
+    }
 
     setTimeout(function () {
       captureWindow.webContents.send('snapshot-window-hidden', options);
