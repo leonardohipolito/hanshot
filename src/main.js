@@ -3,14 +3,16 @@
 const fs = require('fs');
 
 const electron = require('electron');
-const Jimp = require('./lib/jimp-extended');
+const imgur = require('imgur');
 
+const Jimp = require('./lib/jimp-extended');
 
 const app = electron.app;
 const globalShortcut = electron.globalShortcut;
 const ipcMain = electron.ipcMain;
 const nativeImage = electron.nativeImage;
 const BrowserWindow = electron.BrowserWindow;
+const clipboard = electron.clipboard;
 
 var isLinux = (process.platform === 'linux');
 
@@ -103,6 +105,20 @@ app.on('ready', function () {
 
   ipcMain.on('windows-loaded', function (event, data) {
     mainWindow.webContents.send('windows-loaded', data);
+  });
+
+  ipcMain.on('snapshot-upload', function (event, params) {
+
+    imgur.uploadFile('tmp.png')
+    .then(function (json) {
+      var link = json.data.link;
+      clipboard.writeText(link);
+      console.log('Uploaded');
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+
   });
 
 

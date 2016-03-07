@@ -11,6 +11,10 @@
   <button data-load-windows>Load windows</button>
   <select data-windows></select>
 
+  <hr>
+
+  <button data-upload-imgur>Upload Imgur</button>
+
 
   <script type="text/javascript">
 
@@ -24,6 +28,8 @@
     var btnSelection = document.querySelector('[data-selection]');
     var btnLoadWindows = document.querySelector('[data-load-windows]');
     var selectWindows = document.querySelector('[data-windows]');
+
+    var btnUploadImgur = document.querySelector('[data-upload-imgur]');
 
     btnDesktop.addEventListener('click', function () {
       ipcRenderer.send('snapshot-initiated', {
@@ -55,6 +61,14 @@
         type: 'window',
         id: windowId
       });
+    }, false);
+
+    btnUploadImgur.addEventListener('click', function () {
+
+      ipcRenderer.send('snapshot-upload', {
+        resource: 'imgur'
+      });
+
     }, false);
 
     ipcRenderer.on('windows-loaded', function (event, windows) {
