@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 const electron = require('electron');
-const Jimp = require('jimp');
+const Jimp = require('./lib/jimp-extended');
 
 
 const app = electron.app;
@@ -84,15 +84,8 @@ app.on('ready', function () {
       Jimp.read(buf, function (err, image) {
         if (err) throw err;
 
-        image.autocrop(function (err, image) {
-          if (err) throw err;
-
-          image.autocrop(function (err, image) {
-            if (err) throw err;
-
-            image.write('tmp.png');
-          });
-        });
+        image.autocropRightBottomAlpha();
+        image.write('tmp.png');
       });
 
     } else {
