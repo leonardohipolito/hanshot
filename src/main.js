@@ -6,6 +6,8 @@ const electron = require('electron');
 const imgur = require('imgur');
 
 const Jimp = require('./lib/jimp-extended');
+const screens = require('./shared/screens');
+
 
 const app = electron.app;
 const globalShortcut = electron.globalShortcut;
@@ -14,9 +16,10 @@ const nativeImage = electron.nativeImage;
 const BrowserWindow = electron.BrowserWindow;
 const clipboard = electron.clipboard;
 
+
 var isLinux = (process.platform === 'linux');
 
-var mainWindow = null;
+var userWindow = null;
 var captureWindow = null;
 
 if (isLinux) {
@@ -34,49 +37,79 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
 
-  mainWindow = new BrowserWindow();
-  mainWindow.loadURL('file://' + __dirname + '/main.html');
-  // mainWindow.webContents.openDevTools();
-  mainWindow.on('closed', function () {
+  var bounds = screens.getOverallBounds();
+
+  userWindow = new BrowserWindow({
+    // show: false
+  });
+  userWindow.loadURL('file://' + __dirname + '/renderers/user/user.html');
+  // userWindow.webContents.openDevTools();
+  userWindow.on('closed', function () {
     if (captureWindow) {
       captureWindow.close();
     }
-    mainWindow = null;
+    userWindow = null;
   });
+
+  console.log(bounds);
 
   captureWindow = new BrowserWindow({
     show: false,
     frame: false,
-    fullscreen: true,
-    transparent: true
+    transparent: true,
+    enableLargerThanScreen: true,
+    resizable: false,
+    movable: false,
+    minimizable: false,
+    maximizable: false,
+    closable: false,
+    // fullscreenable: false,
+    // kiosk: true,
+    // skipTaskbar: true,
+    // alwaysOnTop: true,
+    hasShadow: false,
+    minWidth: bounds.width,
+    minHeight: bounds.height,
+    x: 0,
+    y: 0
   });
-  captureWindow.loadURL('file://' + __dirname + '/capture.html');
+
+  captureWindow.setPosition(0, -76);
+
+  console.log(captureWindow.getPosition());
+  console.log(captureWindow.getBounds());
+
+  captureWindow.loadURL('file://' + __dirname + '/renderers/capture/capture.html');
   // captureWindow.webContents.openDevTools();
   captureWindow.on('closed', function () {
     captureWindow = null;
   });
 
   ipcMain.on('snapshot-initiated', function (event, options) {
-    mainWindow.hide();
+    userWindow.hide();
 
     if (options.type === 'selection') {
       captureWindow.show();
     }
 
     setTimeout(function () {
-      captureWindow.webContents.send('snapshot-window-hidden', options);
+      captureWindow.webContents.send('snapshot-window-hidden', {
+        windowId: options.windowId,
+        type: options.type,
+        bounds: bounds
+      });
     }, 100);
   });
 
   ipcMain.on('snapshot-cancelled', function (event, data) {
     captureWindow.hide();
-    mainWindow.show();
+    userWindow.show();
   });
 
   ipcMain.on('snapshot-shot', function (event, data) {
 
     captureWindow.hide();
-    mainWindow.show();
+    userWindow.show();
 
     var image = nativeImage.createFromDataURL(data.dataURL);
     var buf = image.toPng();
@@ -97,6 +130,7 @@ app.on('ready', function () {
         console.log('Shot');
       });
     }
+
   });
 
   ipcMain.on('load-windows-initiated', function (event) {
@@ -104,7 +138,7 @@ app.on('ready', function () {
   });
 
   ipcMain.on('windows-loaded', function (event, data) {
-    mainWindow.webContents.send('windows-loaded', data);
+    userWindow.webContents.send('windows-loaded', data);
   });
 
   ipcMain.on('snapshot-upload', function (event, params) {
