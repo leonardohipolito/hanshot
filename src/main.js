@@ -51,33 +51,12 @@ app.on('ready', function () {
     userWindow = null;
   });
 
-  console.log(bounds);
-
   captureWindow = new BrowserWindow({
     show: false,
-    frame: false,
     transparent: true,
-    enableLargerThanScreen: true,
-    resizable: false,
-    movable: false,
-    minimizable: false,
-    maximizable: false,
-    closable: false,
-    // fullscreenable: false,
-    // kiosk: true,
-    // skipTaskbar: true,
-    // alwaysOnTop: true,
-    hasShadow: false,
-    minWidth: bounds.width,
-    minHeight: bounds.height,
-    x: 0,
-    y: 0
+    frame: false,
+    fullscreen: true
   });
-
-  captureWindow.setPosition(0, -76);
-
-  console.log(captureWindow.getPosition());
-  console.log(captureWindow.getBounds());
 
   captureWindow.loadURL('file://' + __dirname + '/renderers/capture/capture.html');
   // captureWindow.webContents.openDevTools();
@@ -94,6 +73,7 @@ app.on('ready', function () {
 
     setTimeout(function () {
       captureWindow.webContents.send('snapshot-window-hidden', {
+        displayId: options.displayId,
         windowId: options.windowId,
         type: options.type,
         bounds: bounds
@@ -114,22 +94,16 @@ app.on('ready', function () {
     var image = nativeImage.createFromDataURL(data.dataURL);
     var buf = image.toPng();
 
-    if (data.autocrop) {
+    Jimp.read(buf, function (err, image) {
 
-      Jimp.read(buf, function (err, image) {
-        if (err) throw err;
-
+      if (data.autocrop) {
         image.autocropRightBottomAlpha();
-        image.write('tmp.png');
-      });
+      }
 
-    } else {
-      fs.writeFile('tmp.png', buf, function (err) {
-        if (err) throw err;
+      image.write('tmp.png');
+      console.error('Shot');
 
-        console.log('Shot');
-      });
-    }
+    });
 
   });
 

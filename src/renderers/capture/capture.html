@@ -153,7 +153,8 @@
 
         var dataURL = canvas.toDataURL('image/png');
         ipcRenderer.send('snapshot-shot', {
-          dataURL: dataURL
+          dataURL: dataURL,
+          options: options
         });
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -188,7 +189,8 @@
             var croppedDataURL = croppedCanvas.toDataURL('image/png');
 
             ipcRenderer.send('snapshot-shot', {
-              dataURL: croppedDataURL
+              dataURL: croppedDataURL,
+              options: options
             });
 
             cropper.destroy();
@@ -219,7 +221,8 @@
         var dataURL = canvas.toDataURL('image/png');
         ipcRenderer.send('snapshot-shot', {
           dataURL: dataURL,
-          autocrop: true
+          autocrop: true,
+          options: options
         });
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);

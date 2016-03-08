@@ -28,10 +28,43 @@ function getOverallBounds() {
   return bounds;
 }
 
+function getNames() {
+
+  var displays = electron.screen.getAllDisplays();
+  var primaryDisplay = electron.screen.getPrimaryDisplay();
+
+  var names = displays.map(function (display) {
+    var name = display.bounds.width + 'x' + display.bounds.height;
+    if (display.id === primaryDisplay.id) {
+      name += ' (primary)';
+    }
+    return {
+      id: display.id,
+      name: name
+    };
+  });
+
+  return names;
+}
+
+function getDisplayById(displayId) {
+
+  var displays = electron.screen.getAllDisplays();
+
+  for (var i = 0; i < displays.length; i++) {
+    if (displays[i].id === displayId) {
+      return displays[i];
+    }
+  }
+
+  return null;
+}
+
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
 
 module.exports = {
-  getOverallBounds: getOverallBounds
+  getOverallBounds: getOverallBounds,
+  getNames: getNames
 };
