@@ -60,8 +60,8 @@
 
     ipcRenderer.on('snapshot-window-hidden', function (event, options) {
 
-      canvas.width = options.bounds.width;
-      canvas.height = options.bounds.height;
+      canvas.width = options.displayBounds.width;
+      canvas.height = options.displayBounds.height;
 
       if (options.type === 'desktop') {
         screenshotDesktop(options);
@@ -114,9 +114,9 @@
                   chromeMediaSourceId: sources[i].id,
                   // TODO: dynamic
                   // minWidth: 1920,
-                  maxWidth: options.bounds.width,
+                  maxWidth: options.overallBounds.width,
                   // minHeight: 1080,
-                  maxHeight: options.bounds.height
+                  maxHeight: options.overallBounds.height
                 }
               }
             }, function (stream) {
@@ -149,7 +149,7 @@
 
       setupStream(options, function (err, stream) {
 
-        ctx.drawImage(video, 0, 0);
+        ctx.drawImage(video, -options.displayBounds.x, -options.displayBounds.y);
 
         var dataURL = canvas.toDataURL('image/png');
         ipcRenderer.send('snapshot-shot', {
@@ -180,7 +180,7 @@
 
         setupStream(options, function (err, stream) {
 
-          ctx.drawImage(video, 0, 0);
+          ctx.drawImage(video, -options.displayBounds.x, -options.displayBounds.y);
 
           var desktopDataURL = canvas.toDataURL('image/png');
 

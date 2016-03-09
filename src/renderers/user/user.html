@@ -92,7 +92,7 @@
 
     selectDesktops.addEventListener('change', function () {
 
-      var displayId = selectDesktops.options[selectDesktops.selectedIndex].value;
+      var displayId = Number(selectDesktops.options[selectDesktops.selectedIndex].value);
 
       ipcRenderer.send('snapshot-initiated', {
         type: 'desktop',
@@ -103,7 +103,7 @@
 
     selectSelections.addEventListener('change', function () {
 
-      var displayId = selectSelections.options[selectSelections.selectedIndex].value;
+      var displayId = Number(selectSelections.options[selectSelections.selectedIndex].value);
 
       ipcRenderer.send('snapshot-initiated', {
         type: 'selection',

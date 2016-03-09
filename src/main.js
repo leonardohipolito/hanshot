@@ -37,7 +37,7 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
 
-  var bounds = screens.getOverallBounds();
+  var overallBounds = screens.getOverallBounds();
 
   userWindow = new BrowserWindow({
     // show: false
@@ -67,16 +67,31 @@ app.on('ready', function () {
   ipcMain.on('snapshot-initiated', function (event, options) {
     userWindow.hide();
 
+    var displayBounds = Object.assign({}, overallBounds);
+
+    if (options.displayId) {
+      var display = screens.getDisplayById(options.displayId);
+      if (display) {
+        Object.assign(displayBounds, display.bounds);
+        captureWindow.setPosition(displayBounds.x, displayBounds.y);
+      }
+    } else {
+      var mousePos = electron.screen.getCursorScreenPoint();
+      var display = electron.screen.getDisplayNearestPoint(mousePos);
+      Object.assign(displayBounds, display.bounds);
+      captureWindow.setPosition(displayBounds.x, displayBounds.y);
+    }
+
     if (options.type === 'selection') {
       captureWindow.show();
     }
 
     setTimeout(function () {
       captureWindow.webContents.send('snapshot-window-hidden', {
-        displayId: options.displayId,
         windowId: options.windowId,
         type: options.type,
-        bounds: bounds
+        overallBounds: overallBounds,
+        displayBounds: displayBounds
       });
     }, 100);
   });
