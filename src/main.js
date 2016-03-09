@@ -42,8 +42,8 @@ app.on('ready', function () {
   userWindow = new BrowserWindow({
     // show: false
   });
-  userWindow.loadURL('file://' + __dirname + '/renderers/user/user.html');
-  // userWindow.webContents.openDevTools();
+  userWindow.loadURL('file://' + __dirname + '/renderers/user/index.html');
+  userWindow.webContents.openDevTools();
   userWindow.on('closed', function () {
     if (captureWindow) {
       captureWindow.close();
