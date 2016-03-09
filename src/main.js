@@ -75,14 +75,17 @@ app.on('ready', function () {
         Object.assign(displayBounds, display.bounds);
         captureWindow.setPosition(displayBounds.x, displayBounds.y);
       }
-    } else {
-      var mousePos = electron.screen.getCursorScreenPoint();
-      var display = electron.screen.getDisplayNearestPoint(mousePos);
-      Object.assign(displayBounds, display.bounds);
-      captureWindow.setPosition(displayBounds.x, displayBounds.y);
     }
 
     if (options.type === 'selection') {
+
+      if (!options.displayId) {
+        var mousePos = electron.screen.getCursorScreenPoint();
+        var display = electron.screen.getDisplayNearestPoint(mousePos);
+        Object.assign(displayBounds, display.bounds);
+        captureWindow.setPosition(displayBounds.x, displayBounds.y);
+      }
+
       captureWindow.show();
     }
 

@@ -50,7 +50,6 @@ function getNames() {
 function getDisplayById(displayId) {
 
   var displays = electron.screen.getAllDisplays();
-  var primaryDisplay = electron.screen.getPrimaryDisplay();
 
   for (var i = 0; i < displays.length; i++) {
     if (displays[i].id === displayId) {
@@ -58,7 +57,7 @@ function getDisplayById(displayId) {
     }
   }
 
-  return primaryDisplay;
+  return null;
 }
 
 //------------------------------------------------------------------------------
