@@ -1,12 +1,10 @@
-'use strict';
-
-const React = require('react');
-const ReactDOM = require('react-dom');
-const electron = require('electron');
+const React = electronRequire('react');
+const ReactDOM = electronRequire('react-dom');
+const electron = electronRequire('electron');
 
 const ipcRenderer = electron.ipcRenderer;
 
-const screens = require('../../shared/screens');
+const screens = electronRequire('../../shared/screens');
 
 
 function ClickableButton(props, children) {

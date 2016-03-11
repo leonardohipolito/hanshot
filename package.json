@@ -10,9 +10,13 @@
     "react-dom": "^0.14.7"
   },
   "devDependencies": {
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^7.2.0",
+    "browserify": "^13.0.0",
     "electron-prebuilt": "^0.36.9"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "browserify -t [ babelify --presets [ react ] ] src/renderers/user/index.js -o src/renderers/user/built.js"
   }
 }
