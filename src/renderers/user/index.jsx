@@ -7,9 +7,14 @@ const ipcRenderer = electron.ipcRenderer;
 const screens = electronRequire('../../shared/screens');
 
 
-function ClickableButton(props, children) {
+function Button(props) {
   return (
-    React.DOM.button({ onClick: props.onClick }, props.children)
+    <button type="button"
+      className={'btn btn-' + (props.type || 'default')}
+      onClick={props.onClick}
+    >
+      {props.children}
+    </button>
   );
 }
 
@@ -60,7 +65,7 @@ var SnapDisplaysControl = React.createClass({
   render: function () {
     return (
       React.DOM.div(null,
-        React.createElement(ClickableButton, {
+        React.createElement(Button, {
             onClick: this.handleButtonClick
           }, this.props.title
         ),

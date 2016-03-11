@@ -3,9 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>hanshot</title>
+  <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.css">
 </head>
 <body>
   <div id="app"></div>
+
+  <script>
+    // https://github.com/atom/electron/issues/254
+    window.$ = window.jQuery = require('jquery');
+  </script>
+
+  <script src="../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
   <script>
     // https://github.com/atom/electron/issues/1611
