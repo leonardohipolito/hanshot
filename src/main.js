@@ -44,6 +44,7 @@ app.on('ready', function () {
   });
   userWindow.loadURL('file://' + __dirname + '/renderers/user/index.html');
   userWindow.webContents.openDevTools();
+  userWindow.maximize();
   userWindow.on('closed', function () {
     if (captureWindow) {
       captureWindow.close();
