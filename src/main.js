@@ -125,13 +125,18 @@ app.on('ready', function () {
 
   });
 
-  ipcMain.on('load-windows-initiated', function (event) {
-    captureWindow.webContents.send('load-windows-initiated');
+  ipcMain.on('displays-requested', function () {
+    var displays = screens.getNames();
+    userWindow.webContents.send('displays-updated', displays);
   });
 
-  ipcMain.on('windows-loaded', function (event, data) {
-    userWindow.webContents.send('windows-loaded', data);
+  ipcMain.on('windows-requested', function () {
+    captureWindow.webContents.send('windows-requested');
   });
+  ipcMain.on('windows-loaded', function (event, windows) {
+    userWindow.webContents.send('windows-updated', windows);
+  });
+
 
   ipcMain.on('snapshot-upload', function (event, params) {
 

@@ -74,7 +74,7 @@
       }
     });
 
-    ipcRenderer.on('load-windows-initiated', function (event) {
+    ipcRenderer.on('windows-requested', function (event) {
       desktopCapturer.getSources({ types: ['window', 'screen'] }, function (err, sources) {
         if (err) throw err;
 

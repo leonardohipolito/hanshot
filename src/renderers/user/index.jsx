@@ -1,115 +1,50 @@
-const React = electronRequire('react');
-const ReactDOM = electronRequire('react-dom');
-const electron = electronRequire('electron');
+var React = electronRequire('react');
+var ReactDOM = electronRequire('react-dom');
+var electron = electronRequire('electron');
 
-const ipcRenderer = electron.ipcRenderer;
+var ipcRenderer = electron.ipcRenderer;
 
-const screens = electronRequire('../../shared/screens');
+var SnapDesktop = require('./components/snap/desktop.jsx');
+var SnapSelection = require('./components/snap/selection.jsx');
+var SnapWindow = require('./components/snap/window.jsx');
 
 
-function Button(props) {
-  return (
-    <button type="button"
-      className={'btn btn-' + (props.type || 'default')}
-      onClick={props.onClick}
-    >
-      {props.children}
-    </button>
-  );
-}
-
-var DisplayList = React.createClass({
-  displayName: 'DisplayList',
-
-  handleChange: function (event) {
-    var select = event.target;
-    var displayId = Number(select.options[select.selectedIndex].value);
-    this.props.onChange(displayId);
-  },
-
-  render: function () {
-    if (!(this.props.displays.length > 1)) {
-      return false;
-    }
-
-    var placeholder = { id: '', name: 'Pick display...' };
-    var displays = [placeholder].concat(this.props.displays);
-
-    var options = displays.map(function (display) {
-      return React.DOM.option(
-        { value: display.id, key: display.id },
-        display.name
-      );
-    });
-
-    // TODO: it should not be a select
-    return (
-      React.DOM.select({ onChange: this.handleChange }, options)
-    );
-  }
-});
-
-var SnapDisplaysControl = React.createClass({
-  displayName: 'SnapDisplaysControl',
-  handleButtonClick: function () {
-    this.props.onSnap({
-      type: this.props.type
-    });
-  },
-  handleListChange: function (displayId) {
-    this.props.onSnap({
-      type: this.props.type,
-      displayId: displayId
-    });
-  },
-  render: function () {
-    return (
-      React.DOM.div(null,
-        React.createElement(Button, {
-            onClick: this.handleButtonClick
-          }, this.props.title
-        ),
-        React.createElement(DisplayList, {
-          displays: this.props.displays,
-          onChange: this.handleListChange
-        })
-      )
-    );
-  }
-});
-
-var SnapPanel = React.createClass({
-  displayName: 'SnapPanel',
+var ActionPanel = React.createClass({
   getInitialState: function () {
-    return { displays: screens.getNames() };
+    return {
+      displays: [],
+      windows: []
+    };
   },
-  handleSnap: function (options) {
-    ipcRenderer.send('snapshot-initiated', {
-      type: options.type,
-      displayId: options.displayId
+  componentDidMount: function () {
+    var self = this;
+    ipcRenderer.on('displays-updated', function (event, displays) {
+      debugger;
+      self.setState({ displays: displays });
     });
+    ipcRenderer.send('displays-requested');
+
+    ipcRenderer.on('windows-updated', function (event, windows) {
+      self.setState({ windows: windows });
+    });
+    ipcRenderer.send('windows-requested');
+  },
+  componentWillUnmount: function () {
+    ipcRenderer.removeAllListeners('displays-updated');
+    ipcRenderer.removeAllListeners('windows-updated');
   },
   render: function () {
     return (
-      React.DOM.div(null,
-        React.createElement(SnapDisplaysControl, {
-          type: 'desktop',
-          title: 'Desktop',
-          displays: this.state.displays,
-          onSnap: this.handleSnap
-        }),
-        React.createElement(SnapDisplaysControl, {
-          type: 'selection',
-          title: 'Selection',
-          displays: this.state.displays,
-          onSnap: this.handleSnap
-        })
-      )
+      <div>
+        <SnapDesktop displays={this.state.displays} />
+        <SnapSelection displays={this.state.displays} />
+        <SnapWindow windows={this.state.windows} />
+      </div>
     );
   }
 });
 
 ReactDOM.render(
-  React.createElement(SnapPanel, null),
+  <ActionPanel />,
   document.getElementById('app')
 );
