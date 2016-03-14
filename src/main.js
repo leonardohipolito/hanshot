@@ -7,6 +7,7 @@ const imgur = require('imgur');
 
 const Jimp = require('./lib/jimp-extended');
 const screens = require('./shared/screens');
+const systemTray = require('./system-tray');
 
 
 const app = electron.app;
@@ -36,6 +37,8 @@ app.on('window-all-closed', function () {
 });
 
 app.on('ready', function () {
+
+  systemTray.create();
 
   var overallBounds = screens.getOverallBounds();
 
