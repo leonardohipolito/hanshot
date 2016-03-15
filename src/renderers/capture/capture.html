@@ -53,7 +53,7 @@
 
     document.addEventListener('keyup', function (event) {
       if (event.keyCode === KEY_ESC) {
-        ipcRenderer.send('snapshot-cancelled');
+        ipcRenderer.send('capture', { action: 'cancel' });
         return;
       }
     }, true);
@@ -85,8 +85,7 @@
           };
         });
 
-        ipcRenderer.send('windows-loaded', windows);
-
+        event.sender.send('windows-loaded', windows);
       });
     });
 
@@ -152,7 +151,8 @@
         ctx.drawImage(video, -options.displayBounds.x, -options.displayBounds.y);
 
         var dataURL = canvas.toDataURL('image/png');
-        ipcRenderer.send('snapshot-shot', {
+        ipcRenderer.send('capture', {
+          action: 'complete',
           dataURL: dataURL,
           options: options
         });
@@ -188,7 +188,8 @@
             var croppedCanvas = cropper.getCroppedCanvas();
             var croppedDataURL = croppedCanvas.toDataURL('image/png');
 
-            ipcRenderer.send('snapshot-shot', {
+            ipcRenderer.send('capture', {
+              action: 'complete',
               dataURL: croppedDataURL,
               options: options
             });
@@ -219,7 +220,8 @@
         ctx.drawImage(video, 0, 0);
 
         var dataURL = canvas.toDataURL('image/png');
-        ipcRenderer.send('snapshot-shot', {
+        ipcRenderer.send('capture', {
+          action: 'complete',
           dataURL: dataURL,
           autocrop: true,
           options: options

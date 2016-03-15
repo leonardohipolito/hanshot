@@ -1,27 +1,35 @@
 'use strict';
 
-const fs = require('fs');
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
 
-const electron = require('electron');
-const imgur = require('imgur');
+var fs = require('fs');
 
-const Jimp = require('./lib/jimp-extended');
-const screens = require('./shared/screens');
-const systemTray = require('./system-tray');
+var electron = require('electron');
+var imgur = require('imgur');
+
+var Jimp = require('./lib/jimp-extended');
+
+var Screen = require('./screen');
 
 
-const app = electron.app;
-const globalShortcut = electron.globalShortcut;
-const ipcMain = electron.ipcMain;
-const nativeImage = electron.nativeImage;
-const BrowserWindow = electron.BrowserWindow;
-const clipboard = electron.clipboard;
+var app = electron.app;
+var globalShortcut = electron.globalShortcut;
+var ipcMain = electron.ipcMain;
+var nativeImage = electron.nativeImage;
+var BrowserWindow = electron.BrowserWindow;
+var clipboard = electron.clipboard;
 
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
 
 var isLinux = (process.platform === 'linux');
 
-var userWindow = null;
-var captureWindow = null;
+//------------------------------------------------------------------------------
+// Private
+//------------------------------------------------------------------------------
 
 if (isLinux) {
   // http://electron.atom.io/docs/v0.36.8/api/frameless-window/#limitations
@@ -38,81 +46,19 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
 
-  systemTray.create();
+  var screen = new Screen();
 
-  var overallBounds = screens.getOverallBounds();
-
-  userWindow = new BrowserWindow({
-    // show: false
-  });
+  var userWindow = new BrowserWindow();
   userWindow.loadURL('file://' + __dirname + '/renderers/user/index.html');
   userWindow.webContents.openDevTools();
   userWindow.maximize();
   userWindow.on('closed', function () {
-    if (captureWindow) {
-      captureWindow.close();
-    }
-    userWindow = null;
+    screen.destroy();
   });
 
-  captureWindow = new BrowserWindow({
-    show: false,
-    transparent: true,
-    frame: false,
-    fullscreen: true
-  });
+  // TODO: tray
 
-  captureWindow.loadURL('file://' + __dirname + '/renderers/capture/capture.html');
-  // captureWindow.webContents.openDevTools();
-  captureWindow.on('closed', function () {
-    captureWindow = null;
-  });
-
-  ipcMain.on('snapshot-initiated', function (event, options) {
-    userWindow.hide();
-
-    var displayBounds = Object.assign({}, overallBounds);
-
-    if (options.displayId) {
-      var display = screens.getDisplayById(options.displayId);
-      if (display) {
-        Object.assign(displayBounds, display.bounds);
-        captureWindow.setPosition(displayBounds.x, displayBounds.y);
-      }
-    }
-
-    if (options.type === 'selection') {
-
-      if (!options.displayId) {
-        var mousePos = electron.screen.getCursorScreenPoint();
-        var display = electron.screen.getDisplayNearestPoint(mousePos);
-        Object.assign(displayBounds, display.bounds);
-        captureWindow.setPosition(displayBounds.x, displayBounds.y);
-      }
-
-      captureWindow.show();
-    }
-
-    setTimeout(function () {
-      captureWindow.webContents.send('snapshot-window-hidden', {
-        windowId: options.windowId,
-        type: options.type,
-        overallBounds: overallBounds,
-        displayBounds: displayBounds
-      });
-    }, 100);
-  });
-
-  ipcMain.on('snapshot-cancelled', function (event, data) {
-    captureWindow.hide();
-    userWindow.show();
-  });
-
-  ipcMain.on('snapshot-shot', function (event, data) {
-
-    captureWindow.hide();
-    userWindow.show();
-
+  function writeTmp(data) {
     var image = nativeImage.createFromDataURL(data.dataURL);
     var buf = image.toPng();
 
@@ -126,21 +72,46 @@ app.on('ready', function () {
       console.error('Shot');
 
     });
+  }
+
+  ipcMain.on('snapshot-initiated', function (event, options) {
+
+    if (options.type === 'desktop') {
+
+      screen.captureDesktop(options.displayId, function (err, snapshot) {
+        if (err) throw err;
+        writeTmp(snapshot);
+      });
+
+    } else if (options.type === 'selection') {
+
+      screen.captureSelection(options.displayId, function (err, snapshot) {
+        if (err) throw err;
+        writeTmp(snapshot);
+      });
+
+    } else if (options.type === 'window') {
+
+      screen.captureWindow(options.windowId, function (err, snapshot) {
+        if (err) throw err;
+        writeTmp(snapshot);
+      });
+
+    }
 
   });
 
-  ipcMain.on('displays-requested', function () {
-    var displays = screens.getNames();
-    userWindow.webContents.send('displays-updated', displays);
+  ipcMain.on('displays-requested', function (event) {
+    var displays = screen.getDisplayNames();
+    event.sender.send('displays-updated', displays);
   });
 
-  ipcMain.on('windows-requested', function () {
-    captureWindow.webContents.send('windows-requested');
+  ipcMain.on('windows-requested', function (event) {
+    screen.getWindowNames(function (err, names) {
+      if (err) throw err;
+      event.sender.send('windows-updated', names);
+    });
   });
-  ipcMain.on('windows-loaded', function (event, windows) {
-    userWindow.webContents.send('windows-updated', windows);
-  });
-
 
   ipcMain.on('snapshot-upload', function (event, params) {
 
@@ -155,7 +126,6 @@ app.on('ready', function () {
     });
 
   });
-
 
   // "printscreen" is not supported yet. FUCK
   // https://github.com/atom/electron/issues/4663

@@ -9,8 +9,7 @@
     "jimp": "^0.2.21",
     "jquery": "^2.2.1",
     "react": "^0.14.7",
-    "react-dom": "^0.14.7",
-    "react-tap-event-plugin": "^0.2.2"
+    "react-dom": "^0.14.7"
   },
   "devDependencies": {
     "babel-preset-react": "^6.5.0",
@@ -19,7 +18,7 @@
     "electron-prebuilt": "^0.36.9"
   },
   "scripts": {
-    "start": "electron .",
+    "start": "npm run build && electron .",
     "build": "browserify -t [ babelify --presets [ react ] ] src/renderers/user/index.jsx -o src/renderers/user/built.js"
   }
 }
