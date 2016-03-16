@@ -7,17 +7,16 @@
 var fs = require('fs');
 
 var electron = require('electron');
+
 var imgur = require('imgur');
 
-var Jimp = require('./lib/jimp-extended');
-
 var Screen = require('./screen');
-
+var Api = require('./api');
+var cli = require('./cli');
 
 var app = electron.app;
 var globalShortcut = electron.globalShortcut;
 var ipcMain = electron.ipcMain;
-var nativeImage = electron.nativeImage;
 var BrowserWindow = electron.BrowserWindow;
 var clipboard = electron.clipboard;
 
@@ -31,12 +30,50 @@ var isLinux = (process.platform === 'linux');
 // Private
 //------------------------------------------------------------------------------
 
+var api = null;
+
+// ---
+
+// Keep one running instance and prevent second instance from starting
+var shouldQuit = app.makeSingleInstance(function (argv, workdir) {
+  console.log('There is an already running instance');
+  var args = argv.slice(2);
+
+  if (!api) {
+    console.log('Unable to use already running instance');
+    return;
+  }
+
+  if (!args.length) {
+    api.openWindow();
+    return;
+  }
+
+  var action = cli.parseAction(args);
+  if (action.capture === 'desktop') {
+    api.captureDesktop();
+  } else if (action.capture === 'selection') {
+    api.captureSelection();
+  } else if (action.capture === 'window') {
+    api.captureWindow();
+  }
+});
+
+if (shouldQuit) {
+  app.quit();
+  return;
+}
+
+// ---
+
 if (isLinux) {
   // http://electron.atom.io/docs/v0.36.8/api/frameless-window/#limitations
   // Alpha channel doesn’t work on some NVidia drivers on Linux
   app.commandLine.appendSwitch('enable-transparent-visuals');
   app.commandLine.appendSwitch('disable-gpu');
 }
+
+// ---
 
 app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
@@ -46,59 +83,32 @@ app.on('window-all-closed', function () {
 
 app.on('ready', function () {
 
+  var args = process.argv.slice(2);
+  var action = cli.parseAction(args);
+
   var screen = new Screen();
 
-  var userWindow = new BrowserWindow();
+  var userWindow = new BrowserWindow({
+    show: action.capture === false
+  });
   userWindow.loadURL('file://' + __dirname + '/renderers/user/index.html');
   userWindow.webContents.openDevTools();
-  userWindow.maximize();
   userWindow.on('closed', function () {
     screen.destroy();
   });
 
+  api = new Api(screen, userWindow);
+
   // TODO: tray
 
-  function writeTmp(data) {
-    var image = nativeImage.createFromDataURL(data.dataURL);
-    var buf = image.toPng();
-
-    Jimp.read(buf, function (err, image) {
-
-      if (data.autocrop) {
-        image.autocropRightBottomAlpha();
-      }
-
-      image.write('tmp.png');
-      console.error('Shot');
-
-    });
-  }
-
   ipcMain.on('snapshot-initiated', function (event, options) {
-
     if (options.type === 'desktop') {
-
-      screen.captureDesktop(options.displayId, function (err, snapshot) {
-        if (err) throw err;
-        writeTmp(snapshot);
-      });
-
+      api.captureDesktop(options.displayId);
     } else if (options.type === 'selection') {
-
-      screen.captureSelection(options.displayId, function (err, snapshot) {
-        if (err) throw err;
-        writeTmp(snapshot);
-      });
-
+      api.captureSelection(options.displayId);
     } else if (options.type === 'window') {
-
-      screen.captureWindow(options.windowId, function (err, snapshot) {
-        if (err) throw err;
-        writeTmp(snapshot);
-      });
-
+      api.captureWindow(options.windowId);
     }
-
   });
 
   ipcMain.on('displays-requested', function (event) {
@@ -126,6 +136,14 @@ app.on('ready', function () {
     });
 
   });
+
+  if (action.capture === 'desktop') {
+    api.captureDesktop();
+  } else if (action.capture === 'selection') {
+    api.captureSelection();
+  } else if (action.capture === 'window') {
+    api.captureWindow();
+  }
 
   // "printscreen" is not supported yet. FUCK
   // https://github.com/atom/electron/issues/4663

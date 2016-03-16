@@ -10,7 +10,7 @@ var BrowserWindow = electron.BrowserWindow;
 var ipcMain = electron.ipcMain;
 
 //------------------------------------------------------------------------------
-// Private
+// Public Interface
 //------------------------------------------------------------------------------
 
 function Screen() {
@@ -25,12 +25,8 @@ function Screen() {
   // this.window.webContents.openDevTools();
 }
 
-//------------------------------------------------------------------------------
-// Public Interface
-//------------------------------------------------------------------------------
-
 Screen.prototype.destroy = function () {
-  this.window.close();
+  this.window.destroy();
 };
 
 Screen.prototype.getOverallBounds = function () {
@@ -109,11 +105,27 @@ Screen.prototype.captureDesktop = function (displayId, cb) {
 
   }.bind(this));
 
-  this.window.webContents.send('snapshot-window-hidden', {
-    type: 'desktop',
-    overallBounds: overallBounds,
-    displayBounds: displayBounds
-  });
+  if (this.window.webContents.isLoading()) {
+
+    this.window.webContents.on('did-finish-load', function () {
+
+      this.window.webContents.send('snapshot-window-hidden', {
+        type: 'desktop',
+        overallBounds: overallBounds,
+        displayBounds: displayBounds
+      });
+
+    }.bind(this));
+
+  } else {
+
+    this.window.webContents.send('snapshot-window-hidden', {
+      type: 'desktop',
+      overallBounds: overallBounds,
+      displayBounds: displayBounds
+    });
+
+  }
 
 };
 
@@ -144,13 +156,31 @@ Screen.prototype.captureSelection = function (displayId, cb) {
   }.bind(this));
 
 
-  this.window.show();
+  if (this.window.webContents.isLoading()) {
 
-  this.window.webContents.send('snapshot-window-hidden', {
-    type: 'selection',
-    overallBounds: overallBounds,
-    displayBounds: displayBounds
-  });
+    this.window.webContents.on('did-finish-load', function () {
+
+      this.window.show();
+
+      this.window.webContents.send('snapshot-window-hidden', {
+        type: 'selection',
+        overallBounds: overallBounds,
+        displayBounds: displayBounds
+      });
+
+    }.bind(this));
+
+  } else {
+
+    this.window.show();
+
+    this.window.webContents.send('snapshot-window-hidden', {
+      type: 'selection',
+      overallBounds: overallBounds,
+      displayBounds: displayBounds
+    });
+
+  }
 
 };
 
@@ -171,12 +201,30 @@ Screen.prototype.captureWindow = function (windowId, cb) {
 
   }.bind(this));
 
-  this.window.webContents.send('snapshot-window-hidden', {
-    type: 'window',
-    windowId: windowId,
-    overallBounds: overallBounds,
-    displayBounds: displayBounds
-  });
+  if (this.window.webContents.isLoading()) {
+
+    this.window.webContents.on('did-finish-load', function () {
+
+      this.window.webContents.send('snapshot-window-hidden', {
+        type: 'window',
+        windowId: windowId,
+        overallBounds: overallBounds,
+        displayBounds: displayBounds
+      });
+
+    }.bind(this));
+
+  } else {
+
+    this.window.webContents.send('snapshot-window-hidden', {
+      type: 'window',
+      windowId: windowId,
+      overallBounds: overallBounds,
+      displayBounds: displayBounds
+    });
+
+  }
+
 };
 
 module.exports = Screen;
