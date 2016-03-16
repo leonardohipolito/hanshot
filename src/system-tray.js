@@ -8,25 +8,23 @@ var path = require('path');
 
 var electron = require('electron');
 
-var api = require('./api');
-
 var ipcMain = electron.ipcMain;
 var Tray = electron.Tray;
 var Menu = electron.Menu;
 
 //------------------------------------------------------------------------------
-// Private
+// Public Interface
 //------------------------------------------------------------------------------
 
-// Hold instance of tray, do not let it be garbage collected
-var tray = null;
+function SystemTray(api) {
 
-function getMenuTemplate() {
+  var iconPath = path.join(__dirname, '..', 'resources', 'tray.png');
+
   var template = [
     {
       label: 'Open',
       click: function () {
-        api.window.open();
+        api.openWindow();
       }
     },
     {
@@ -35,13 +33,13 @@ function getMenuTemplate() {
     {
       label: 'Desktop',
       click: function () {
-        api.snap.desktop();
+        api.captureDesktop();
       }
     },
     {
       label: 'Selection',
       click: function () {
-        api.snap.selection();
+        api.captureSelection();
       }
     },
     {
@@ -52,22 +50,12 @@ function getMenuTemplate() {
       role: 'close'
     }
   ];
-  return template;
+
+  var menu = Menu.buildFromTemplate(template);
+
+  this.tray = new Tray(iconPath);
+  this.tray.setContextMenu(menu);
+
 }
 
-//------------------------------------------------------------------------------
-// Public Interface
-//------------------------------------------------------------------------------
-
-exports.init = function () {
-
-  var iconPath = path.join(__dirname, '..', 'resources', 'tray.png');
-
-  var menuTemplate = getMenuTemplate();
-  var menu = Menu.buildFromTemplate(menuTemplate);
-
-  tray = new Tray(iconPath);
-  tray.setContextMenu(menu);
-
-  return tray;
-};
+module.exports = SystemTray;
