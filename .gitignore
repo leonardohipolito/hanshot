@@ -1,5 +1,5 @@
 node_modules/
 
-src/renderers/user/built.js
+src/dashboard/renderer/built.js
 
 tmp.png

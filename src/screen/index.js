@@ -21,7 +21,7 @@ function Screen() {
     fullscreen: true
   });
 
-  this.window.loadURL('file://' + __dirname + '/renderers/capture/capture.html');
+  this.window.loadURL('file://' + __dirname + '/renderer/screen.html');
   // this.window.webContents.openDevTools();
 }
 

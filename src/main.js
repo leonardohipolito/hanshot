@@ -11,6 +11,7 @@ var electron = require('electron');
 var imgur = require('imgur');
 
 var Screen = require('./screen');
+var Dashboard = require('./dashboard');
 var Api = require('./api');
 var tray = require('./tray');
 var cli = require('./cli');
@@ -20,7 +21,6 @@ var settings = require('./settings').init();
 var app = electron.app;
 var globalShortcut = electron.globalShortcut;
 var ipcMain = electron.ipcMain;
-var BrowserWindow = electron.BrowserWindow;
 var clipboard = electron.clipboard;
 
 //------------------------------------------------------------------------------
@@ -92,17 +92,13 @@ app.on('ready', function () {
   var action = cli.parseAction(args);
 
   var screen = new Screen();
+  var dashboard = new Dashboard(action);
 
-  var userWindow = new BrowserWindow({
-    show: action.capture === false
-  });
-  userWindow.loadURL('file://' + __dirname + '/renderers/user/index.html');
-  userWindow.webContents.openDevTools();
-  userWindow.on('closed', function () {
+  dashboard.window.on('closed', function () {
     screen.destroy();
   });
 
-  api = new Api(settings, screen, userWindow);
+  api = new Api(settings, screen, dashboard);
 
   tray.init(api);
 
