@@ -19,7 +19,9 @@
     "electron-prebuilt": "^0.36.9"
   },
   "scripts": {
-    "start": "npm run build && electron .",
-    "build": "browserify -t [ babelify --presets [ react ] ] src/dashboard/renderer/dashboard.jsx -o src/dashboard/renderer/dashboard.built.js"
+    "build-dashboard": "browserify -t [ babelify --presets [ react ] ] src/dashboard/renderer/dashboard.jsx -o src/dashboard/renderer/dashboard.built.js",
+    "build-settings": "browserify -t [ babelify --presets [ react ] ] src/settings/renderer/settings.jsx -o src/settings/renderer/settings.built.js",
+    "build": "npm run build-dashboard && npm run build-settings",
+    "start": "npm run build && electron ."
   }
 }

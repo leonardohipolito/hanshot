@@ -44,6 +44,7 @@ Settings.prototype.open = function () {
   this.window.on('closed', function () {
     this.window = null;
   }.bind(this));
+  this.window.webContents.openDevTools();
 };
 
 Settings.prototype.extend = function (extraSettings) {
@@ -51,6 +52,9 @@ Settings.prototype.extend = function (extraSettings) {
 };
 
 Settings.prototype.get = function (settingPath) {
+  if (_.isUndefined(settingPath )) {
+    return this.resolvedSettings;
+  }
   return _.get(this.resolvedSettings, settingPath);
 };
 

@@ -126,6 +126,10 @@ app.on('ready', function () {
     });
   });
 
+  ipcMain.on('settings-requested', function (event) {
+    event.sender.send('settings-updated', settings.get());
+  });
+
   ipcMain.on('snapshot-upload', function (event, params) {
 
     imgur.uploadFile('tmp.png')
