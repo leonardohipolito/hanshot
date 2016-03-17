@@ -15,7 +15,7 @@ function Dashboard(action) {
     show: action.capture === false
   });
 
-  this.window.loadURL('file://' + __dirname + '/renderer/index.html');
+  this.window.loadURL('file://' + __dirname + '/renderer/dashboard.html');
   this.window.webContents.openDevTools();
 }
 

@@ -35,10 +35,10 @@ function writeTmp(data) {
 // Public Interface
 //------------------------------------------------------------------------------
 
-function Api(settings, screen, dashboard) {
-  this.settings = settings;
-  this.screen = screen;
+function Api(dashboard, screen, settings) {
   this.dashboard = dashboard;
+  this.screen = screen;
+  this.settings = settings;
 }
 
 Api.prototype.openWindow = function () {

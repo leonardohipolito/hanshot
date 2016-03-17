@@ -20,6 +20,6 @@
   },
   "scripts": {
     "start": "npm run build && electron .",
-    "build": "browserify -t [ babelify --presets [ react ] ] src/dashboard/renderer/index.jsx -o src/dashboard/renderer/built.js"
+    "build": "browserify -t [ babelify --presets [ react ] ] src/dashboard/renderer/dashboard.jsx -o src/dashboard/renderer/dashboard.built.js"
   }
 }

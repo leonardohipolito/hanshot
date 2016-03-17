@@ -10,13 +10,13 @@ var electron = require('electron');
 
 var imgur = require('imgur');
 
-var Screen = require('./screen');
 var Dashboard = require('./dashboard');
+var Screen = require('./screen');
+var Settings = require('./settings');
 var Api = require('./api');
-var tray = require('./tray');
-var cli = require('./cli');
+var Tray = require('./tray');
 
-var settings = require('./settings').init();
+var cli = require('./cli');
 
 var app = electron.app;
 var globalShortcut = electron.globalShortcut;
@@ -91,16 +91,18 @@ app.on('ready', function () {
   var args = process.argv.slice(2);
   var action = cli.parseAction(args);
 
-  var screen = new Screen();
   var dashboard = new Dashboard(action);
+  var screen = new Screen();
+  var settings = new Settings();
+
+  // TODO: decide if API is required, maybe just gather all major instances
+  api = new Api(dashboard, screen, settings);
+
+  var tray = new Tray(api);
 
   dashboard.window.on('closed', function () {
     screen.destroy();
   });
-
-  api = new Api(settings, screen, dashboard);
-
-  tray.init(api);
 
   ipcMain.on('snapshot-initiated', function (event, options) {
     if (options.type === 'desktop') {

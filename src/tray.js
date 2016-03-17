@@ -12,9 +12,7 @@ var electron = require('electron');
 // Public Interface
 //------------------------------------------------------------------------------
 
-var tray = null;
-
-exports.init = function (api) {
+function Tray(api) {
 
   var iconPath = path.join(__dirname, '..', 'resources', 'tray.png');
 
@@ -60,6 +58,9 @@ exports.init = function (api) {
 
   var menu = electron.Menu.buildFromTemplate(template);
 
-  tray = new electron.Tray(iconPath);
-  tray.setContextMenu(menu);
+  this.tray = new electron.Tray(iconPath);
+  this.tray.setContextMenu(menu);
+
 }
+
+module.exports = Tray;

@@ -13,16 +13,18 @@ var _ = require('lodash');
 // Public Interface
 //------------------------------------------------------------------------------
 
-exports.init = function () {
+function Settings() {
 
-  var defaultSettings = require('./default.json');
+  this.window = null;
+
+  this.defaultSettings = require('./default.json');
 
   var cacheBasePath = electron.app.getPath('appData');
   var userSettingsPath = path.join(cacheBasePath, 'hanshot', 'settings.json');
 
-  var userSettings = {};
+  this.userSettings = {};
   try {
-    userSettings = require(userSettingsPath);
+    this.userSettings = require(userSettingsPath);
   } catch (err) {
     if (err.code === 'MODULE_NOT_FOUND') {
       // It's fine if user settings file does not exist, it will be created
@@ -30,22 +32,30 @@ exports.init = function () {
     }
   }
 
-  var resolvedSettings = _.merge({}, defaultSettings, userSettings);
-
-  return {
-    open: function () {
-      var window = new electron.BrowserWindow();
-      window.loadURL('file://' + __dirname + '/renderer/settings.html');
-    },
-    extend: function (extraSettings) {
-      return _.merge(resolvedSettings, extraSettings);
-    },
-    get: function (settingPath) {
-      return _.get(resolvedSettings, settingPath);
-    },
-    set: function (settingPath, value) {
-      return _.set(resolvedSettings, settingPath, value);
-    }
-  };
-
+  this.resolvedSettings = _.merge({}, this.defaultSettings, this.userSettings);
 };
+
+Settings.prototype.open = function () {
+  if (this.window) {
+    return;
+  }
+  this.window = new electron.BrowserWindow();
+  this.window.loadURL('file://' + __dirname + '/renderer/settings.html');
+  this.window.on('closed', function () {
+    this.window = null;
+  }.bind(this));
+};
+
+Settings.prototype.extend = function (extraSettings) {
+  return _.merge(this.resolvedSettings, extraSettings);
+};
+
+Settings.prototype.get = function (settingPath) {
+  return _.get(this.resolvedSettings, settingPath);
+};
+
+Settings.prototype.set = function (settingPath, value) {
+  return _.set(this.resolvedSettings, settingPath, value);
+};
+
+module.exports = Settings;
