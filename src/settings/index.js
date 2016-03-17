@@ -33,6 +33,10 @@ exports.init = function () {
   var resolvedSettings = _.merge({}, defaultSettings, userSettings);
 
   return {
+    open: function () {
+      var window = new electron.BrowserWindow();
+      window.loadURL('file://' + __dirname + '/renderer/settings.html');
+    },
     extend: function (extraSettings) {
       return _.merge(resolvedSettings, extraSettings);
     },

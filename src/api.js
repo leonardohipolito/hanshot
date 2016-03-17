@@ -45,6 +45,10 @@ Api.prototype.openWindow = function () {
   this.userWindow.show();
 };
 
+Api.prototype.openSettings = function () {
+  this.settings.open();
+};
+
 Api.prototype.captureDesktop = function (displayId) {
   if (this.settings.get('close_before_capture')) {
     this.userWindow.hide();

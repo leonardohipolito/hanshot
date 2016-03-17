@@ -8,15 +8,13 @@ var path = require('path');
 
 var electron = require('electron');
 
-var ipcMain = electron.ipcMain;
-var Tray = electron.Tray;
-var Menu = electron.Menu;
-
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
 
-function SystemTray(api) {
+var tray = null;
+
+exports.init = function (api) {
 
   var iconPath = path.join(__dirname, '..', 'resources', 'tray.png');
 
@@ -46,16 +44,22 @@ function SystemTray(api) {
       type: 'separator'
     },
     {
+      label: 'Settings',
+      click: function () {
+        api.openSettings();
+      }
+    },
+    {
+      type: 'separator'
+    },
+    {
       label: 'Quit',
       role: 'close'
     }
   ];
 
-  var menu = Menu.buildFromTemplate(template);
+  var menu = electron.Menu.buildFromTemplate(template);
 
-  this.tray = new Tray(iconPath);
-  this.tray.setContextMenu(menu);
-
+  tray = new electron.Tray(iconPath);
+  tray.setContextMenu(menu);
 }
-
-module.exports = SystemTray;

@@ -12,7 +12,7 @@ var imgur = require('imgur');
 
 var Screen = require('./screen');
 var Api = require('./api');
-var SystemTray = require('./system-tray');
+var tray = require('./tray');
 var cli = require('./cli');
 
 var settings = require('./settings').init();
@@ -36,7 +36,6 @@ var isLinux = (process.platform === 'linux');
 // Initialize variables used inside app.on('ready'),
 // so they won't be garbage collected when handler executes
 var api = null;
-var tray = null;
 
 // ---
 
@@ -105,7 +104,7 @@ app.on('ready', function () {
 
   api = new Api(settings, screen, userWindow);
 
-  tray = new SystemTray(api);
+  tray.init(api);
 
   ipcMain.on('snapshot-initiated', function (event, options) {
     if (options.type === 'desktop') {
