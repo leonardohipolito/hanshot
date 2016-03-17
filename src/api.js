@@ -35,7 +35,8 @@ function writeTmp(data) {
 // Public Interface
 //------------------------------------------------------------------------------
 
-function Api(screen, userWindow) {
+function Api(settings, screen, userWindow) {
+  this.settings = settings;
   this.screen = screen;
   this.userWindow = userWindow;
 }
@@ -45,26 +46,41 @@ Api.prototype.openWindow = function () {
 };
 
 Api.prototype.captureDesktop = function (displayId) {
+  if (this.settings.get('close_before_capture')) {
+    this.userWindow.hide();
+  }
   this.screen.captureDesktop(displayId, function (err, snapshot) {
     if (err) throw err;
     writeTmp(snapshot);
-    this.userWindow.show();
+    if (this.settings.get('open_after_capture')) {
+      this.userWindow.show();
+    }
   }.bind(this));
 };
 
 Api.prototype.captureSelection = function (displayId) {
+  if (this.settings.get('close_before_capture')) {
+    this.userWindow.hide();
+  }
   this.screen.captureSelection(displayId, function (err, snapshot) {
     if (err) throw err;
     writeTmp(snapshot);
-    this.userWindow.show();
+    if (this.settings.get('open_after_capture')) {
+      this.userWindow.show();
+    }
   }.bind(this));
 };
 
 Api.prototype.captureWindow = function (windowId) {
+  if (this.settings.get('close_before_capture')) {
+    this.userWindow.hide();
+  }
   this.screen.captureWindow(windowId, function (err, snapshot) {
     if (err) throw err;
     writeTmp(snapshot);
-    this.userWindow.show();
+    if (this.settings.get('open_after_capture')) {
+      this.userWindow.show();
+    }
   }.bind(this));
 };
 

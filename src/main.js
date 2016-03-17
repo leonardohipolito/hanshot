@@ -15,6 +15,8 @@ var Api = require('./api');
 var SystemTray = require('./system-tray');
 var cli = require('./cli');
 
+var settings = require('./settings').init();
+
 var app = electron.app;
 var globalShortcut = electron.globalShortcut;
 var ipcMain = electron.ipcMain;
@@ -101,7 +103,7 @@ app.on('ready', function () {
     screen.destroy();
   });
 
-  api = new Api(screen, userWindow);
+  api = new Api(settings, screen, userWindow);
 
   tray = new SystemTray(api);
 
