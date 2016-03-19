@@ -36,6 +36,7 @@ var isLinux = (process.platform === 'linux');
 // Initialize variables used inside app.on('ready'),
 // so they won't be garbage collected when handler executes
 var api = null;
+var tray = null;
 
 // ---
 
@@ -98,10 +99,16 @@ app.on('ready', function () {
   // TODO: decide if API is required, maybe just gather all major instances
   api = new Api(dashboard, screen, settings);
 
-  var tray = new Tray(api);
+  tray = new Tray(api);
+
+  settings.open();
 
   dashboard.window.on('closed', function () {
     screen.destroy();
+  });
+
+  settings.window.on('closed', function () {
+    settings.save();
   });
 
   ipcMain.on('snapshot-initiated', function (event, options) {
@@ -128,6 +135,10 @@ app.on('ready', function () {
 
   ipcMain.on('settings-requested', function (event) {
     event.sender.send('settings-updated', settings.get());
+  });
+
+  ipcMain.on('settings-changed', function (event, data) {
+    settings.set(data.key, data.value);
   });
 
   ipcMain.on('snapshot-upload', function (event, params) {

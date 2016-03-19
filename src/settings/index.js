@@ -4,6 +4,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
+var fs = require('fs');
 var path = require('path');
 
 var electron = require('electron');
@@ -20,11 +21,11 @@ function Settings() {
   this.defaultSettings = require('./default.json');
 
   var cacheBasePath = electron.app.getPath('appData');
-  var userSettingsPath = path.join(cacheBasePath, 'hanshot', 'settings.json');
+  this.userSettingsPath = path.join(cacheBasePath, 'hanshot', 'settings.json');
 
   this.userSettings = {};
   try {
-    this.userSettings = require(userSettingsPath);
+    this.userSettings = require(this.userSettingsPath);
   } catch (err) {
     if (err.code === 'MODULE_NOT_FOUND') {
       // It's fine if user settings file does not exist, it will be created
@@ -32,7 +33,7 @@ function Settings() {
     }
   }
 
-  this.resolvedSettings = _.merge({}, this.defaultSettings, this.userSettings);
+  this.settings = _.merge({}, this.defaultSettings, this.userSettings);
 };
 
 Settings.prototype.open = function () {
@@ -47,19 +48,24 @@ Settings.prototype.open = function () {
   this.window.webContents.openDevTools();
 };
 
-Settings.prototype.extend = function (extraSettings) {
-  return _.merge(this.resolvedSettings, extraSettings);
-};
-
-Settings.prototype.get = function (settingPath) {
-  if (_.isUndefined(settingPath )) {
-    return this.resolvedSettings;
+Settings.prototype.get = function (key) {
+  if (_.isUndefined(key)) {
+    return this.settings;
   }
-  return _.get(this.resolvedSettings, settingPath);
+  return this.settings[key];
 };
 
-Settings.prototype.set = function (settingPath, value) {
-  return _.set(this.resolvedSettings, settingPath, value);
+Settings.prototype.set = function (key, value) {
+  this.userSettings[key] = value;
+  this.settings[key] = value;
+  return this.settings;
+};
+
+Settings.prototype.save = function () {
+  var json = JSON.stringify(this.userSettings);
+  fs.writeFile(this.userSettingsPath, json, function (err) {
+    if (err) throw err;
+  });
 };
 
 module.exports = Settings;

@@ -10,15 +10,18 @@ var Settings = React.createClass({
   componentDidMount: function () {
     electron.ipcRenderer.on('settings-updated', function (event, settings) {
       this.setState(settings);
-      console.log(settings);
     }.bind(this));
     electron.ipcRenderer.send('settings-requested');
   },
   componentWillUnmount: function () {
     electron.ipcRenderer.removeAllListeners('settings-updated');
   },
-  toggle: function (setting) {
-
+  toggle: function (setting, event) {
+    this.setState({ [setting]: event.target.checked });
+    electron.ipcRenderer.send('settings-changed', {
+      key: setting,
+      value: event.target.checked
+    });
   },
   render: function () {
     return (
