@@ -1,4 +1,5 @@
 {
   "open_after_capture": true,
-  "close_before_capture": true
+  "close_before_capture": true,
+  "save_dir": null
 }

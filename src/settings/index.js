@@ -34,6 +34,11 @@ function Settings() {
   }
 
   this.settings = _.merge({}, this.defaultSettings, this.userSettings);
+
+  if (this.settings['save_dir'] === null) {
+    this.settings['save_dir'] = electron.app.getPath('pictures');
+  }
+
 };
 
 Settings.prototype.open = function () {
@@ -46,6 +51,10 @@ Settings.prototype.open = function () {
     this.window = null;
   }.bind(this));
   this.window.webContents.openDevTools();
+
+  this.window.on('closed', function () {
+    this.save();
+  }.bind(this));
 };
 
 Settings.prototype.get = function (key) {

@@ -7,8 +7,8 @@
 var fs = require('fs');
 
 var electron = require('electron');
-
 var imgur = require('imgur');
+var _ = require('lodash');
 
 var Dashboard = require('./dashboard');
 var Screen = require('./screen');
@@ -101,14 +101,8 @@ app.on('ready', function () {
 
   tray = new Tray(api);
 
-  settings.open();
-
   dashboard.window.on('closed', function () {
     screen.destroy();
-  });
-
-  settings.window.on('closed', function () {
-    settings.save();
   });
 
   ipcMain.on('snapshot-initiated', function (event, options) {
@@ -139,6 +133,21 @@ app.on('ready', function () {
 
   ipcMain.on('settings-changed', function (event, data) {
     settings.set(data.key, data.value);
+  });
+
+  ipcMain.on('settings-dialog', function (event) {
+    electron.dialog.showOpenDialog({
+      defaultPath: settings.get('save_dir'),
+      properties: ['openDirectory', 'createDirectory']
+    }, function (directories) {
+      if (_.isUndefined(directories)) {
+        // "Cancel" pressed
+        return;
+      }
+      var directory = directories[0];
+      settings.set('save_dir', directory);
+      event.sender.send('settings-updated', settings.get());
+    });
   });
 
   ipcMain.on('snapshot-upload', function (event, params) {
