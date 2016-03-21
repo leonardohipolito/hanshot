@@ -14,6 +14,8 @@ var _ = require('lodash');
 // Public Interface
 //------------------------------------------------------------------------------
 
+// TODO: most of implementation can be moved to one place along with Cache
+//       create Storage base class
 function Settings() {
 
   this.window = null;
@@ -30,11 +32,14 @@ function Settings() {
     if (err.code === 'MODULE_NOT_FOUND') {
       // It's fine if user settings file does not exist, it will be created
       // when user first saves his settings
+    } else {
+      throw err;
     }
   }
 
   this.settings = _.merge({}, this.defaultSettings, this.userSettings);
 
+  // TODO: check if directory does not exist, think of default strategy
   if (this.settings['save_dir'] === null) {
     this.settings['save_dir'] = electron.app.getPath('pictures');
   }
@@ -74,6 +79,7 @@ Settings.prototype.save = function () {
   var json = JSON.stringify(this.userSettings);
   fs.writeFile(this.userSettingsPath, json, function (err) {
     if (err) throw err;
+    console.log('Settings saved');
   });
 };
 

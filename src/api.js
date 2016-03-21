@@ -41,10 +41,12 @@ function createFileName(type) {
 // Public Interface
 //------------------------------------------------------------------------------
 
-function Api(dashboard, screen, settings) {
+// TODO: this is getting ugly, maybe think about implementing everything using events
+function Api(dashboard, screen, settings, cache) {
   this.dashboard = dashboard;
   this.screen = screen;
   this.settings = settings;
+  this.cache = cache;
 }
 
 Api.prototype.openWindow = function () {
@@ -107,6 +109,10 @@ Api.prototype.writeFile = function (type, data) {
 
     var fileName = createFileName(type) + '.png';
     var filePath = path.join(this.settings.get('save_dir'), fileName);
+
+    var recent = this.cache.get('recent', []);
+    recent.unshift(filePath);
+    this.cache.set('recent', recent);
 
     image.write(filePath);
 

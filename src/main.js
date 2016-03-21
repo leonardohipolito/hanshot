@@ -5,14 +5,17 @@
 //------------------------------------------------------------------------------
 
 var fs = require('fs');
+var path = require('path');
 
 var electron = require('electron');
 var imgur = require('imgur');
 var _ = require('lodash');
+var async = require('async');
 
 var Dashboard = require('./dashboard');
 var Screen = require('./screen');
 var Settings = require('./settings');
+var Cache = require('./cache');
 var Api = require('./api');
 var Tray = require('./tray');
 
@@ -96,13 +99,16 @@ app.on('ready', function () {
   var screen = new Screen();
   var settings = new Settings();
 
+  var cache = new Cache();
+
   // TODO: decide if API is required, maybe just gather all major instances
-  api = new Api(dashboard, screen, settings);
+  api = new Api(dashboard, screen, settings, cache);
 
   tray = new Tray(api);
 
   dashboard.window.on('closed', function () {
     screen.destroy();
+    cache.save();
   });
 
   ipcMain.on('snapshot-initiated', function (event, options) {
@@ -148,6 +154,28 @@ app.on('ready', function () {
       settings.set('save_dir', directory);
       event.sender.send('settings-updated', settings.get());
     });
+  });
+
+  ipcMain.on('recent-requested', function (event) {
+    var recent = cache.get('recent', []);
+
+    async.map(recent, function (filePath, callback) {
+      // TODO: files might not exist
+      fs.readFile(filePath, callback);
+    }, function (err, buffers) {
+
+      var images = buffers.map(function (buffer, index) {
+        // TODO: this might be expensive to pass all images as dataURL, investigate
+        var image = electron.nativeImage.createFromBuffer(buffer);
+        return {
+          fileName: path.basename(recent[index]),
+          dataURL: image.toDataURL()
+        };
+      });
+
+      event.sender.send('recent-updated', images);
+    });
+
   });
 
   ipcMain.on('snapshot-upload', function (event, params) {

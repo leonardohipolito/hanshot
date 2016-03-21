@@ -16,7 +16,7 @@ function Dashboard(action) {
   });
 
   this.window.loadURL('file://' + __dirname + '/renderer/dashboard.html');
-  this.window.webContents.openDevTools();
+  // this.window.webContents.openDevTools();
 }
 
 Dashboard.prototype.show = function () {
