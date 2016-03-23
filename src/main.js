@@ -10,7 +10,6 @@ var path = require('path');
 var electron = require('electron');
 var imgur = require('imgur');
 var _ = require('lodash');
-var async = require('async');
 
 var Dashboard = require('./dashboard');
 var Screen = require('./screen');
@@ -159,23 +158,37 @@ app.on('ready', function () {
   ipcMain.on('recent-requested', function (event) {
     var recent = cache.get('recent', []);
 
-    async.map(recent, function (filePath, callback) {
-      // TODO: files might not exist
-      fs.readFile(filePath, callback);
-    }, function (err, buffers) {
-
-      var images = buffers.map(function (buffer, index) {
-        // TODO: this might be expensive to pass all images as dataURL, investigate
-        var image = electron.nativeImage.createFromBuffer(buffer);
-        return {
-          fileName: path.basename(recent[index]),
-          dataURL: image.toDataURL()
-        };
-      });
-
-      event.sender.send('recent-updated', images);
+    recent = recent.map(function (filePath) {
+      return {
+        filePath : filePath,
+        fileName: path.basename(filePath)
+      };
     });
 
+    event.sender.send('recent-updated', recent);
+  });
+
+  ipcMain.on('image-requested', function (event, data) {
+    fs.readFile(data.filePath, function (err, buffer) {
+      var exists = true;
+      if (err) {
+        if(err.code === 'ENOENT') {
+          exists = false;
+        } else {
+          throw err;
+        }
+      }
+
+      var image = electron.nativeImage.createFromBuffer(buffer);
+
+      event.sender.send('image-updated', {
+        exists: exists,
+        filePath: data.filePath,
+        fileName: path.basename(data.filePath),
+        dataURL: image.toDataURL()
+      });
+
+    });
   });
 
   ipcMain.on('snapshot-upload', function (event, params) {

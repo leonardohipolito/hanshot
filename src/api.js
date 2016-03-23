@@ -6,6 +6,7 @@
 
 var path = require('path');
 
+var fs = require('fs-extra');
 var electron = require('electron');
 
 var Jimp = require('./lib/jimp-extended');
@@ -107,16 +108,31 @@ Api.prototype.writeFile = function (type, data) {
       image.autocropRightBottomAlpha();
     }
 
+    var cacheBaseDir = electron.app.getPath('appData');
+
     var fileName = createFileName(type) + '.png';
-    var filePath = path.join(this.settings.get('save_dir'), fileName);
+    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    var recent = this.cache.get('recent', []);
-    recent.unshift(filePath);
-    this.cache.set('recent', recent);
+    if (this.settings.get('auto_save')) {
+      fileDir = this.settings.get('save_dir');
+    }
 
-    image.write(filePath);
+    var filePath = path.join(fileDir, fileName);
 
-    console.error('Shot');
+    fs.mkdirs(fileDir, function (err) {
+      if (err) throw err;
+
+      image.write(filePath, function (err) {
+        if (err) throw err;
+
+        var recent = this.cache.get('recent', []);
+        recent.unshift(filePath);
+        this.cache.set('recent', recent);
+
+        console.error('Shot');
+      }.bind(this));
+
+    }.bind(this));
 
   }.bind(this));
 };

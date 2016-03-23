@@ -53,12 +53,24 @@ var Settings = React.createClass({
             </div>
           </div>
           <div className="form-group">
-            Directory: {this.state.save_dir}
-            <button className="btn btn-default"
-              onClick={this.changeSaveDir}
-            >
-              Change
-            </button>
+            <div className="checkbox">
+              <label>
+                <input type="checkbox"
+                  checked={this.state.auto_save}
+                  onChange={this.toggle.bind(this, 'auto_save')}
+                />
+                Auto save to directory
+              </label>
+            </div>
+            <div className={!this.state.auto_save ? 'disabled-area' : ''}>
+              Directory: {this.state.save_dir}
+              <button className="btn btn-default"
+                onClick={this.changeSaveDir}
+                disabled={!this.state.auto_save}
+              >
+                Change
+              </button>
+            </div>
           </div>
         </form>
       </div>

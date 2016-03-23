@@ -4,18 +4,57 @@ var electron = electronRequire('electron');
 var Gallery = React.createClass({
   getInitialState: function () {
     return {
-      images: []
+      recent: [],
+      image: {},
+      index: 0,
+      cache: {}
     };
   },
   componentWillMount: function () {
-    electron.ipcRenderer.on('recent-updated', function (event, images) {
-      console.log(images);
-      this.setState({ images: images });
+    electron.ipcRenderer.on('recent-updated', function (event, recent) {
+      this.setState({ recent: recent });
+      this.fetchImage(0);
     }.bind(this));
     electron.ipcRenderer.send('recent-requested');
+
+    electron.ipcRenderer.on('image-updated', function (event, image) {
+      this.setState({ image: image });
+      this.state.cache[image.filePath] = image;
+    }.bind(this));
   },
   componentWillUnmoount: function () {
     electron.ipcRenderer.removeAllListeners('recent-updated');
+    electron.ipcRenderer.removeAllListeners('image-updated');
+  },
+  fetchImage: function (index) {
+    var image = this.state.recent[index];
+    if (!image) {
+      return;
+    }
+    this.setState({ image: image });
+    if (this.state.cache[image.filePath]) {
+      this.setState({ image: this.state.cache[image.filePath] });
+    } else {
+      electron.ipcRenderer.send('image-requested', {
+        filePath: image.filePath
+      });
+    }
+  },
+  prev: function () {
+    var index = this.state.index;
+    if (index === this.state.recent.length - 1) {
+      return false;
+    }
+    this.setState({ index: index + 1 });
+    this.fetchImage(index + 1);
+  },
+  next: function () {
+    var index = this.state.index;
+    if (index === 0) {
+      return false;
+    }
+    this.setState({ index: index - 1 });
+    this.fetchImage(index - 1);
   },
   renderEmpty: function () {
     return (
@@ -23,26 +62,29 @@ var Gallery = React.createClass({
     );
   },
   render: function () {
-    if (this.state.images.length === 0) {
+    if (this.state.recent.length === 0) {
       return this.renderEmpty();
     }
 
-    var thumbNodes = this.state.images.map(function (image) {
-      return (
-        <div className="col-sm-6 col-md-4" key={image.fileName}>
-          <div className="thumbnail">
-            <img src={image.dataURL} />
-            <div className="caption">
-              <h3>{image.fileName}</h3>
-            </div>
-          </div>
-        </div>
-      );
-    });
+    var imageNode = (<div>Loading ...</div>);
+    if (this.state.image.dataURL) {
+      if (this.state.image.exists) {
+        imageNode = (<img src={this.state.image.dataURL} />);
+      } else {
+        imageNode = (<div>Image file does not exist</div>);
+      }
+    }
 
     return (
-      <div className="row">
-        {thumbNodes}
+      <div className="thumbnail">
+        {imageNode}
+        <div className="caption">
+          <h3>{this.state.image.fileName}</h3>
+          <p>
+            <button className="btn btn-primary" onClick={this.prev}>Prev</button>
+            <button className="btn btn-default" onClick={this.next}>Next</button>
+          </p>
+        </div>
       </div>
     );
   }
