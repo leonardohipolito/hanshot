@@ -66,6 +66,16 @@ var Gallery = React.createClass({
       filePath: image.filePath
     });
   },
+  copy: function (type) {
+    var image = this.state.recent[this.state.index];
+    if (!image) {
+      return;
+    }
+    electron.ipcRenderer.send('copy-requested', {
+      type: type,
+      filePath: image.filePath
+    });
+  },
   renderEmpty: function () {
     return (
       <div>No recent screenshots</div>
@@ -95,6 +105,9 @@ var Gallery = React.createClass({
             <button className="btn btn-default" onClick={this.next}>Next</button>
             <button className="btn btn-primary" onClick={this.upload.bind(this, 'imgur')}>Upload (imgur)</button>
             <button className="btn btn-primary" onClick={this.upload.bind(this, 'dropbox')}>Upload (dropbox)</button>
+            <button className="btn btn-info" onClick={this.copy.bind(this, 'image')}>Copy image</button>
+            <button className="btn btn-info" onClick={this.copy.bind(this, 'fileName')}>Copy file name</button>
+            <button className="btn btn-info" onClick={this.copy.bind(this, 'filePath')}>Copy file path</button>
           </p>
         </div>
       </div>

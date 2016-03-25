@@ -225,6 +225,30 @@ app.on('ready', function () {
 
   });
 
+  ipcMain.on('copy-requested', function (event, data) {
+
+    if (data.type === 'image') {
+
+      fs.readFile(data.filePath, function (err, buffer) {
+        if (err) throw err;
+
+        var image = electron.nativeImage.createFromBuffer(buffer);
+        clipboard.writeImage(image);
+      });
+
+    } else if (data.type === 'fileName') {
+
+      var fileName = path.basename(data.filePath);
+      clipboard.writeText(fileName);
+
+    } else if (data.type === 'filePath') {
+
+      clipboard.writeText(data.filePath);
+
+    }
+
+  });
+
   if (action.capture === 'desktop') {
     api.captureDesktop();
   } else if (action.capture === 'selection') {
