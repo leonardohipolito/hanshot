@@ -56,6 +56,16 @@ var Gallery = React.createClass({
     this.setState({ index: index - 1 });
     this.fetchImage(index - 1);
   },
+  upload: function (uploader) {
+    var image = this.state.recent[this.state.index];
+    if (!image) {
+      return;
+    }
+    electron.ipcRenderer.send('upload-requested', {
+      uploader: uploader,
+      filePath: image.filePath
+    });
+  },
   renderEmpty: function () {
     return (
       <div>No recent screenshots</div>
@@ -81,8 +91,10 @@ var Gallery = React.createClass({
         <div className="caption">
           <h3>{this.state.image.fileName}</h3>
           <p>
-            <button className="btn btn-primary" onClick={this.prev}>Prev</button>
+            <button className="btn btn-default" onClick={this.prev}>Prev</button>
             <button className="btn btn-default" onClick={this.next}>Next</button>
+            <button className="btn btn-primary" onClick={this.upload.bind(this, 'imgur')}>Upload (imgur)</button>
+            <button className="btn btn-primary" onClick={this.upload.bind(this, 'dropbox')}>Upload (dropbox)</button>
           </p>
         </div>
       </div>

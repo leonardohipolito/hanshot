@@ -51,7 +51,7 @@ Settings.prototype.open = function () {
     return;
   }
   this.window = new electron.BrowserWindow();
-  this.window.loadURL('file://' + __dirname + '/renderer/settings.html');
+  this.window.loadURL('atom://src/settings/renderer/settings.html');
   this.window.on('closed', function () {
     this.window = null;
   }.bind(this));

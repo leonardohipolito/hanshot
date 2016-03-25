@@ -8,7 +8,6 @@ var fs = require('fs');
 var path = require('path');
 
 var electron = require('electron');
-var imgur = require('imgur');
 var _ = require('lodash');
 
 var Dashboard = require('./dashboard');
@@ -19,6 +18,7 @@ var Api = require('./api');
 var Tray = require('./tray');
 
 var cli = require('./cli');
+var uploaders = require('./uploaders');
 
 var app = electron.app;
 var globalShortcut = electron.globalShortcut;
@@ -191,17 +191,37 @@ app.on('ready', function () {
     });
   });
 
-  ipcMain.on('snapshot-upload', function (event, params) {
+  ipcMain.on('upload-requested', function (event, data) {
 
-    imgur.uploadFile('tmp.png')
-    .then(function (json) {
-      var link = json.data.link;
-      clipboard.writeText(link);
-      console.log('Uploaded');
-    })
-    .catch(function (err) {
-      console.log(err);
-    });
+    if (data.uploader === 'imgur') {
+
+      var imgur = new uploaders.Imgur(cache);
+
+      imgur.upload(data.filePath, function (err, link) {
+        if (err) throw err;
+
+        clipboard.writeText(link);
+
+        console.log('Uploaded');
+        console.log(link);
+
+      });
+
+    } else if (data.uploader === 'dropbox') {
+
+      var dropbox = new uploaders.Dropbox(cache);
+
+      dropbox.upload(data.filePath, function (err, link) {
+        if (err) throw err;
+
+        clipboard.writeText(link);
+
+        console.log('Uploaded');
+        console.log(link);
+
+      });
+
+    }
 
   });
 
