@@ -155,25 +155,20 @@ app.on('ready', function () {
     });
   });
 
-  ipcMain.on('recent-requested', function (event) {
-    var recent = cache.get('recent', []);
-
-    recent = recent.map(function (filePath) {
-      return {
-        filePath : filePath,
-        fileName: path.basename(filePath)
-      };
-    });
-
-    event.sender.send('recent-updated', recent);
-  });
-
   ipcMain.on('image-requested', function (event, data) {
-    fs.readFile(data.filePath, function (err, buffer) {
-      var exists = true;
+    var recent = cache.get('recent', []);
+    if (!recent.length) {
+      event.sender.send('image-updated', {});
+      return;
+    }
+
+    var filePath = recent[0];
+
+    fs.readFile(filePath, function (err, buffer) {
       if (err) {
-        if(err.code === 'ENOENT') {
-          exists = false;
+        if (err.code === 'ENOENT') {
+          event.sender.send('image-updated', {});
+          return;
         } else {
           throw err;
         }
@@ -182,9 +177,8 @@ app.on('ready', function () {
       var image = electron.nativeImage.createFromBuffer(buffer);
 
       event.sender.send('image-updated', {
-        exists: exists,
-        filePath: data.filePath,
-        fileName: path.basename(data.filePath),
+        filePath: filePath,
+        fileName: path.basename(filePath),
         dataURL: image.toDataURL()
       });
 

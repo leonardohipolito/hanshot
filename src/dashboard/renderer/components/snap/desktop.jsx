@@ -20,7 +20,7 @@ var SnapDesktop = React.createClass({
       <button type="button" className="btn btn-default"
         onClick={this.handleDefault}
       >
-        Desktop
+        {' Desktop '}
       </button>
     );
   },
@@ -45,7 +45,7 @@ var SnapDesktop = React.createClass({
         <button type="button"
           className="btn btn-default" onClick={this.handleDefault}
         >
-          Desktop
+          {' Desktop '}
         </button>
         <button type="button"
           className="btn btn-default dropdown-toggle"

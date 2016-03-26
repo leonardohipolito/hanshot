@@ -7,7 +7,7 @@ var SnapDesktop = require('./snap/desktop.jsx');
 var SnapSelection = require('./snap/selection.jsx');
 var SnapWindow = require('./snap/window.jsx');
 
-var ActionPanel = React.createClass({
+var Navbar = React.createClass({
   getInitialState: function () {
     return {
       displays: [],
@@ -32,13 +32,19 @@ var ActionPanel = React.createClass({
   },
   render: function () {
     return (
-      <div>
-        <SnapDesktop displays={this.state.displays} />
-        <SnapSelection displays={this.state.displays} />
-        <SnapWindow windows={this.state.windows} />
-      </div>
+      <nav className="navbar navbar-default navbar-fixed-top">
+        <div className="container-fluid">
+          <div className="navbar-btn">
+            <SnapDesktop displays={this.state.displays} />
+            {' '}
+            <SnapSelection displays={this.state.displays} />
+            {' '}
+            <SnapWindow windows={this.state.windows} />
+          </div>
+        </div>
+      </nav>
     );
   }
 });
 
-module.exports = ActionPanel;
+module.exports = Navbar;

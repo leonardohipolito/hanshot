@@ -30,7 +30,7 @@ var SnapWindow = React.createClass({
             className="btn btn-default dropdown-toggle"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
           >
-            Window
+            {' Window '}
             <span className="caret"></span>
           </button>
           <ul className="dropdown-menu">
