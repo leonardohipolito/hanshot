@@ -9,7 +9,7 @@ var Dashboard = React.createClass({
     return (
       <div className="dashboard-container">
         <Navbar />
-        <div className="image-container">
+        <div className="container-fluid dashboard-content">
           <Image />
         </div>
       </div>

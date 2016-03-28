@@ -32,7 +32,7 @@ var Navbar = React.createClass({
   },
   render: function () {
     return (
-      <nav className="navbar navbar-default navbar-fixed-top">
+      <nav className="navbar navbar-default">
         <div className="container-fluid">
           <div className="navbar-btn">
             <SnapDesktop displays={this.state.displays} />

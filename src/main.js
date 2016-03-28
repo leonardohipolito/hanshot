@@ -175,11 +175,14 @@ app.on('ready', function () {
       }
 
       var image = electron.nativeImage.createFromBuffer(buffer);
+      var imageSize = image.getSize();
 
       event.sender.send('image-updated', {
         filePath: filePath,
         fileName: path.basename(filePath),
-        dataURL: image.toDataURL()
+        dataURL: image.toDataURL(),
+        width: imageSize.width,
+        height: imageSize.height
       });
 
     });
