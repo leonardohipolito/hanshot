@@ -20,3 +20,10 @@ exports.snapWindow = function (windowId) {
     windowId: windowId
   });
 };
+
+exports.upload = function (filePath, uploaderId) {
+  electron.ipcRenderer.send('upload-requested', {
+    filePath: filePath,
+    uploaderId: uploaderId
+  });
+};

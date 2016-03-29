@@ -29,7 +29,10 @@ var Navbar = React.createClass({
             <SnapWindow windows={this.props.windows} />
           </div>
           <div className="navbar-btn pull-right">
-            <Upload uploaders={this.props.uploaders} />
+            <Upload
+              uploaders={this.props.uploaders}
+              image={this.props.image}
+            />
           </div>
         </div>
       </nav>

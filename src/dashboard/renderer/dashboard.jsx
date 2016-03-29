@@ -27,6 +27,7 @@ var Dashboard = React.createClass({
           displays={this.state.displays}
           windows={this.state.windows}
           uploaders={this.state.uploaders}
+          image={this.state.image}
         />
         <div className="container-fluid dashboard-content">
           <Image image={this.state.image} />

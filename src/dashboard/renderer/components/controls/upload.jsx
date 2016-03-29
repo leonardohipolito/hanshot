@@ -1,17 +1,19 @@
 var React = electronRequire('react');
-var electron = electronRequire('electron');
+
+var actions = require('../../actions');
 
 var Upload = React.createClass({
   getDefaultProps: function () {
     return {
+      image: null,
       uploaders: []
     };
   },
   handleDefault: function () {
-
+    actions.upload(this.props.image.filePath);
   },
-  handleSelected: function () {
-
+  handleSelected: function (uploaderId) {
+    actions.upload(this.props.image.filePath, uploaderId);
   },
   renderListNode: function (uploader) {
     return (
@@ -23,6 +25,9 @@ var Upload = React.createClass({
     );
   },
   render: function () {
+    if (!this.props.image) {
+      return null;
+    }
 
     if (!this.props.uploaders.length) {
       return null;

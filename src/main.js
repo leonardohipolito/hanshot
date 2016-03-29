@@ -117,6 +117,7 @@ app.on('ready', function () {
     controller.request('image');
     controller.request('displays');
     controller.request('windows');
+    controller.request('uploaders');
   });
 
   // Register
@@ -162,6 +163,10 @@ app.on('ready', function () {
     });
   });
 
+  controller.register('uploaders', function (params, cb) {
+    cb(null, uploaders.getList());
+  });
+
   // Listen
 
   controller.on('windows', function (err, windows) {
@@ -174,6 +179,10 @@ app.on('ready', function () {
 
   controller.on('image', function (err, image) {
     dashboard.updateState({ image: image });
+  });
+
+  controller.on('uploaders', function (err, uploaders) {
+    dashboard.updateState({ uploaders: uploaders });
   });
 
   // Other shit
@@ -213,7 +222,7 @@ app.on('ready', function () {
 
   electron.ipcMain.on('upload-requested', function (event, data) {
 
-    if (data.uploader === 'imgur') {
+    if (data.uploaderId === 'Imgur') {
 
       var imgur = new uploaders.Imgur(cache);
 
@@ -227,7 +236,7 @@ app.on('ready', function () {
 
       });
 
-    } else if (data.uploader === 'dropbox') {
+    } else if (data.uploaderId === 'Dropbox') {
 
       var dropbox = new uploaders.Dropbox(cache);
 
