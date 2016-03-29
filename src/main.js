@@ -16,6 +16,7 @@ var Settings = require('./settings');
 var Cache = require('./cache');
 var Api = require('./api');
 var Tray = require('./tray');
+var Controller = require('./controller');
 
 var cli = require('./cli');
 var uploaders = require('./uploaders');
@@ -36,6 +37,7 @@ var isLinux = (process.platform === 'linux');
 // so they won't be garbage collected when handler executes
 var api = null;
 var tray = null;
+var controller = null;
 
 // ---
 
@@ -97,6 +99,8 @@ app.on('ready', function () {
 
   var cache = new Cache();
 
+  controller = new Controller();
+
   // TODO: decide if API is required, maybe just gather all major instances
   api = new Api(dashboard, screen, settings, cache);
 
@@ -107,44 +111,30 @@ app.on('ready', function () {
     cache.save();
   });
 
+  // Request
+
   electron.ipcMain.on('dashboard-state-requested', function (event) {
-
-    dashboard.updateState({
-      displays: screen.getDisplayNames()
-    });
-
-    screen.getWindowNames(function (err, names) {
-      if (err) throw err;
-
-      dashboard.updateState({
-        windows: names
-      });
-    });
-
-    getImage(function (err, image) {
-      if (err) throw err;
-
-      dashboard.updateState({
-        image: image
-      });
-    });
-
+    controller.request('image');
+    controller.request('displays');
+    controller.request('windows');
   });
 
-  electron.ipcMain.on('snapshot-requested', function (event, options) {
-    if (options.type === 'desktop') {
-      api.captureDesktop(options.displayId);
-    } else if (options.type === 'selection') {
-      api.captureSelection(options.displayId);
-    } else if (options.type === 'window') {
-      api.captureWindow(options.windowId);
-    }
+  // Register
+
+  controller.register('windows', function (params, cb) {
+    screen.getWindowNames(function (err, windows) {
+      cb(err, windows);
+    });
   });
 
-  function getImage(cb) {
+  controller.register('displays', function (params, cb) {
+    cb(null, screen.getDisplayNames());
+  });
+
+  controller.register('image', function (params, cb) {
     var recent = cache.get('recent', []);
     if (!recent.length) {
-      return cb();
+      return cb(null, null);
     }
 
     var filePath = recent[0];
@@ -152,7 +142,7 @@ app.on('ready', function () {
     fs.readFile(filePath, function (err, buffer) {
       if (err) {
         if (err.code === 'ENOENT') {
-          return cb();
+          return cb(null, null);
         } else {
           return cb(err);
         }
@@ -170,7 +160,33 @@ app.on('ready', function () {
       });
 
     });
-  }
+  });
+
+  // Listen
+
+  controller.on('windows', function (err, windows) {
+    dashboard.updateState({ windows: windows });
+  });
+
+  controller.on('displays', function (err, displays) {
+    dashboard.updateState({ displays: displays });
+  });
+
+  controller.on('image', function (err, image) {
+    dashboard.updateState({ image: image });
+  });
+
+  // Other shit
+
+  electron.ipcMain.on('snapshot-requested', function (event, options) {
+    if (options.type === 'desktop') {
+      api.captureDesktop(options.displayId);
+    } else if (options.type === 'selection') {
+      api.captureSelection(options.displayId);
+    } else if (options.type === 'window') {
+      api.captureWindow(options.windowId);
+    }
+  });
 
   electron.ipcMain.on('settings-requested', function (event) {
     event.sender.send('settings-updated', settings.get());

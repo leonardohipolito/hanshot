@@ -4,7 +4,7 @@ var electron = electronRequire('electron');
 var Image = React.createClass({
   getDefaultProps: function () {
     return {
-      image: {}
+      image: null
     };
   },
   upload: function (uploader) {
@@ -25,7 +25,7 @@ var Image = React.createClass({
     );
   },
   render: function () {
-    if (!this.props.image.dataURL) {
+    if (!this.props.image) {
       return this.renderEmpty();
     }
 
