@@ -3,43 +3,33 @@ var electron = electronRequire('electron');
 
 var ipcRenderer = electron.ipcRenderer;
 
-var SnapDesktop = require('./snap/desktop.jsx');
-var SnapSelection = require('./snap/selection.jsx');
-var SnapWindow = require('./snap/window.jsx');
+var SnapDesktop = require('./controls/snap-desktop.jsx');
+var SnapSelection = require('./controls/snap-selection.jsx');
+var SnapWindow = require('./controls/snap-window.jsx');
+var Upload = require('./controls/upload.jsx');
 
+// TODO: do not use navbar in data flow, just as a component container
 var Navbar = React.createClass({
-  getInitialState: function () {
+  getDefaultProps: function () {
     return {
       displays: [],
-      windows: []
+      windows: [],
+      uploaders: []
     };
-  },
-  componentDidMount: function () {
-    var self = this;
-    ipcRenderer.on('displays-updated', function (event, displays) {
-      self.setState({ displays: displays });
-    });
-    ipcRenderer.send('displays-requested');
-
-    ipcRenderer.on('windows-updated', function (event, windows) {
-      self.setState({ windows: windows });
-    });
-    ipcRenderer.send('windows-requested');
-  },
-  componentWillUnmount: function () {
-    ipcRenderer.removeAllListeners('displays-updated');
-    ipcRenderer.removeAllListeners('windows-updated');
   },
   render: function () {
     return (
       <nav className="navbar navbar-default">
         <div className="container-fluid">
-          <div className="navbar-btn">
-            <SnapDesktop displays={this.state.displays} />
+          <div className="navbar-btn pull-left">
+            <SnapDesktop displays={this.props.displays} />
             {' '}
-            <SnapSelection displays={this.state.displays} />
+            <SnapSelection displays={this.props.displays} />
             {' '}
-            <SnapWindow windows={this.state.windows} />
+            <SnapWindow windows={this.props.windows} />
+          </div>
+          <div className="navbar-btn pull-right">
+            <Upload uploaders={this.props.uploaders} />
           </div>
         </div>
       </nav>

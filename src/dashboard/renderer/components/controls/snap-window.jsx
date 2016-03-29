@@ -1,14 +1,10 @@
 var React = electronRequire('react');
-var electron = electronRequire('electron');
 
-var ipcRenderer = electron.ipcRenderer;
+var actions = require('../../actions');
 
 var SnapWindow = React.createClass({
   handleSelected: function (windowId) {
-    ipcRenderer.send('snapshot-initiated', {
-      type: 'window',
-      windowId: windowId
-    });
+    actions.snapWindow(windowId);
   },
   renderListNode: function (windowItem) {
     return (

@@ -21,9 +21,6 @@ var cli = require('./cli');
 var uploaders = require('./uploaders');
 
 var app = electron.app;
-var globalShortcut = electron.globalShortcut;
-var ipcMain = electron.ipcMain;
-var clipboard = electron.clipboard;
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -110,7 +107,31 @@ app.on('ready', function () {
     cache.save();
   });
 
-  ipcMain.on('snapshot-initiated', function (event, options) {
+  electron.ipcMain.on('dashboard-state-requested', function (event) {
+
+    dashboard.updateState({
+      displays: screen.getDisplayNames()
+    });
+
+    screen.getWindowNames(function (err, names) {
+      if (err) throw err;
+
+      dashboard.updateState({
+        windows: names
+      });
+    });
+
+    getImage(function (err, image) {
+      if (err) throw err;
+
+      dashboard.updateState({
+        image: image
+      });
+    });
+
+  });
+
+  electron.ipcMain.on('snapshot-requested', function (event, options) {
     if (options.type === 'desktop') {
       api.captureDesktop(options.displayId);
     } else if (options.type === 'selection') {
@@ -120,27 +141,46 @@ app.on('ready', function () {
     }
   });
 
-  ipcMain.on('displays-requested', function (event) {
-    var displays = screen.getDisplayNames();
-    event.sender.send('displays-updated', displays);
-  });
+  function getImage(cb) {
+    var recent = cache.get('recent', []);
+    if (!recent.length) {
+      return cb();
+    }
 
-  ipcMain.on('windows-requested', function (event) {
-    screen.getWindowNames(function (err, names) {
-      if (err) throw err;
-      event.sender.send('windows-updated', names);
+    var filePath = recent[0];
+
+    fs.readFile(filePath, function (err, buffer) {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          return cb();
+        } else {
+          return cb(err);
+        }
+      }
+
+      var image = electron.nativeImage.createFromBuffer(buffer);
+      var imageSize = image.getSize();
+
+      cb(null, {
+        filePath: filePath,
+        fileName: path.basename(filePath),
+        dataURL: image.toDataURL(),
+        width: imageSize.width,
+        height: imageSize.height
+      });
+
     });
-  });
+  }
 
-  ipcMain.on('settings-requested', function (event) {
+  electron.ipcMain.on('settings-requested', function (event) {
     event.sender.send('settings-updated', settings.get());
   });
 
-  ipcMain.on('settings-changed', function (event, data) {
+  electron.ipcMain.on('settings-changed', function (event, data) {
     settings.set(data.key, data.value);
   });
 
-  ipcMain.on('settings-dialog', function (event) {
+  electron.ipcMain.on('settings-dialog', function (event) {
     electron.dialog.showOpenDialog({
       defaultPath: settings.get('save_dir'),
       properties: ['openDirectory', 'createDirectory']
@@ -155,40 +195,7 @@ app.on('ready', function () {
     });
   });
 
-  ipcMain.on('image-requested', function (event, data) {
-    var recent = cache.get('recent', []);
-    if (!recent.length) {
-      event.sender.send('image-updated', {});
-      return;
-    }
-
-    var filePath = recent[0];
-
-    fs.readFile(filePath, function (err, buffer) {
-      if (err) {
-        if (err.code === 'ENOENT') {
-          event.sender.send('image-updated', {});
-          return;
-        } else {
-          throw err;
-        }
-      }
-
-      var image = electron.nativeImage.createFromBuffer(buffer);
-      var imageSize = image.getSize();
-
-      event.sender.send('image-updated', {
-        filePath: filePath,
-        fileName: path.basename(filePath),
-        dataURL: image.toDataURL(),
-        width: imageSize.width,
-        height: imageSize.height
-      });
-
-    });
-  });
-
-  ipcMain.on('upload-requested', function (event, data) {
+  electron.ipcMain.on('upload-requested', function (event, data) {
 
     if (data.uploader === 'imgur') {
 
@@ -197,7 +204,7 @@ app.on('ready', function () {
       imgur.upload(data.filePath, function (err, link) {
         if (err) throw err;
 
-        clipboard.writeText(link);
+        electron.clipboard.writeText(link);
 
         console.log('Uploaded');
         console.log(link);
@@ -211,7 +218,7 @@ app.on('ready', function () {
       dropbox.upload(data.filePath, function (err, link) {
         if (err) throw err;
 
-        clipboard.writeText(link);
+        electron.clipboard.writeText(link);
 
         console.log('Uploaded');
         console.log(link);
@@ -222,7 +229,7 @@ app.on('ready', function () {
 
   });
 
-  ipcMain.on('copy-requested', function (event, data) {
+  electron.ipcMain.on('copy-requested', function (event, data) {
 
     if (data.type === 'image') {
 
@@ -230,17 +237,17 @@ app.on('ready', function () {
         if (err) throw err;
 
         var image = electron.nativeImage.createFromBuffer(buffer);
-        clipboard.writeImage(image);
+        electron.clipboard.writeImage(image);
       });
 
     } else if (data.type === 'fileName') {
 
       var fileName = path.basename(data.filePath);
-      clipboard.writeText(fileName);
+      electron.clipboard.writeText(fileName);
 
     } else if (data.type === 'filePath') {
 
-      clipboard.writeText(data.filePath);
+      electron.clipboard.writeText(data.filePath);
 
     }
 
@@ -256,7 +263,7 @@ app.on('ready', function () {
 
   // "printscreen" is not supported yet. FUCK
   // https://github.com/atom/electron/issues/4663
-  // var isNowRegistered = globalShortcut.register('ctrl+p', function () {
+  // var isNowRegistered = electron.globalShortcut.register('ctrl+p', function () {
   //   snapshot();
   // });
 

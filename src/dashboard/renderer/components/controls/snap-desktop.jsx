@@ -1,26 +1,20 @@
 var React = electronRequire('react');
-var electron = electronRequire('electron');
 
-var ipcRenderer = electron.ipcRenderer;
+var actions = require('../../actions');
 
 var SnapDesktop = React.createClass({
   handleDefault: function () {
-    ipcRenderer.send('snapshot-initiated', {
-      type: 'selection'
-    });
+    actions.snapDesktop();
   },
   handleSelected: function (displayId) {
-    ipcRenderer.send('snapshot-initiated', {
-      type: 'selection',
-      displayId: displayId
-    });
+    actions.snapDesktop(displayId);
   },
   renderButton: function () {
     return (
       <button type="button" className="btn btn-default"
         onClick={this.handleDefault}
       >
-        {' Selection '}
+        {' Desktop '}
       </button>
     );
   },
@@ -45,7 +39,7 @@ var SnapDesktop = React.createClass({
         <button type="button"
           className="btn btn-default" onClick={this.handleDefault}
         >
-          {' Selection '}
+          {' Desktop '}
         </button>
         <button type="button"
           className="btn btn-default dropdown-toggle"

@@ -2,28 +2,21 @@ var React = electronRequire('react');
 var electron = electronRequire('electron');
 
 var Image = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  componentWillMount: function () {
-    electron.ipcRenderer.on('image-updated', function (event, image) {
-      this.setState(image);
-    }.bind(this));
-    electron.ipcRenderer.send('image-requested');
-  },
-  componentWillUnmoount: function () {
-    electron.ipcRenderer.removeAllListeners('image-updated');
+  getDefaultProps: function () {
+    return {
+      image: {}
+    };
   },
   upload: function (uploader) {
     electron.ipcRenderer.send('upload-requested', {
       uploader: uploader,
-      filePath: this.state.filePath
+      filePath: this.props.image.filePath
     });
   },
   copy: function (type) {
     electron.ipcRenderer.send('copy-requested', {
       type: type,
-      filePath: this.state.filePath
+      filePath: this.props.image.filePath
     });
   },
   renderEmpty: function () {
@@ -32,26 +25,26 @@ var Image = React.createClass({
     );
   },
   render: function () {
-    if (!this.state.dataURL) {
+    if (!this.props.image.dataURL) {
       return this.renderEmpty();
     }
 
     return (
       <div className="panel panel-default image-container">
-        <div className="panel-heading">{this.state.fileName}</div>
+        <div className="panel-heading">{this.props.image.fileName}</div>
         <div className="panel-body image-body">
           <div
             className="image"
             style={{
-              backgroundImage: 'url(' + this.state.dataURL + ')',
-              maxWidth: this.state.width,
-              maxHeight: this.state.height
+              backgroundImage: 'url(' + this.props.image.dataURL + ')',
+              maxWidth: this.props.image.width,
+              maxHeight: this.props.image.height
             }}
           ></div>
         </div>
         <div className="panel-footer image-info">
           <span>
-            {this.state.width} x {this.state.height} pixels
+            {this.props.image.width} x {this.props.image.height} pixels
           </span>
         </div>
       </div>
