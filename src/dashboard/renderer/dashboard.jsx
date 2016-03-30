@@ -17,7 +17,6 @@ var Dashboard = React.createClass({
     electron.ipcRenderer.removeListener('dashboard-state-updated', this.onStateUpdated);
   },
   onStateUpdated: function (event, state) {
-    console.log(state);
     this.setState(state);
   },
   render: function () {

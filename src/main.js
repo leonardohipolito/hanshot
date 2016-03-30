@@ -120,6 +120,11 @@ app.on('ready', function () {
     controller.request('uploaders');
   });
 
+  electron.ipcMain.on('settings-state-requested', function (event) {
+    controller.request('settings');
+    controller.request('uploaders');
+  });
+
   // Register
 
   controller.register('windows', function (params, cb) {
@@ -164,7 +169,20 @@ app.on('ready', function () {
   });
 
   controller.register('uploaders', function (params, cb) {
-    cb(null, uploaders.getList());
+    var uploadersList = uploaders.getList();
+
+    var defaultUploader = settings.get('default_uploader');
+    if (defaultUploader) {
+      uploadersList.forEach(function (uploader) {
+        uploader.isDefault = defaultUploader === uploader.id;
+      });
+    }
+
+    cb(null, uploadersList);
+  });
+
+  controller.register('settings', function (params, cb) {
+    cb(null, settings.get());
   });
 
   // Listen
@@ -183,6 +201,11 @@ app.on('ready', function () {
 
   controller.on('uploaders', function (err, uploaders) {
     dashboard.updateState({ uploaders: uploaders });
+    settings.updateState({ uploaders: uploaders });
+  });
+
+  controller.on('settings', function (err, newSettings) {
+    settings.updateState({ settings: newSettings });
   });
 
   // Other shit
@@ -195,10 +218,6 @@ app.on('ready', function () {
     } else if (options.type === 'window') {
       api.captureWindow(options.windowId);
     }
-  });
-
-  electron.ipcMain.on('settings-requested', function (event) {
-    event.sender.send('settings-updated', settings.get());
   });
 
   electron.ipcMain.on('settings-changed', function (event, data) {
@@ -222,35 +241,30 @@ app.on('ready', function () {
 
   electron.ipcMain.on('upload-requested', function (event, data) {
 
-    if (data.uploaderId === 'Imgur') {
+    var Uploader;
 
-      var imgur = new uploaders.Imgur(cache);
-
-      imgur.upload(data.filePath, function (err, link) {
-        if (err) throw err;
-
-        electron.clipboard.writeText(link);
-
-        console.log('Uploaded');
-        console.log(link);
-
-      });
-
-    } else if (data.uploaderId === 'Dropbox') {
-
-      var dropbox = new uploaders.Dropbox(cache);
-
-      dropbox.upload(data.filePath, function (err, link) {
-        if (err) throw err;
-
-        electron.clipboard.writeText(link);
-
-        console.log('Uploaded');
-        console.log(link);
-
-      });
-
+    if (data.uploaderId) {
+      Uploader = uploaders[data.uploaderId];
+    } else {
+      var defaultUploader = settings.get('default_uploader');
+      if (defaultUploader) {
+        Uploader = uploaders[defaultUploader];
+      } else {
+        Uploader = uploaders.getDefault();
+      }
     }
+
+    var uploader = new Uploader(cache);
+
+    uploader.upload(data.filePath, function (err, link) {
+      if (err) throw err;
+
+      electron.clipboard.writeText(link);
+
+      console.log('Uploaded');
+      console.log(link);
+
+    });
 
   });
 

@@ -1,20 +1,25 @@
 var React = electronRequire('react');
 var ReactDOM = electronRequire('react-dom');
 var electron = electronRequire('electron');
-var _ = electronRequire('lodash');
+
+var SaveDirectory = require('./components/save-directory.jsx');
+var DefaultUploader = require('./components/default-uploader.jsx');
 
 var Settings = React.createClass({
   getInitialState: function () {
-    return {};
+    return {
+      settings: {}
+    };
   },
   componentWillMount: function () {
-    electron.ipcRenderer.on('settings-updated', function (event, settings) {
-      this.setState(settings);
-    }.bind(this));
-    electron.ipcRenderer.send('settings-requested');
+    electron.ipcRenderer.on('settings-state-updated', this.onStateUpdated);
+    electron.ipcRenderer.send('settings-state-requested');
   },
   componentWillUnmount: function () {
-    electron.ipcRenderer.removeAllListeners('settings-updated');
+    electron.ipcRenderer.removeListener('settings-state-updated', this.onStateUpdated);
+  },
+  onStateUpdated: function (event, state) {
+    this.setState(state);
   },
   toggle: function (setting, event) {
     this.setState({ [setting]: event.target.checked });
@@ -29,8 +34,6 @@ var Settings = React.createClass({
   render: function () {
     return (
       <div className="container-fluid">
-        <h2>Settings</h2>
-        <h4>Dashboard</h4>
         <form>
           <div className="form-group">
             <div className="checkbox">
@@ -52,26 +55,13 @@ var Settings = React.createClass({
               </label>
             </div>
           </div>
-          <div className="form-group">
-            <div className="checkbox">
-              <label>
-                <input type="checkbox"
-                  checked={this.state.auto_save}
-                  onChange={this.toggle.bind(this, 'auto_save')}
-                />
-                Auto save to directory
-              </label>
-            </div>
-            <div className={!this.state.auto_save ? 'disabled-area' : ''}>
-              Directory: {this.state.save_dir}
-              <button className="btn btn-default"
-                onClick={this.changeSaveDir}
-                disabled={!this.state.auto_save}
-              >
-                Change
-              </button>
-            </div>
-          </div>
+          <SaveDirectory
+            autoSave={this.state.settings.auto_save}
+            saveDir={this.state.settings.save_dir}
+          />
+          <DefaultUploader
+            uploaders={this.state.uploaders}
+          />
         </form>
       </div>
     );

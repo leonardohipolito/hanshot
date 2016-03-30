@@ -2,5 +2,6 @@
   "open_after_capture": true,
   "close_before_capture": true,
   "auto_save": false,
-  "save_dir": null
+  "save_dir": null,
+  "default_uploader": null
 }

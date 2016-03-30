@@ -21,7 +21,7 @@ function Cache() {
   var cacheBasePath = electron.app.getPath('appData');
   this.cacheFilePath = path.join(cacheBasePath, 'hanshot', 'cache.json');
 
-  console.log(this.cacheFilePath);
+  console.log('Cache path', this.cacheFilePath);
 
   this.cache = {};
   try {

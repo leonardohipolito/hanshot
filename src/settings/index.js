@@ -18,12 +18,16 @@ var _ = require('lodash');
 //       create Storage base class
 function Settings() {
 
+  this.state = {};
+
   this.window = null;
 
   this.defaultSettings = require('./default.json');
 
   var cacheBasePath = electron.app.getPath('appData');
   this.userSettingsPath = path.join(cacheBasePath, 'hanshot', 'settings.json');
+
+  console.log('Settings path', this.userSettingsPath);
 
   this.userSettings = {};
   try {
@@ -44,6 +48,13 @@ function Settings() {
     this.settings['save_dir'] = electron.app.getPath('pictures');
   }
 
+};
+
+Settings.prototype.updateState = function (newState) {
+  if (!_.isUndefined(newState)) {
+    _.merge(this.state, newState);
+  }
+  this.window.webContents.send('settings-state-updated', this.state);
 };
 
 Settings.prototype.open = function () {
