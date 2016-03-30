@@ -54,7 +54,9 @@ Settings.prototype.updateState = function (newState) {
   if (!_.isUndefined(newState)) {
     _.merge(this.state, newState);
   }
-  this.window.webContents.send('settings-state-updated', this.state);
+  if (this.window) {
+    this.window.webContents.send('settings-state-updated', this.state);
+  }
 };
 
 Settings.prototype.open = function () {

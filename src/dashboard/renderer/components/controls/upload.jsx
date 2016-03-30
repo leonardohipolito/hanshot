@@ -48,7 +48,7 @@ var Upload = React.createClass({
         >
           <span className="caret"></span>
         </button>
-        <ul className="dropdown-menu">
+        <ul className="dropdown-menu dropdown-menu-right">
           {listNodes}
         </ul>
       </div>

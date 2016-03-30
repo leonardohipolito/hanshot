@@ -270,7 +270,9 @@ app.on('ready', function () {
 
   electron.ipcMain.on('copy-requested', function (event, data) {
 
-    if (data.type === 'image') {
+    var copyId = data.copyId || 'image';
+
+    if (copyId === 'image') {
 
       fs.readFile(data.filePath, function (err, buffer) {
         if (err) throw err;
@@ -279,12 +281,12 @@ app.on('ready', function () {
         electron.clipboard.writeImage(image);
       });
 
-    } else if (data.type === 'fileName') {
+    } else if (copyId === 'fileName') {
 
       var fileName = path.basename(data.filePath);
       electron.clipboard.writeText(fileName);
 
-    } else if (data.type === 'filePath') {
+    } else if (copyId === 'filePath') {
 
       electron.clipboard.writeText(data.filePath);
 

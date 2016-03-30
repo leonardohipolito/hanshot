@@ -27,3 +27,10 @@ exports.upload = function (filePath, uploaderId) {
     uploaderId: uploaderId
   });
 };
+
+exports.copy = function (filePath, copyId) {
+  electron.ipcRenderer.send('copy-requested', {
+    filePath: filePath,
+    copyId: copyId
+  });
+};

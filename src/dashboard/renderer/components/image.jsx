@@ -7,18 +7,6 @@ var Image = React.createClass({
       image: null
     };
   },
-  upload: function (uploader) {
-    electron.ipcRenderer.send('upload-requested', {
-      uploader: uploader,
-      filePath: this.props.image.filePath
-    });
-  },
-  copy: function (type) {
-    electron.ipcRenderer.send('copy-requested', {
-      type: type,
-      filePath: this.props.image.filePath
-    });
-  },
   renderEmpty: function () {
     return (
       <center>No recent screenshots</center>
