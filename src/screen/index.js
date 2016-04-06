@@ -45,7 +45,7 @@ Screen.prototype.getOverallBounds = function () {
   return bounds;
 };
 
-Screen.prototype.getDisplayNames = function() {
+Screen.prototype.getDisplayList = function() {
   var displays = electron.screen.getAllDisplays();
   var primaryDisplay = electron.screen.getPrimaryDisplay();
 
@@ -75,7 +75,7 @@ Screen.prototype.getDisplayById = function (displayId) {
   return null;
 };
 
-Screen.prototype.getWindowNames = function (cb) {
+Screen.prototype.getWindowList = function (cb) {
   ipcMain.once('windows-loaded', function (event, names) {
     cb(null, names);
   });

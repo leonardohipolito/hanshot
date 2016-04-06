@@ -18,10 +18,6 @@ var _ = require('lodash');
 //       create Storage base class
 function Settings() {
 
-  this.state = {};
-
-  this.window = null;
-
   this.defaultSettings = require('./default.json');
 
   var cacheBasePath = electron.app.getPath('appData');
@@ -48,31 +44,6 @@ function Settings() {
     this.settings['save_dir'] = electron.app.getPath('pictures');
   }
 
-};
-
-Settings.prototype.updateState = function (newState) {
-  if (!_.isUndefined(newState)) {
-    _.merge(this.state, newState);
-  }
-  if (this.window) {
-    this.window.webContents.send('settings-state-updated', this.state);
-  }
-};
-
-Settings.prototype.open = function () {
-  if (this.window) {
-    return;
-  }
-  this.window = new electron.BrowserWindow();
-  this.window.loadURL('file://' + __dirname + '/renderer/settings.html');
-  this.window.on('closed', function () {
-    this.window = null;
-  }.bind(this));
-  this.window.webContents.openDevTools();
-
-  this.window.on('closed', function () {
-    this.save();
-  }.bind(this));
 };
 
 Settings.prototype.get = function (key) {

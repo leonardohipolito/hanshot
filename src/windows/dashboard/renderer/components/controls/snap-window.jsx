@@ -17,6 +17,10 @@ var SnapWindow = React.createClass({
   },
   render: function () {
 
+    if (!this.props.windows.length) {
+      return null;
+    }
+
     var listNodes = this.props.windows.map(this.renderListNode);
 
     return (

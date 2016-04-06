@@ -11,10 +11,12 @@ var Dashboard = React.createClass({
   },
   componentWillMount: function () {
     electron.ipcRenderer.on('dashboard-state-updated', this.onStateUpdated);
-    electron.ipcRenderer.send('dashboard-state-requested');
+    electron.ipcRenderer.send('dashboard-ready');
   },
   componentWillUnmount: function () {
-    electron.ipcRenderer.removeListener('dashboard-state-updated', this.onStateUpdated);
+    electron.ipcRenderer.removeListener(
+      'dashboard-state-updated', this.onStateUpdated
+    );
   },
   onStateUpdated: function (event, state) {
     this.setState(state);

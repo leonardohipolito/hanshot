@@ -43,56 +43,57 @@ function createFileName(type) {
 //------------------------------------------------------------------------------
 
 // TODO: this is getting ugly, maybe think about implementing everything using events
-function Api(dashboard, screen, settings, cache) {
-  this.dashboard = dashboard;
+function Api(dashboardWindow, settingsWindow, screen, settings, cache) {
+  this.dashboardWindow = dashboardWindow;
+  this.settingsWindow = settingsWindow;
   this.screen = screen;
   this.settings = settings;
   this.cache = cache;
 }
 
 Api.prototype.openWindow = function () {
-  this.dashboard.show();
+  this.dashboardWindow.show();
 };
 
 Api.prototype.openSettings = function () {
-  this.settings.open();
+  this.settingsWindow.open();
 };
 
 Api.prototype.captureDesktop = function (displayId) {
   if (this.settings.get('close_before_capture')) {
-    this.dashboard.hide();
+    this.dashboardWindow.hide();
   }
   this.screen.captureDesktop(displayId, function (err, snapshot) {
     if (err) throw err;
     this.writeFile('desktop', snapshot);
     if (this.settings.get('open_after_capture')) {
-      this.dashboard.show();
+      this.dashboardWindow.show();
     }
   }.bind(this));
 };
 
 Api.prototype.captureSelection = function (displayId) {
   if (this.settings.get('close_before_capture')) {
-    this.dashboard.hide();
+    this.dashboardWindow.hide();
   }
   this.screen.captureSelection(displayId, function (err, snapshot) {
     if (err) throw err;
     this.writeFile('selection', snapshot);
     if (this.settings.get('open_after_capture')) {
-      this.dashboard.show();
+      this.dashboardWindow.show();
     }
   }.bind(this));
 };
 
 Api.prototype.captureWindow = function (windowId) {
   if (this.settings.get('close_before_capture')) {
-    this.dashboard.hide();
+    this.dashboardWindow.hide();
   }
   this.screen.captureWindow(windowId, function (err, snapshot) {
     if (err) throw err;
     this.writeFile('window', snapshot);
     if (this.settings.get('open_after_capture')) {
-      this.dashboard.show();
+      this.dashboardWindow.show();
     }
   }.bind(this));
 };

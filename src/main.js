@@ -10,13 +10,17 @@ var path = require('path');
 var electron = require('electron');
 var _ = require('lodash');
 
-var Dashboard = require('./dashboard');
 var Screen = require('./screen');
 var Settings = require('./settings');
 var Cache = require('./cache');
 var Api = require('./api');
 var Tray = require('./tray');
-var Controller = require('./controller');
+var Provider = require('./provider');
+
+var windows = {
+  Dashboard: require('./windows/dashboard'),
+  Settings: require('./windows/settings')
+};
 
 var cli = require('./cli');
 var uploaders = require('./uploaders');
@@ -93,54 +97,51 @@ app.on('ready', function () {
   var args = process.argv.slice(2);
   var action = cli.parseAction(args);
 
-  var dashboard = new Dashboard(action);
-  var screen = new Screen();
+  var dashboardWindow = new windows.Dashboard();
+  var settingsWindow = new windows.Settings();
+
   var settings = new Settings();
-
   var cache = new Cache();
-
-  controller = new Controller();
+  var screen = new Screen();
 
   // TODO: decide if API is required, maybe just gather all major instances
-  api = new Api(dashboard, screen, settings, cache);
+  api = new Api(dashboardWindow, settingsWindow, screen, settings, cache);
 
   tray = new Tray(api);
 
-  dashboard.window.on('closed', function () {
-    screen.destroy();
-    cache.save();
+  // Create providers
+
+  var displaysProvider = new Provider(function (params, provide) {
+    provide(null, screen.getDisplayList());
   });
 
-  // Request
-
-  electron.ipcMain.on('dashboard-state-requested', function (event) {
-    controller.request('image');
-    controller.request('displays');
-    controller.request('windows');
-    controller.request('uploaders');
-  });
-
-  electron.ipcMain.on('settings-state-requested', function (event) {
-    controller.request('settings');
-    controller.request('uploaders');
-  });
-
-  // Register
-
-  controller.register('windows', function (params, cb) {
-    screen.getWindowNames(function (err, windows) {
-      cb(err, windows);
+  var windowsProvider = new Provider(function (params, provide) {
+    screen.getWindowList(function (err, data) {
+      provide(err, data);
     });
   });
 
-  controller.register('displays', function (params, cb) {
-    cb(null, screen.getDisplayNames());
+  var settingsProvider = new Provider(function (params, provide) {
+    provide(null, settings.get());
   });
 
-  controller.register('image', function (params, cb) {
+  var uploadersProvider = new Provider(function (params, provide) {
+    var uploadersList = uploaders.getList();
+
+    var defaultUploader = settings.get('default_uploader');
+    if (defaultUploader) {
+      uploadersList.forEach(function (uploader) {
+        uploader.isDefault = defaultUploader === uploader.id;
+      });
+    }
+
+    provide(null, uploadersList);
+  });
+
+  var imageProvider = new Provider(function (param, provide) {
     var recent = cache.get('recent', []);
     if (!recent.length) {
-      return cb(null, null);
+      return provide(null, null);
     }
 
     var filePath = recent[0];
@@ -148,16 +149,16 @@ app.on('ready', function () {
     fs.readFile(filePath, function (err, buffer) {
       if (err) {
         if (err.code === 'ENOENT') {
-          return cb(null, null);
+          return provide(null, null);
         } else {
-          return cb(err);
+          return provide(err);
         }
       }
 
       var image = electron.nativeImage.createFromBuffer(buffer);
       var imageSize = image.getSize();
 
-      cb(null, {
+      provide(null, {
         filePath: filePath,
         fileName: path.basename(filePath),
         dataURL: image.toDataURL(),
@@ -168,44 +169,63 @@ app.on('ready', function () {
     });
   });
 
-  controller.register('uploaders', function (params, cb) {
-    var uploadersList = uploaders.getList();
+  // Listen providers
 
-    var defaultUploader = settings.get('default_uploader');
-    if (defaultUploader) {
-      uploadersList.forEach(function (uploader) {
-        uploader.isDefault = defaultUploader === uploader.id;
-      });
-    }
-
-    cb(null, uploadersList);
+  displaysProvider.addUpdateListener(function (err, data) {
+    dashboardWindow.updateState({ displays: data });
   });
 
-  controller.register('settings', function (params, cb) {
-    cb(null, settings.get());
+  windowsProvider.addUpdateListener(function (err, data) {
+    dashboardWindow.updateState({ windows: data });
   });
 
-  // Listen
-
-  controller.on('windows', function (err, windows) {
-    dashboard.updateState({ windows: windows });
+  settingsProvider.addUpdateListener(function (err, data) {
+    settingsWindow.updateState({ settings: data });
   });
 
-  controller.on('displays', function (err, displays) {
-    dashboard.updateState({ displays: displays });
+  uploadersProvider.addUpdateListener(function (err, data) {
+    dashboardWindow.updateState({ uploaders: data });
+    settingsWindow.updateState({ uploaders: data });
   });
 
-  controller.on('image', function (err, image) {
-    dashboard.updateState({ image: image });
+  imageProvider.addUpdateListener(function (err, data) {
+    dashboardWindow.updateState({ image: data });
   });
 
-  controller.on('uploaders', function (err, uploaders) {
-    dashboard.updateState({ uploaders: uploaders });
-    settings.updateState({ uploaders: uploaders });
+  // Create windows
+
+  dashboardWindow.open(action);
+  dashboardWindow.on('close', function () {
+    screen.destroy();
+    cache.save();
   });
 
-  controller.on('settings', function (err, newSettings) {
-    settings.updateState({ settings: newSettings });
+  // Trigger providers
+
+  dashboardWindow.on('ready', function () {
+    displaysProvider.triggerUpdate();
+    windowsProvider.triggerUpdate();
+    uploadersProvider.triggerUpdate();
+    imageProvider.triggerUpdate();
+  });
+
+  settingsWindow.on('ready', function (event) {
+    settingsProvider.triggerUpdate();
+    uploadersProvider.triggerUpdate();
+  });
+
+  electron.screen.on('display-added', function () {
+    displaysProvider.triggerUpdate();
+  });
+  // ISSUE: display-removed does not fire, maybe use focus?
+  // https://github.com/atom/electron/issues/3075
+  electron.screen.on('display-removed', function () {
+    displaysProvider.triggerUpdate();
+  });
+  // ISSUE: display-metrics-changed does not fire, maybe use focus?
+  // https://github.com/atom/electron/issues/3075
+  electron.screen.on('display-metrics-changed', function () {
+    displaysProvider.triggerUpdate();
   });
 
   // Other shit

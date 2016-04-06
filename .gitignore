@@ -1,5 +1,5 @@
 node_modules/
 tmp/
 
-src/dashboard/renderer/dashboard.built.js
-src/settings/renderer/settings.built.js
+src/windows/dashboard/renderer/dashboard.built.js
+src/windows/settings/renderer/settings.built.js

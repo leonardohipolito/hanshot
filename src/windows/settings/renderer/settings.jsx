@@ -13,7 +13,7 @@ var Settings = React.createClass({
   },
   componentWillMount: function () {
     electron.ipcRenderer.on('settings-state-updated', this.onStateUpdated);
-    electron.ipcRenderer.send('settings-state-requested');
+    electron.ipcRenderer.send('settings-ready');
   },
   componentWillUnmount: function () {
     electron.ipcRenderer.removeListener('settings-state-updated', this.onStateUpdated);
@@ -22,7 +22,11 @@ var Settings = React.createClass({
     this.setState(state);
   },
   toggle: function (setting, event) {
-    this.setState({ [setting]: event.target.checked });
+    this.setState({
+      settings: {
+        [setting]: event.target.checked
+      }
+    });
     electron.ipcRenderer.send('settings-changed', {
       key: setting,
       value: event.target.checked
@@ -39,7 +43,7 @@ var Settings = React.createClass({
             <div className="checkbox">
               <label>
                 <input type="checkbox"
-                  checked={this.state.close_before_capture}
+                  checked={this.state.settings.close_before_capture}
                   onChange={this.toggle.bind(this, 'close_before_capture')}
                 />
                 Close before capture
@@ -48,7 +52,7 @@ var Settings = React.createClass({
             <div className="checkbox">
               <label>
                 <input type="checkbox"
-                  checked={this.state.open_after_capture}
+                  checked={this.state.settings.open_after_capture}
                   onChange={this.toggle.bind(this, 'open_after_capture')}
                 />
                 Open after capture
