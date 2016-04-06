@@ -35,6 +35,10 @@ SettingsWindow.prototype.open = function () {
     this.emit('close');
   }.bind(this));
 
+  // Remove window menu
+  // TODO: mac
+  this.window.setMenu(null);
+
   electron.ipcMain.on('settings-ready', this.onReady);
 
   // this.window.webContents.openDevTools();

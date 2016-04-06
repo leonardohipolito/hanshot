@@ -104,11 +104,6 @@ app.on('ready', function () {
   var cache = new Cache();
   var screen = new Screen();
 
-  // TODO: decide if API is required, maybe just gather all major instances
-  api = new Api(dashboardWindow, settingsWindow, screen, settings, cache);
-
-  tray = new Tray(api);
-
   // Create providers
 
   var displaysProvider = new Provider(function (params, provide) {
@@ -226,6 +221,45 @@ app.on('ready', function () {
   // https://github.com/atom/electron/issues/3075
   electron.screen.on('display-metrics-changed', function () {
     displaysProvider.triggerUpdate();
+  });
+
+  // Work with actions
+
+  // TODO: decide if API is required, maybe just gather all major instances
+  api = new Api(dashboardWindow, settingsWindow, screen, settings, cache);
+
+  tray = new Tray();
+
+  tray.on('action', function (actionName) {
+    switch (actionName) {
+      case 'capture-desktop':
+        api.captureDesktop();
+        break;
+      case 'capture-selection':
+        api.captureSelection();
+        break;
+      case 'open-dashboard':
+        api.openWindow();
+        break;
+      case 'open-settings':
+        api.openSettings();
+        break;
+    }
+  });
+
+  // Menu actions, TODO: combine with window actions
+  dashboardWindow.on('action', function (actionName) {
+    switch (actionName) {
+      case 'capture-desktop':
+        api.captureDesktop();
+        break;
+      case 'capture-selection':
+        api.captureSelection();
+        break;
+      case 'open-settings':
+        api.openSettings();
+        break;
+    }
   });
 
   // Other shit

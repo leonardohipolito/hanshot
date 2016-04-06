@@ -27,6 +27,8 @@ util.inherits(DashboardWindow, EventEmitter);
 
 // TODO: rethink actions
 DashboardWindow.prototype.open = function (action) {
+  var self = this;
+
   this.window = new electron.BrowserWindow({
     show: action.capture === false
   });
@@ -34,13 +36,57 @@ DashboardWindow.prototype.open = function (action) {
   this.window.loadURL('file://' + __dirname + '/renderer/dashboard.html');
 
   this.window.on('closed', function () {
-    this.close();
-    this.emit('close');
-  }.bind(this));
+    self.close();
+    self.emit('close');
+  });
 
   this.window.on('focus', function () {
-    this.emit('focus');
-  }.bind(this));
+    self.emit('focus');
+  });
+
+  var template = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'New',
+          submenu: [
+            {
+              label: 'Desktop',
+              click: function () {
+                self.emit('action', 'capture-desktop');
+              }
+            },
+            {
+              label: 'Selection',
+              click: function () {
+                self.emit('action', 'capture-selection');
+              }
+            }
+          ]
+        },
+        {
+          label: 'Quit',
+          role: 'close'
+        }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        {
+          label: 'Settings',
+          click: function () {
+            self.emit('action', 'open-settings');
+          }
+        }
+      ]
+    }
+  ];
+
+  var menu = electron.Menu.buildFromTemplate(template);
+
+  this.window.setMenu(menu);
 
   electron.ipcMain.on('dashboard-ready', this.onReady);
 

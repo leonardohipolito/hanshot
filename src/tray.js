@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 
 var path = require('path');
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
 
 var electron = require('electron');
 
@@ -12,7 +14,10 @@ var electron = require('electron');
 // Public Interface
 //------------------------------------------------------------------------------
 
-function Tray(api) {
+function Tray() {
+  EventEmitter.call(this);
+
+  var self = this;
 
   var iconPath = path.join(__dirname, '..', 'resources', 'tray.png');
 
@@ -20,7 +25,7 @@ function Tray(api) {
     {
       label: 'Open',
       click: function () {
-        api.openWindow();
+        self.emit('action', 'open-dashboard');
       }
     },
     {
@@ -29,13 +34,13 @@ function Tray(api) {
     {
       label: 'Desktop',
       click: function () {
-        api.captureDesktop();
+        self.emit('action', 'capture-desktop');
       }
     },
     {
       label: 'Selection',
       click: function () {
-        api.captureSelection();
+        self.emit('action', 'capture-selection');
       }
     },
     {
@@ -44,7 +49,7 @@ function Tray(api) {
     {
       label: 'Settings',
       click: function () {
-        api.openSettings();
+        self.emit('action', 'open-settings');
       }
     },
     {
@@ -60,7 +65,8 @@ function Tray(api) {
 
   this.tray = new electron.Tray(iconPath);
   this.tray.setContextMenu(menu);
-
 }
+
+util.inherits(Tray, EventEmitter);
 
 module.exports = Tray;
