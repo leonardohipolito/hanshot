@@ -26,18 +26,43 @@ function SettingsWindow() {
 util.inherits(SettingsWindow, EventEmitter);
 
 SettingsWindow.prototype.open = function () {
+  var self = this;
+
   this.window = new electron.BrowserWindow();
 
   this.window.loadURL('file://' + __dirname + '/renderer/settings.html');
 
   this.window.on('closed', function () {
-    this.close();
-    this.emit('close');
-  }.bind(this));
+    self.close();
+    self.emit('close');
+  });
 
-  // Remove window menu
-  // TODO: mac
-  this.window.setMenu(null);
+  var template = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Close',
+          role: 'close'
+        }
+      ]
+    },
+    {
+      label: 'Developer',
+      submenu: [
+        {
+          label: 'Open dev tools',
+          click: function () {
+            self.window.webContents.openDevTools();
+          }
+        }
+      ]
+    }
+  ];
+
+  var menu = electron.Menu.buildFromTemplate(template);
+
+  this.window.setMenu(menu);
 
   electron.ipcMain.on('settings-ready', this.onReady);
 

@@ -102,6 +102,17 @@ DashboardWindow.prototype.open = function (action) {
           }
         }
       ]
+    },
+    {
+      label: 'Developer',
+      submenu: [
+        {
+          label: 'Open dev tools',
+          click: function () {
+            self.window.webContents.openDevTools();
+          }
+        }
+      ]
     }
   ];
 
