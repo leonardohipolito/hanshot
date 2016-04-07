@@ -262,6 +262,25 @@ app.on('ready', function () {
       case 'import-clipboard':
         api.importFile();
         break;
+      case 'import-open':
+        electron.dialog.showOpenDialog({
+          defaultPath: electron.app.getPath('pictures'),
+          properties: ['openFile'],
+          filters: [
+            {
+              name: 'All Compatible Image Formats',
+              extensions: ['jpg', 'png']
+            }
+          ],
+        }, function (filePaths) {
+          if (_.isUndefined(filePaths)) {
+            // "Cancel" pressed
+            return;
+          }
+          var filePath = filePaths[0];
+          api.openFile(filePath);
+        });
+        break;
     }
   });
 
@@ -285,13 +304,13 @@ app.on('ready', function () {
     electron.dialog.showOpenDialog({
       defaultPath: settings.get('save_dir'),
       properties: ['openDirectory', 'createDirectory']
-    }, function (directories) {
-      if (_.isUndefined(directories)) {
+    }, function (directoryPaths) {
+      if (_.isUndefined(directoryPaths)) {
         // "Cancel" pressed
         return;
       }
-      var directory = directories[0];
-      settings.set('save_dir', directory);
+      var directoryPath = directoryPaths[0];
+      settings.set('save_dir', directoryPath);
       event.sender.send('settings-updated', settings.get());
     });
   });

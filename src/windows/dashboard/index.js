@@ -75,6 +75,18 @@ DashboardWindow.prototype.open = function (action) {
           ]
         },
         {
+          type: 'separator'
+        },
+        {
+          label: 'Open...',
+          click: function () {
+            self.emit('action', 'import-open');
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Quit',
           role: 'close'
         }

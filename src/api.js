@@ -20,7 +20,8 @@ function createFileName(type) {
     'desktop': 'desktop',
     'selection': 'selection',
     'window': 'window',
-    'clipboard': 'clipboard'
+    'clipboard': 'clipboard',
+    'open': 'open'
   };
 
   var fileName = types[type];
@@ -99,6 +100,39 @@ Api.prototype.captureWindow = function (windowId) {
   }.bind(this));
 };
 
+Api.prototype.openFile = function (filePath) {
+  Jimp.read(filePath, function (err, image) {
+    if (err) throw err;
+
+    var cacheBaseDir = electron.app.getPath('appData');
+
+    var fileName = createFileName('open') + '.png';
+    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
+
+    if (this.settings.get('auto_save')) {
+      fileDir = this.settings.get('save_dir');
+    }
+
+    var filePath = path.join(fileDir, fileName);
+
+    fs.mkdirs(fileDir, function (err) {
+      if (err) throw err;
+
+      image.write(filePath, function (err) {
+        if (err) throw err;
+
+        var recent = this.cache.get('recent', []);
+        recent.unshift(filePath);
+        this.cache.set('recent', recent);
+
+        console.error('Open');
+      }.bind(this));
+
+    }.bind(this));
+
+  }.bind(this));
+};
+
 Api.prototype.importFile = function () {
   var image = electron.clipboard.readImage();
   if (image.isEmpty()) {
@@ -143,6 +177,7 @@ Api.prototype.writeFile = function (type, data) {
   var buf = image.toPng();
 
   Jimp.read(buf, function (err, image) {
+    if (err) throw err;
 
     // TODO: crop right in capture.html, return buffer from screen
     if (data.autocrop) {
