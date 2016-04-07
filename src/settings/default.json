@@ -1,7 +1,7 @@
 {
-  "open_after_capture": true,
-  "close_before_capture": true,
-  "auto_save": false,
-  "save_dir": null,
-  "default_uploader": null
+  "open-after-capture": true,
+  "close-before-capture": true,
+  "auto-save": false,
+  "save-dir": null,
+  "default-uploader": null
 }

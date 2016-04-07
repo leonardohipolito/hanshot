@@ -2,6 +2,8 @@ var React = electronRequire('react');
 var ReactDOM = electronRequire('react-dom');
 var electron = electronRequire('electron');
 
+var CloseBeforeCapture = require('./components/close-before-capture.jsx');
+var OpenAfterCapture = require('./components/open-after-capture.jsx');
 var SaveDirectory = require('./components/save-directory.jsx');
 var DefaultUploader = require('./components/default-uploader.jsx');
 
@@ -21,47 +23,19 @@ var Settings = React.createClass({
   onStateUpdated: function (event, state) {
     this.setState(state);
   },
-  toggle: function (setting, event) {
-    this.setState({
-      settings: {
-        [setting]: event.target.checked
-      }
-    });
-    electron.ipcRenderer.send('settings-changed', {
-      key: setting,
-      value: event.target.checked
-    });
-  },
-  changeSaveDir: function () {
-    electron.ipcRenderer.send('settings-dialog');
-  },
   render: function () {
     return (
       <div className="container-fluid">
         <form>
-          <div className="form-group">
-            <div className="checkbox">
-              <label>
-                <input type="checkbox"
-                  checked={this.state.settings.close_before_capture}
-                  onChange={this.toggle.bind(this, 'close_before_capture')}
-                />
-                Close before capture
-              </label>
-            </div>
-            <div className="checkbox">
-              <label>
-                <input type="checkbox"
-                  checked={this.state.settings.open_after_capture}
-                  onChange={this.toggle.bind(this, 'open_after_capture')}
-                />
-                Open after capture
-              </label>
-            </div>
-          </div>
+          <CloseBeforeCapture
+            closeBeforeCapture={this.state.settings['close-before-capture']}
+          />
+          <OpenAfterCapture
+            openAfterCapture={this.state.settings['open-after-capture']}
+          />
           <SaveDirectory
-            autoSave={this.state.settings.auto_save}
-            saveDir={this.state.settings.save_dir}
+            autoSave={this.state.settings['auto-save']}
+            saveDir={this.state.settings['save-dir']}
           />
           <DefaultUploader
             uploaders={this.state.uploaders}

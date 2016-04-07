@@ -15,7 +15,7 @@ var SaveDirectory = React.createClass({
   },
   handleChange: function (event) {
     this.setState({ autoSaveChecked: event.target.checked });
-    actions.updateSetting('auto_save', event.target.checked);
+    actions.updateSetting('auto-save', event.target.checked);
   },
   openDialog: function () {
     actions.openDialog();

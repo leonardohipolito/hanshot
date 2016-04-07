@@ -62,39 +62,39 @@ Api.prototype.openSettings = function () {
 };
 
 Api.prototype.captureDesktop = function (displayId) {
-  if (this.settings.get('close_before_capture')) {
+  if (this.settings.get('close-before-capture')) {
     this.dashboardWindow.hide();
   }
   this.screen.captureDesktop(displayId, function (err, snapshot) {
     if (err) throw err;
     this.writeFile('desktop', snapshot);
-    if (this.settings.get('open_after_capture')) {
+    if (this.settings.get('open-after-capture')) {
       this.dashboardWindow.show();
     }
   }.bind(this));
 };
 
 Api.prototype.captureSelection = function (displayId) {
-  if (this.settings.get('close_before_capture')) {
+  if (this.settings.get('close-before-capture')) {
     this.dashboardWindow.hide();
   }
   this.screen.captureSelection(displayId, function (err, snapshot) {
     if (err) throw err;
     this.writeFile('selection', snapshot);
-    if (this.settings.get('open_after_capture')) {
+    if (this.settings.get('open-after-capture')) {
       this.dashboardWindow.show();
     }
   }.bind(this));
 };
 
 Api.prototype.captureWindow = function (windowId) {
-  if (this.settings.get('close_before_capture')) {
+  if (this.settings.get('close-before-capture')) {
     this.dashboardWindow.hide();
   }
   this.screen.captureWindow(windowId, function (err, snapshot) {
     if (err) throw err;
     this.writeFile('window', snapshot);
-    if (this.settings.get('open_after_capture')) {
+    if (this.settings.get('open-after-capture')) {
       this.dashboardWindow.show();
     }
   }.bind(this));
@@ -109,8 +109,8 @@ Api.prototype.openFile = function (filePath) {
     var fileName = createFileName('open') + '.png';
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    if (this.settings.get('auto_save')) {
-      fileDir = this.settings.get('save_dir');
+    if (this.settings.get('auto-save')) {
+      fileDir = this.settings.get('save-dir');
     }
 
     var filePath = path.join(fileDir, fileName);
@@ -148,8 +148,8 @@ Api.prototype.importFile = function () {
     var fileName = createFileName('clipboard') + '.png';
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    if (this.settings.get('auto_save')) {
-      fileDir = this.settings.get('save_dir');
+    if (this.settings.get('auto-save')) {
+      fileDir = this.settings.get('save-dir');
     }
 
     var filePath = path.join(fileDir, fileName);
@@ -189,8 +189,8 @@ Api.prototype.writeFile = function (type, data) {
     var fileName = createFileName(type) + '.png';
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    if (this.settings.get('auto_save')) {
-      fileDir = this.settings.get('save_dir');
+    if (this.settings.get('auto-save')) {
+      fileDir = this.settings.get('save-dir');
     }
 
     var filePath = path.join(fileDir, fileName);

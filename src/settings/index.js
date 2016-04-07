@@ -40,22 +40,23 @@ function Settings() {
   this.settings = _.merge({}, this.defaultSettings, this.userSettings);
 
   // TODO: check if directory does not exist, think of default strategy
-  if (this.settings['save_dir'] === null) {
-    this.settings['save_dir'] = electron.app.getPath('pictures');
+  if (this.settings['save-dir'] === null) {
+    this.settings['save-dir'] = electron.app.getPath('pictures');
   }
 
 };
 
 Settings.prototype.get = function (key) {
-  if (_.isUndefined(key)) {
-    return this.settings;
-  }
   return this.settings[key];
 };
 
 Settings.prototype.set = function (key, value) {
   this.userSettings[key] = value;
   this.settings[key] = value;
+  return this.settings;
+};
+
+Settings.prototype.serialize = function () {
   return this.settings;
 };
 

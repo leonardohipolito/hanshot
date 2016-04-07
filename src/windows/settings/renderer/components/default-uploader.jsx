@@ -15,9 +15,11 @@ var DefaultUploader = React.createClass({
     };
   },
   componentWillReceiveProps: function (newProps) {
-    var newDefaultUploader = this.getDefaultUploader(newProps.uploaders);
-    if (newDefaultUploader.id !== this.state.selectedUploaderId) {
-      this.setState({ selectedUploaderId: newDefaultUploader.id });
+    if (newProps.uploaders.length) {
+      var newDefaultUploader = this.getDefaultUploader(newProps.uploaders);
+      if (newDefaultUploader.id !== this.state.selectedUploaderId) {
+        this.setState({ selectedUploaderId: newDefaultUploader.id });
+      }
     }
   },
   isChecked: function (uploader) {
@@ -28,7 +30,7 @@ var DefaultUploader = React.createClass({
   },
   handleChange: function (event) {
     this.setState({ selectedUploaderId: event.target.value });
-    actions.updateSetting('default_uploader', event.target.value);
+    actions.updateSetting('default-uploader', event.target.value);
   },
   renderRadioItem: function (uploader) {
     return (

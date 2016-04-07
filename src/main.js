@@ -117,13 +117,14 @@ app.on('ready', function () {
   });
 
   var settingsProvider = new Provider(function (params, provide) {
-    provide(null, settings.get());
+    console.log(settings.serialize());
+    provide(null, settings.serialize());
   });
 
   var uploadersProvider = new Provider(function (params, provide) {
     var uploadersList = uploaders.getList();
 
-    var defaultUploader = settings.get('default_uploader');
+    var defaultUploader = settings.get('default-uploader');
     if (defaultUploader) {
       uploadersList.forEach(function (uploader) {
         uploader.isDefault = defaultUploader === uploader.id;
@@ -193,6 +194,10 @@ app.on('ready', function () {
   dashboardWindow.on('close', function () {
     screen.destroy();
     cache.save();
+  });
+
+  settingsWindow.on('close', function () {
+    settings.save();
   });
 
   // Trigger providers
@@ -302,7 +307,7 @@ app.on('ready', function () {
 
   electron.ipcMain.on('settings-dialog', function (event) {
     electron.dialog.showOpenDialog({
-      defaultPath: settings.get('save_dir'),
+      defaultPath: settings.get('save-dir'),
       properties: ['openDirectory', 'createDirectory']
     }, function (directoryPaths) {
       if (_.isUndefined(directoryPaths)) {
@@ -311,7 +316,7 @@ app.on('ready', function () {
       }
       var directoryPath = directoryPaths[0];
       settings.set('save_dir', directoryPath);
-      event.sender.send('settings-updated', settings.get());
+      event.sender.send('settings-updated', settings.serialize());
     });
   });
 
@@ -322,7 +327,7 @@ app.on('ready', function () {
     if (data.uploaderId) {
       Uploader = uploaders[data.uploaderId];
     } else {
-      var defaultUploader = settings.get('default_uploader');
+      var defaultUploader = settings.get('default-uploader');
       if (defaultUploader) {
         Uploader = uploaders[defaultUploader];
       } else {
