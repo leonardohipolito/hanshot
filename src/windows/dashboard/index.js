@@ -62,6 +62,15 @@ DashboardWindow.prototype.open = function (action) {
               click: function () {
                 self.emit('action', 'capture-selection');
               }
+            },
+            {
+              type: 'separator'
+            },
+            {
+              label: 'Import from clipboard',
+              click: function () {
+                self.emit('action', 'import-clipboard');
+              }
             }
           ]
         },

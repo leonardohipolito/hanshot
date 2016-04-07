@@ -259,6 +259,9 @@ app.on('ready', function () {
       case 'open-settings':
         api.openSettings();
         break;
+      case 'import-clipboard':
+        api.importFile();
+        break;
     }
   });
 

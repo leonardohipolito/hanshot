@@ -19,7 +19,8 @@ function createFileName(type) {
   var types = {
     'desktop': 'desktop',
     'selection': 'selection',
-    'window': 'window'
+    'window': 'window',
+    'clipboard': 'clipboard'
   };
 
   var fileName = types[type];
@@ -95,6 +96,45 @@ Api.prototype.captureWindow = function (windowId) {
     if (this.settings.get('open_after_capture')) {
       this.dashboardWindow.show();
     }
+  }.bind(this));
+};
+
+Api.prototype.importFile = function () {
+  var image = electron.clipboard.readImage();
+  if (image.isEmpty()) {
+    return;
+  }
+  var buf = image.toPng();
+
+  Jimp.read(buf, function (err, image) {
+    if (err) throw err;
+
+    var cacheBaseDir = electron.app.getPath('appData');
+
+    var fileName = createFileName('clipboard') + '.png';
+    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
+
+    if (this.settings.get('auto_save')) {
+      fileDir = this.settings.get('save_dir');
+    }
+
+    var filePath = path.join(fileDir, fileName);
+
+    fs.mkdirs(fileDir, function (err) {
+      if (err) throw err;
+
+      image.write(filePath, function (err) {
+        if (err) throw err;
+
+        var recent = this.cache.get('recent', []);
+        recent.unshift(filePath);
+        this.cache.set('recent', recent);
+
+        console.error('Import');
+      }.bind(this));
+
+    }.bind(this));
+
   }.bind(this));
 };
 
