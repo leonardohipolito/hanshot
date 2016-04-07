@@ -117,7 +117,6 @@ app.on('ready', function () {
   });
 
   var settingsProvider = new Provider(function (params, provide) {
-    console.log(settings.serialize());
     provide(null, settings.serialize());
   });
 
@@ -190,10 +189,23 @@ app.on('ready', function () {
 
   // Create windows
 
-  dashboardWindow.open(action);
-  dashboardWindow.on('close', function () {
+  var quitApp = function () {
+    // TODO: use promises or callbacks to make async writes
+    // now cache and settings are saved synchronously (is it bad?)
     screen.destroy();
     cache.save();
+    settings.save();
+    app.quit();
+  };
+
+  dashboardWindow.open(action);
+  dashboardWindow.on('close', function () {
+    if (settings.get('tray-on-close')) {
+      cache.save();
+      settings.save();
+    } else {
+      quitApp();
+    }
   });
 
   settingsWindow.on('close', function () {
@@ -249,6 +261,9 @@ app.on('ready', function () {
       case 'open-settings':
         api.openSettings();
         break;
+      case 'force-quit':
+        quitApp();
+        break;
     }
   });
 
@@ -285,6 +300,9 @@ app.on('ready', function () {
           var filePath = filePaths[0];
           api.openFile(filePath);
         });
+        break;
+      case 'force-quit':
+        quitApp();
         break;
     }
   });

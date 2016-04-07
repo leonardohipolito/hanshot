@@ -57,7 +57,9 @@ function Tray() {
     },
     {
       label: 'Quit',
-      role: 'close'
+      click: function () {
+        self.emit('action', 'force-quit');
+      }
     }
   ];
 

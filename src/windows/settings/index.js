@@ -26,6 +26,11 @@ function SettingsWindow() {
 util.inherits(SettingsWindow, EventEmitter);
 
 SettingsWindow.prototype.open = function () {
+  if (this.window) {
+    this.window.show();
+    return;
+  }
+
   var self = this;
 
   this.window = new electron.BrowserWindow();
@@ -84,6 +89,9 @@ SettingsWindow.prototype.close = function () {
 };
 
 SettingsWindow.prototype.updateState = function (newState) {
+  if (!this.window) {
+    return;
+  }
   if (!_.isUndefined(newState)) {
     _.merge(this.state, newState);
   }

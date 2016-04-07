@@ -62,10 +62,10 @@ Settings.prototype.serialize = function () {
 
 Settings.prototype.save = function () {
   var json = JSON.stringify(this.userSettings);
-  fs.writeFile(this.userSettingsPath, json, function (err) {
-    if (err) throw err;
-    console.log('Settings saved');
-  });
+  // TODO: writing sync because settings are saved on app exit, seems like
+  // async operation might be cancelled on exit
+  fs.writeFileSync(this.userSettingsPath, json);
+  console.log('Settings saved');
 };
 
 module.exports = Settings;

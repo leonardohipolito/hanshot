@@ -4,6 +4,7 @@ var electron = electronRequire('electron');
 
 var CloseBeforeCapture = require('./components/close-before-capture.jsx');
 var OpenAfterCapture = require('./components/open-after-capture.jsx');
+var TrayOnClose = require('./components/tray-on-close.jsx');
 var SaveDirectory = require('./components/save-directory.jsx');
 var DefaultUploader = require('./components/default-uploader.jsx');
 
@@ -32,6 +33,9 @@ var Settings = React.createClass({
           />
           <OpenAfterCapture
             openAfterCapture={this.state.settings['open-after-capture']}
+          />
+          <TrayOnClose
+            trayOnClose={this.state.settings['tray-on-close']}
           />
           <SaveDirectory
             autoSave={this.state.settings['auto-save']}

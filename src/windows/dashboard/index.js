@@ -26,12 +26,15 @@ function DashboardWindow() {
 util.inherits(DashboardWindow, EventEmitter);
 
 // TODO: rethink actions
-DashboardWindow.prototype.open = function (action) {
+DashboardWindow.prototype.open = function () {
+  if (this.window) {
+    this.window.show();
+    return;
+  }
+
   var self = this;
 
-  this.window = new electron.BrowserWindow({
-    show: action.capture === false
-  });
+  this.window = new electron.BrowserWindow();
 
   this.window.loadURL('file://' + __dirname + '/renderer/dashboard.html');
 
@@ -88,7 +91,9 @@ DashboardWindow.prototype.open = function (action) {
         },
         {
           label: 'Quit',
-          role: 'close'
+          click: function () {
+            self.emit('action', 'force-quit');
+          }
         }
       ]
     },
@@ -140,6 +145,9 @@ DashboardWindow.prototype.close = function () {
 };
 
 DashboardWindow.prototype.updateState = function (newState) {
+  if (!this.window) {
+    return;
+  }
   if (!_.isUndefined(newState)) {
     _.merge(this.state, newState);
   }
@@ -147,10 +155,16 @@ DashboardWindow.prototype.updateState = function (newState) {
 };
 
 DashboardWindow.prototype.show = function () {
+  if (!this.window) {
+    return;
+  }
   this.window.show();
 };
 
 DashboardWindow.prototype.hide = function () {
+  if (!this.window) {
+    return;
+  }
   this.window.hide();
 };
 

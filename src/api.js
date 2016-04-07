@@ -54,7 +54,7 @@ function Api(dashboardWindow, settingsWindow, screen, settings, cache) {
 }
 
 Api.prototype.openWindow = function () {
-  this.dashboardWindow.show();
+  this.dashboardWindow.open();
 };
 
 Api.prototype.openSettings = function () {

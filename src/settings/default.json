@@ -3,5 +3,6 @@
   "close-before-capture": true,
   "auto-save": false,
   "save-dir": null,
-  "default-uploader": null
+  "default-uploader": null,
+  "tray-on-close": false
 }
