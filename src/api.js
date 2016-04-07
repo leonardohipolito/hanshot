@@ -10,6 +10,7 @@ var fs = require('fs-extra');
 var electron = require('electron');
 
 var Jimp = require('./lib/jimp-extended');
+var Image = require('./image/image');
 
 //------------------------------------------------------------------------------
 // Private
@@ -45,12 +46,13 @@ function createFileName(type) {
 //------------------------------------------------------------------------------
 
 // TODO: this is getting ugly, maybe think about implementing everything using events
-function Api(dashboardWindow, settingsWindow, screen, settings, cache) {
+function Api(dashboardWindow, settingsWindow, screen, settings, cache, gallery) {
   this.dashboardWindow = dashboardWindow;
   this.settingsWindow = settingsWindow;
   this.screen = screen;
   this.settings = settings;
   this.cache = cache;
+  this.gallery = gallery;
 }
 
 Api.prototype.openWindow = function () {
@@ -121,9 +123,7 @@ Api.prototype.openFile = function (filePath) {
       image.write(filePath, function (err) {
         if (err) throw err;
 
-        var recent = this.cache.get('recent', []);
-        recent.unshift(filePath);
-        this.cache.set('recent', recent);
+        this.gallery.add(Image.createFromPath(filePath));
 
         console.error('Open');
       }.bind(this));
@@ -134,11 +134,11 @@ Api.prototype.openFile = function (filePath) {
 };
 
 Api.prototype.importFile = function () {
-  var image = electron.clipboard.readImage();
-  if (image.isEmpty()) {
+  var nativeImage = electron.clipboard.readImage();
+  if (nativeImage.isEmpty()) {
     return;
   }
-  var buf = image.toPng();
+  var buf = nativeImage.toPng();
 
   Jimp.read(buf, function (err, image) {
     if (err) throw err;
@@ -160,9 +160,7 @@ Api.prototype.importFile = function () {
       image.write(filePath, function (err) {
         if (err) throw err;
 
-        var recent = this.cache.get('recent', []);
-        recent.unshift(filePath);
-        this.cache.set('recent', recent);
+        this.gallery.add(new Image(nativeImage, filePath));
 
         console.error('Import');
       }.bind(this));
@@ -173,8 +171,8 @@ Api.prototype.importFile = function () {
 };
 
 Api.prototype.writeFile = function (type, data) {
-  var image = electron.nativeImage.createFromDataURL(data.dataURL);
-  var buf = image.toPng();
+  var nativeImage = electron.nativeImage.createFromDataURL(data.dataURL);
+  var buf = nativeImage.toPng();
 
   Jimp.read(buf, function (err, image) {
     if (err) throw err;
@@ -201,9 +199,7 @@ Api.prototype.writeFile = function (type, data) {
       image.write(filePath, function (err) {
         if (err) throw err;
 
-        var recent = this.cache.get('recent', []);
-        recent.unshift(filePath);
-        this.cache.set('recent', recent);
+        this.gallery.add(new Image(nativeImage, filePath));
 
         console.error('Shot');
       }.bind(this));

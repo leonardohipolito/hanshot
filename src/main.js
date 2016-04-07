@@ -16,6 +16,7 @@ var Cache = require('./cache');
 var Api = require('./api');
 var Tray = require('./tray');
 var Provider = require('./provider');
+var Gallery = require('./image/gallery');
 
 var windows = {
   Dashboard: require('./windows/dashboard'),
@@ -103,6 +104,7 @@ app.on('ready', function () {
   var settings = new Settings();
   var cache = new Cache();
   var screen = new Screen();
+  var gallery = new Gallery(cache.get('recent', []));
 
   // Create providers
 
@@ -134,34 +136,7 @@ app.on('ready', function () {
   });
 
   var imageProvider = new Provider(function (param, provide) {
-    var recent = cache.get('recent', []);
-    if (!recent.length) {
-      return provide(null, null);
-    }
-
-    var filePath = recent[0];
-
-    fs.readFile(filePath, function (err, buffer) {
-      if (err) {
-        if (err.code === 'ENOENT') {
-          return provide(null, null);
-        } else {
-          return provide(err);
-        }
-      }
-
-      var image = electron.nativeImage.createFromBuffer(buffer);
-      var imageSize = image.getSize();
-
-      provide(null, {
-        filePath: filePath,
-        fileName: path.basename(filePath),
-        dataURL: image.toDataURL(),
-        width: imageSize.width,
-        height: imageSize.height
-      });
-
-    });
+    provide(null, gallery.last());
   });
 
   // Listen providers
@@ -190,6 +165,9 @@ app.on('ready', function () {
   // Create windows
 
   var quitApp = function () {
+    var recentPaths = gallery.getPaths();
+    cache.set('recent', recentPaths);
+
     // TODO: use promises or callbacks to make async writes
     // now cache and settings are saved synchronously (is it bad?)
     screen.destroy();
@@ -226,6 +204,10 @@ app.on('ready', function () {
     uploadersProvider.triggerUpdate();
   });
 
+  gallery.on('added', function (image) {
+    imageProvider.triggerUpdate();
+  });
+
   electron.screen.on('display-added', function () {
     displaysProvider.triggerUpdate();
   });
@@ -243,7 +225,7 @@ app.on('ready', function () {
   // Work with actions
 
   // TODO: decide if API is required, maybe just gather all major instances
-  api = new Api(dashboardWindow, settingsWindow, screen, settings, cache);
+  api = new Api(dashboardWindow, settingsWindow, screen, settings, cache, gallery);
 
   tray = new Tray();
 
@@ -340,6 +322,11 @@ app.on('ready', function () {
 
   electron.ipcMain.on('upload-requested', function (event, data) {
 
+    var image = gallery.find(data.filePath);
+    if (!image) {
+      return;
+    }
+
     var Uploader;
 
     if (data.uploaderId) {
@@ -355,7 +342,7 @@ app.on('ready', function () {
 
     var uploader = new Uploader(cache);
 
-    uploader.upload(data.filePath, function (err, link) {
+    uploader.upload(image.getFilePath(), function (err, link) {
       if (err) throw err;
 
       electron.clipboard.writeText(link);
@@ -371,24 +358,17 @@ app.on('ready', function () {
 
     var copyId = data.copyId || 'image';
 
+    var image = gallery.find(data.filePath);
+    if (!image) {
+      return;
+    }
+
     if (copyId === 'image') {
-
-      fs.readFile(data.filePath, function (err, buffer) {
-        if (err) throw err;
-
-        var image = electron.nativeImage.createFromBuffer(buffer);
-        electron.clipboard.writeImage(image);
-      });
-
+      electron.clipboard.writeImage(image.getNative());
     } else if (copyId === 'fileName') {
-
-      var fileName = path.basename(data.filePath);
-      electron.clipboard.writeText(fileName);
-
+      electron.clipboard.writeText(image.getFileName());
     } else if (copyId === 'filePath') {
-
-      electron.clipboard.writeText(data.filePath);
-
+      electron.clipboard.writeText(image.getFilePath());
     }
 
   });
