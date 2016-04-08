@@ -34,6 +34,10 @@ var Image = React.createClass({
           <span>
             {this.props.image.width} x {this.props.image.height} pixels
           </span>
+          {' '}
+          <span>
+            {this.props.image.fileSizeHuman}
+          </span>
         </div>
       </div>
     );
