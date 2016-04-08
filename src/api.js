@@ -41,6 +41,14 @@ function createFileName(type) {
   return fileName;
 }
 
+function createExt(imageFormat) {
+  var formats = {
+    jpg: 'jpg',
+    png: 'png'
+  };
+  return formats[imageFormat];
+}
+
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
@@ -108,7 +116,11 @@ Api.prototype.openFile = function (filePath) {
 
     var cacheBaseDir = electron.app.getPath('appData');
 
-    var fileName = createFileName('open') + '.png';
+    var fileName = [
+      createFileName('open'),
+      createExt(this.settings.get('image-format'))
+    ].join('.');
+
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
     if (this.settings.get('auto-save')) {
@@ -138,14 +150,23 @@ Api.prototype.importFile = function () {
   if (nativeImage.isEmpty()) {
     return;
   }
-  var buf = nativeImage.toPng();
+  var buf = null;
+  if (this.settings.get('image-format') === 'jpg') {
+    buf = nativeImage.toJpeg(this.settings.get('jpg-quality'));
+  } else {
+    buf = nativeImage.toPng();
+  }
 
   Jimp.read(buf, function (err, image) {
     if (err) throw err;
 
     var cacheBaseDir = electron.app.getPath('appData');
 
-    var fileName = createFileName('clipboard') + '.png';
+    var fileName = [
+      createFileName('clipboard'),
+      createExt(this.settings.get('image-format'))
+    ].join('.');
+
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
     if (this.settings.get('auto-save')) {
@@ -172,7 +193,12 @@ Api.prototype.importFile = function () {
 
 Api.prototype.writeFile = function (type, data) {
   var nativeImage = electron.nativeImage.createFromDataURL(data.dataURL);
-  var buf = nativeImage.toPng();
+  var buf = null;
+  if (this.settings.get('image-format') === 'jpg') {
+    buf = nativeImage.toJpeg(this.settings.get('jpg-quality'));
+  } else {
+    buf = nativeImage.toPng();
+  }
 
   Jimp.read(buf, function (err, image) {
     if (err) throw err;
@@ -184,7 +210,11 @@ Api.prototype.writeFile = function (type, data) {
 
     var cacheBaseDir = electron.app.getPath('appData');
 
-    var fileName = createFileName(type) + '.png';
+    var fileName = [
+      createFileName(type),
+      createExt(this.settings.get('image-format'))
+    ].join('.');
+
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
     if (this.settings.get('auto-save')) {

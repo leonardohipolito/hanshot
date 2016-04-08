@@ -4,5 +4,7 @@
   "auto-save": false,
   "save-dir": null,
   "default-uploader": null,
-  "tray-on-close": false
+  "tray-on-close": false,
+  "image-format": "png",
+  "jpg-quality": 80
 }

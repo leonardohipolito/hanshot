@@ -7,6 +7,7 @@ var OpenAfterCapture = require('./components/open-after-capture.jsx');
 var TrayOnClose = require('./components/tray-on-close.jsx');
 var SaveDirectory = require('./components/save-directory.jsx');
 var DefaultUploader = require('./components/default-uploader.jsx');
+var ImageFormat = require('./components/image-format.jsx');
 
 var Settings = React.createClass({
   getInitialState: function () {
@@ -43,6 +44,10 @@ var Settings = React.createClass({
           />
           <DefaultUploader
             uploaders={this.state.uploaders}
+          />
+          <ImageFormat
+            imageFormat={this.state.settings['image-format']}
+            jpgQuality={this.state.settings['jpg-quality']}
           />
         </form>
       </div>

@@ -53,6 +53,7 @@ var DefaultUploader = React.createClass({
 
     return (
       <div className="form-group">
+        <label>Default uploader</label>
         {radioItems}
       </div>
     );
