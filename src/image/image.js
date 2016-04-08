@@ -29,6 +29,10 @@ Image.prototype.getNative = function () {
   return this.native;
 };
 
+Image.prototype.getFileName = function () {
+  return this.fileName;
+};
+
 Image.prototype.getFilePath = function () {
   return this.filePath;
 };

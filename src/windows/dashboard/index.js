@@ -90,6 +90,15 @@ DashboardWindow.prototype.open = function () {
           type: 'separator'
         },
         {
+          label: 'Save as...',
+          click: function () {
+            self.emit('action', 'save-as');
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
           label: 'Quit',
           click: function () {
             self.emit('action', 'force-quit');

@@ -275,12 +275,35 @@ app.on('ready', function () {
             }
           ],
         }, function (filePaths) {
-          if (_.isUndefined(filePaths)) {
+          if (!filePaths) {
             // "Cancel" pressed
             return;
           }
           var filePath = filePaths[0];
           api.openFile(filePath);
+        });
+        break;
+      case 'save-as':
+        var image = gallery.last();
+        if (!image) {
+          return;
+        }
+        electron.dialog.showSaveDialog({
+          defaultPath: path.join(electron.app.getPath('pictures'), image.getFileName()),
+          filters: [
+            {
+              name: 'All Compatible Image Formats',
+              extensions: ['jpg', 'png']
+            },
+            { name: 'PNG', extensions: ['png'] },
+            { name: 'JPEG', extensions: ['jpg'] }
+          ]
+        }, function (filePath) {
+          if (!filePath) {
+            // "Cancel" pressed
+            return;
+          }
+          api.saveFileAs(filePath, image);
         });
         break;
       case 'force-quit':
@@ -310,7 +333,7 @@ app.on('ready', function () {
       defaultPath: settings.get('save-dir'),
       properties: ['openDirectory', 'createDirectory']
     }, function (directoryPaths) {
-      if (_.isUndefined(directoryPaths)) {
+      if (!directoryPaths) {
         // "Cancel" pressed
         return;
       }

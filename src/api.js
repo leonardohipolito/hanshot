@@ -111,6 +111,7 @@ Api.prototype.captureWindow = function (windowId) {
 };
 
 Api.prototype.openFile = function (filePath) {
+  var self = this;
   Jimp.read(filePath, function (err, image) {
     if (err) throw err;
 
@@ -118,13 +119,13 @@ Api.prototype.openFile = function (filePath) {
 
     var fileName = [
       createFileName('open'),
-      createExt(this.settings.get('image-format'))
+      createExt(self.settings.get('image-format'))
     ].join('.');
 
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    if (this.settings.get('auto-save')) {
-      fileDir = this.settings.get('save-dir');
+    if (self.settings.get('auto-save')) {
+      fileDir = self.settings.get('save-dir');
     }
 
     var filePath = path.join(fileDir, fileName);
@@ -135,24 +136,26 @@ Api.prototype.openFile = function (filePath) {
       image.write(filePath, function (err) {
         if (err) throw err;
 
-        this.gallery.add(Image.createFromPath(filePath));
+        self.gallery.add(Image.createFromPath(filePath));
 
         console.error('Open');
-      }.bind(this));
+      });
 
-    }.bind(this));
+    });
 
-  }.bind(this));
+  });
 };
 
 Api.prototype.importFile = function () {
+  var self = this;
+
   var nativeImage = electron.clipboard.readImage();
   if (nativeImage.isEmpty()) {
     return;
   }
   var buf = null;
-  if (this.settings.get('image-format') === 'jpg') {
-    buf = nativeImage.toJpeg(this.settings.get('jpg-quality'));
+  if (self.settings.get('image-format') === 'jpg') {
+    buf = nativeImage.toJpeg(self.settings.get('jpg-quality'));
   } else {
     buf = nativeImage.toPng();
   }
@@ -164,13 +167,13 @@ Api.prototype.importFile = function () {
 
     var fileName = [
       createFileName('clipboard'),
-      createExt(this.settings.get('image-format'))
+      createExt(self.settings.get('image-format'))
     ].join('.');
 
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    if (this.settings.get('auto-save')) {
-      fileDir = this.settings.get('save-dir');
+    if (self.settings.get('auto-save')) {
+      fileDir = self.settings.get('save-dir');
     }
 
     var filePath = path.join(fileDir, fileName);
@@ -181,21 +184,23 @@ Api.prototype.importFile = function () {
       image.write(filePath, function (err) {
         if (err) throw err;
 
-        this.gallery.add(new Image(nativeImage, filePath));
+        self.gallery.add(new Image(nativeImage, filePath));
 
         console.error('Import');
-      }.bind(this));
+      });
 
-    }.bind(this));
+    });
 
-  }.bind(this));
+  });
 };
 
 Api.prototype.writeFile = function (type, data) {
+  var self = this;
+
   var nativeImage = electron.nativeImage.createFromDataURL(data.dataURL);
   var buf = null;
-  if (this.settings.get('image-format') === 'jpg') {
-    buf = nativeImage.toJpeg(this.settings.get('jpg-quality'));
+  if (self.settings.get('image-format') === 'jpg') {
+    buf = nativeImage.toJpeg(self.settings.get('jpg-quality'));
   } else {
     buf = nativeImage.toPng();
   }
@@ -212,13 +217,13 @@ Api.prototype.writeFile = function (type, data) {
 
     var fileName = [
       createFileName(type),
-      createExt(this.settings.get('image-format'))
+      createExt(self.settings.get('image-format'))
     ].join('.');
 
     var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-    if (this.settings.get('auto-save')) {
-      fileDir = this.settings.get('save-dir');
+    if (self.settings.get('auto-save')) {
+      fileDir = self.settings.get('save-dir');
     }
 
     var filePath = path.join(fileDir, fileName);
@@ -229,14 +234,37 @@ Api.prototype.writeFile = function (type, data) {
       image.write(filePath, function (err) {
         if (err) throw err;
 
-        this.gallery.add(new Image(nativeImage, filePath));
+        self.gallery.add(new Image(nativeImage, filePath));
 
         console.error('Shot');
-      }.bind(this));
+      });
 
-    }.bind(this));
+    });
 
-  }.bind(this));
+  });
+};
+
+Api.prototype.saveFileAs = function (filePath, image) {
+  var self = this;
+  var nativeImage = image.getNative();
+  var buf = null;
+
+  var ext = path.extname(filePath).toLowerCase();
+  if (ext === '.jpg' || ext === '.jpeg') {
+    buf = nativeImage.toJpeg(this.settings.get('jpg-quality'));
+  } else {
+    buf = nativeImage.toPng();
+  }
+
+  Jimp.read(buf, function (err, image) {
+    if (err) throw err;
+
+    image.write(filePath, function (err) {
+      if (err) throw err;
+
+      console.log('Save as');
+    });
+  });
 };
 
 module.exports = Api;
