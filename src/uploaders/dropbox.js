@@ -60,7 +60,8 @@ function DropboxUploader(cache) {
   this.cache = cache;
 }
 
-DropboxUploader.prototype.upload = function (filePath, cb) {
+DropboxUploader.prototype.upload = function (image, cb) {
+  var filePath = image.getFilePath();
 
   var token = this.cache.get('uploaders.dropbox.token');
 

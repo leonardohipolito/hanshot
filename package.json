@@ -6,7 +6,6 @@
     "bootstrap": "^3.3.6",
     "cropperjs": "^0.7.0",
     "dropbox": "^0.10.3",
-    "imgur": "^0.1.7",
     "jquery": "^2.2.1",
     "lodash": "^4.6.1",
     "mkdirp": "^0.5.1",

@@ -67,6 +67,11 @@ Image.prototype.toJpgBuffer = function (quality) {
   return this.native.toJpeg(quality);
 };
 
+Image.prototype.toBase64 = function () {
+  var parts = this.dataURL.split('base64,');
+  return parts[1];
+};
+
 Image.createFromPath = function (filePath) {
   var native = electron.nativeImage.createFromPath(filePath);
   if (native.isEmpty()) {

@@ -368,7 +368,7 @@ app.on('ready', function () {
 
     var uploader = new Uploader(cache);
 
-    uploader.upload(image.getFilePath(), function (err, link) {
+    uploader.upload(image, function (err, link) {
       if (err) throw err;
 
       electron.clipboard.writeText(link);
