@@ -54,9 +54,13 @@ function createExt(imageFormat) {
 //------------------------------------------------------------------------------
 
 // TODO: this is getting ugly, maybe think about implementing everything using events
-function Api(dashboardWindow, settingsWindow, screen, settings, cache, gallery) {
+function Api(
+  dashboardWindow, settingsWindow, selectionWindow,
+  screen, settings, cache, gallery
+) {
   this.dashboardWindow = dashboardWindow;
   this.settingsWindow = settingsWindow;
+  this.selectionWindow = selectionWindow;
   this.screen = screen;
   this.settings = settings;
   this.cache = cache;
@@ -75,22 +79,9 @@ Api.prototype.captureDesktop = function (displayId) {
   if (this.settings.get('close-before-capture')) {
     this.dashboardWindow.hide();
   }
-  this.screen.captureDesktop(displayId, function (err, snapshot) {
+  this.screen.captureDisplay(displayId, function (err, dataURL) {
     if (err) throw err;
-    this.writeFile('desktop', snapshot);
-    if (this.settings.get('open-after-capture')) {
-      this.dashboardWindow.show();
-    }
-  }.bind(this));
-};
-
-Api.prototype.captureSelection = function (displayId) {
-  if (this.settings.get('close-before-capture')) {
-    this.dashboardWindow.hide();
-  }
-  this.screen.captureSelection(displayId, function (err, snapshot) {
-    if (err) throw err;
-    this.writeFile('selection', snapshot);
+    this.writeFile('desktop', dataURL);
     if (this.settings.get('open-after-capture')) {
       this.dashboardWindow.show();
     }
@@ -101,13 +92,44 @@ Api.prototype.captureWindow = function (windowId) {
   if (this.settings.get('close-before-capture')) {
     this.dashboardWindow.hide();
   }
-  this.screen.captureWindow(windowId, function (err, snapshot) {
+  this.screen.captureWindow(windowId, function (err, dataURL) {
     if (err) throw err;
-    this.writeFile('window', snapshot);
+    this.writeFile('window', dataURL);
     if (this.settings.get('open-after-capture')) {
       this.dashboardWindow.show();
     }
   }.bind(this));
+};
+
+Api.prototype.captureSelection = function (displayId) {
+  var self = this;
+
+  var display = this.screen.getDisplayById(displayId);
+  if (!display) {
+    display = this.screen.getActiveDisplay();
+  }
+
+  if (this.settings.get('close-before-capture')) {
+    this.dashboardWindow.hide();
+  }
+
+  this.screen.captureDisplay(display.id, function (err, dataURL) {
+    if (err) throw err;
+
+    self.selectionWindow.open({
+      dataURL: dataURL,
+      displayBounds: display.bounds
+    }, function (err, selectionDataURL) {
+      if (err) {
+        // Failed or cancelled
+      } else {
+        self.writeFile('selection', selectionDataURL);
+      }
+      if (self.settings.get('open-after-capture')) {
+        self.dashboardWindow.show();
+      }
+    });
+  });
 };
 
 Api.prototype.openFile = function (filePath) {
@@ -157,10 +179,10 @@ Api.prototype.importFile = function () {
   });
 };
 
-Api.prototype.writeFile = function (type, data) {
+Api.prototype.writeFile = function (type, dataURL) {
   var self = this;
 
-  var nativeImage = electron.nativeImage.createFromDataURL(data.dataURL);
+  var nativeImage = electron.nativeImage.createFromDataURL(dataURL);
   var buffer = null;
   if (this.settings.get('image-format') === 'jpg') {
     buffer = nativeImage.toJpeg(this.settings.get('jpg-quality'));

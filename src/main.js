@@ -20,7 +20,8 @@ var Gallery = require('./image/gallery');
 
 var windows = {
   Dashboard: require('./windows/dashboard'),
-  Settings: require('./windows/settings')
+  Settings: require('./windows/settings'),
+  Selection: require('./windows/selection')
 };
 
 var cli = require('./cli');
@@ -100,6 +101,7 @@ app.on('ready', function () {
 
   var dashboardWindow = new windows.Dashboard();
   var settingsWindow = new windows.Settings();
+  var selectionWindow = new windows.Selection();
 
   var settings = new Settings();
   var cache = new Cache();
@@ -208,24 +210,25 @@ app.on('ready', function () {
     imageProvider.triggerUpdate();
   });
 
-  electron.screen.on('display-added', function () {
+  screen.on('display-added', function () {
     displaysProvider.triggerUpdate();
   });
-  // ISSUE: display-removed does not fire, maybe use focus?
-  // https://github.com/atom/electron/issues/3075
-  electron.screen.on('display-removed', function () {
+
+  screen.on('display-removed', function () {
     displaysProvider.triggerUpdate();
   });
-  // ISSUE: display-metrics-changed does not fire, maybe use focus?
-  // https://github.com/atom/electron/issues/3075
-  electron.screen.on('display-metrics-changed', function () {
+
+  screen.on('display-updated', function () {
     displaysProvider.triggerUpdate();
   });
 
   // Work with actions
 
   // TODO: decide if API is required, maybe just gather all major instances
-  api = new Api(dashboardWindow, settingsWindow, screen, settings, cache, gallery);
+  api = new Api(
+    dashboardWindow, settingsWindow, selectionWindow,
+    screen, settings, cache, gallery
+  );
 
   tray = new Tray();
 

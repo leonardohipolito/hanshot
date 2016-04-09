@@ -4,7 +4,7 @@
   "main": "src/main.js",
   "dependencies": {
     "bootstrap": "^3.3.6",
-    "cropperjs": "^0.6.0",
+    "cropperjs": "^0.7.0",
     "dropbox": "^0.10.3",
     "imgur": "^0.1.7",
     "jquery": "^2.2.1",
