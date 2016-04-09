@@ -59,6 +59,14 @@ Image.prototype.getFilePath = function () {
   return this.filePath;
 };
 
+Image.prototype.toPngBuffer = function () {
+  return this.native.toPng();
+};
+
+Image.prototype.toJpgBuffer = function (quality) {
+  return this.native.toJpeg(quality);
+};
+
 Image.createFromPath = function (filePath) {
   var native = electron.nativeImage.createFromPath(filePath);
   if (native.isEmpty()) {

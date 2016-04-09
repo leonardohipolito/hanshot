@@ -4,12 +4,12 @@
 // Requirements
 //------------------------------------------------------------------------------
 
+var fs = require('fs');
 var path = require('path');
 
-var fs = require('fs-extra');
 var electron = require('electron');
+var mkdirp = require('mkdirp');
 
-var Jimp = require('./lib/jimp-extended');
 var Image = require('./image/image');
 
 //------------------------------------------------------------------------------
@@ -111,39 +111,7 @@ Api.prototype.captureWindow = function (windowId) {
 };
 
 Api.prototype.openFile = function (filePath) {
-  var self = this;
-  Jimp.read(filePath, function (err, image) {
-    if (err) throw err;
-
-    var cacheBaseDir = electron.app.getPath('appData');
-
-    var fileName = [
-      createFileName('open'),
-      createExt(self.settings.get('image-format'))
-    ].join('.');
-
-    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
-
-    if (self.settings.get('auto-save')) {
-      fileDir = self.settings.get('save-dir');
-    }
-
-    var filePath = path.join(fileDir, fileName);
-
-    fs.mkdirs(fileDir, function (err) {
-      if (err) throw err;
-
-      image.write(filePath, function (err) {
-        if (err) throw err;
-
-        self.gallery.add(Image.createFromPath(filePath));
-
-        console.error('Open');
-      });
-
-    });
-
-  });
+  this.gallery.add(Image.createFromPath(filePath));
 };
 
 Api.prototype.importFile = function () {
@@ -151,46 +119,41 @@ Api.prototype.importFile = function () {
 
   var nativeImage = electron.clipboard.readImage();
   if (nativeImage.isEmpty()) {
+    console.warn('Image is empty');
     return;
   }
-  var buf = null;
-  if (self.settings.get('image-format') === 'jpg') {
-    buf = nativeImage.toJpeg(self.settings.get('jpg-quality'));
+  var buffer = null;
+  if (this.settings.get('image-format') === 'jpg') {
+    buffer = nativeImage.toJpeg(this.settings.get('jpg-quality'));
   } else {
-    buf = nativeImage.toPng();
+    buffer = nativeImage.toPng();
   }
 
-  Jimp.read(buf, function (err, image) {
+  var cacheBaseDir = electron.app.getPath('appData');
+
+  var fileName = [
+    createFileName('clipboard'),
+    createExt(this.settings.get('image-format'))
+  ].join('.');
+
+  var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
+
+  if (this.settings.get('auto-save')) {
+    fileDir = this.settings.get('save-dir');
+  }
+
+  var filePath = path.join(fileDir, fileName);
+
+  mkdirp(fileDir, function (err) {
     if (err) throw err;
 
-    var cacheBaseDir = electron.app.getPath('appData');
-
-    var fileName = [
-      createFileName('clipboard'),
-      createExt(self.settings.get('image-format'))
-    ].join('.');
-
-    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
-
-    if (self.settings.get('auto-save')) {
-      fileDir = self.settings.get('save-dir');
-    }
-
-    var filePath = path.join(fileDir, fileName);
-
-    fs.mkdirs(fileDir, function (err) {
+    fs.writeFile(filePath, buffer, function (err) {
       if (err) throw err;
 
-      image.write(filePath, function (err) {
-        if (err) throw err;
+      self.gallery.add(new Image(nativeImage, filePath));
 
-        self.gallery.add(new Image(nativeImage, filePath));
-
-        console.error('Import');
-      });
-
+      console.error('Import');
     });
-
   });
 };
 
@@ -198,72 +161,55 @@ Api.prototype.writeFile = function (type, data) {
   var self = this;
 
   var nativeImage = electron.nativeImage.createFromDataURL(data.dataURL);
-  var buf = null;
-  if (self.settings.get('image-format') === 'jpg') {
-    buf = nativeImage.toJpeg(self.settings.get('jpg-quality'));
+  var buffer = null;
+  if (this.settings.get('image-format') === 'jpg') {
+    buffer = nativeImage.toJpeg(this.settings.get('jpg-quality'));
   } else {
-    buf = nativeImage.toPng();
+    buffer = nativeImage.toPng();
   }
 
-  Jimp.read(buf, function (err, image) {
+  var cacheBaseDir = electron.app.getPath('appData');
+
+  var fileName = [
+    createFileName(type),
+    createExt(this.settings.get('image-format'))
+  ].join('.');
+
+  var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
+
+  if (this.settings.get('auto-save')) {
+    fileDir = this.settings.get('save-dir');
+  }
+
+  var filePath = path.join(fileDir, fileName);
+
+  mkdirp(fileDir, function (err) {
     if (err) throw err;
 
-    // TODO: crop right in capture.html, return buffer from screen
-    if (data.autocrop) {
-      image.autocropRightBottomAlpha();
-    }
-
-    var cacheBaseDir = electron.app.getPath('appData');
-
-    var fileName = [
-      createFileName(type),
-      createExt(self.settings.get('image-format'))
-    ].join('.');
-
-    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
-
-    if (self.settings.get('auto-save')) {
-      fileDir = self.settings.get('save-dir');
-    }
-
-    var filePath = path.join(fileDir, fileName);
-
-    fs.mkdirs(fileDir, function (err) {
+    fs.writeFile(filePath, buffer, function (err) {
       if (err) throw err;
 
-      image.write(filePath, function (err) {
-        if (err) throw err;
+      self.gallery.add(new Image(nativeImage, filePath));
 
-        self.gallery.add(new Image(nativeImage, filePath));
-
-        console.error('Shot');
-      });
-
+      console.error('Shot');
     });
-
   });
 };
 
 Api.prototype.saveFileAs = function (filePath, image) {
-  var self = this;
-  var nativeImage = image.getNative();
-  var buf = null;
+  var buffer = null;
 
   var ext = path.extname(filePath).toLowerCase();
   if (ext === '.jpg' || ext === '.jpeg') {
-    buf = nativeImage.toJpeg(this.settings.get('jpg-quality'));
+    buffer = image.toJpgBuffer(this.settings.get('jpg-quality'));
   } else {
-    buf = nativeImage.toPng();
+    buffer = image.toPngBuffer();
   }
 
-  Jimp.read(buf, function (err, image) {
+  fs.writeFile(filePath, buffer, function (err) {
     if (err) throw err;
 
-    image.write(filePath, function (err) {
-      if (err) throw err;
-
-      console.log('Save as');
-    });
+    console.log('Save as');
   });
 };
 

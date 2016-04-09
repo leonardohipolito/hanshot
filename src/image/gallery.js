@@ -36,6 +36,9 @@ Gallery.prototype.load = function (filePath) {
 };
 
 Gallery.prototype.add = function (image) {
+  if (!image) {
+    return;
+  }
   this.currentImage = image;
   this.paths.push(image.getFilePath());
   this.emit('added', image);

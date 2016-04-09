@@ -219,11 +219,12 @@
 
         ctx.drawImage(video, 0, 0);
 
-        var dataURL = canvas.toDataURL('image/png');
+        var croppedCanvas = autocropRightBottomAlpha(canvas);
+
+        var dataURL = croppedCanvas.toDataURL('image/png');
         ipcRenderer.send('capture', {
           action: 'complete',
           dataURL: dataURL,
-          autocrop: true,
           options: options
         });
 
@@ -231,6 +232,41 @@
         destroyStream();
       });
 
+    }
+
+    // Based on https://gist.github.com/remy/784508
+    function autocropRightBottomAlpha(canvas) {
+
+      var ctx = canvas.getContext('2d');
+      var copy = document.createElement('canvas').getContext('2d');
+      var pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      var cropX = 0, cropY = 0;
+
+      for (var i = 0; i < pixels.data.length; i += 4) {
+        var alpha = pixels.data[i+3];
+        if (alpha !== 0) {
+
+          // ?
+          var x = (i / 4) % canvas.width;
+          var y = ~~((i / 4) / canvas.width);
+
+          cropX = Math.max(cropX, x);
+          cropY = Math.max(cropY, y);
+        }
+      }
+
+      if (!(cropX > 0 && cropY > 0)) {
+        return canvas;
+      }
+
+      var cropped = ctx.getImageData(0, 0, cropX, cropY);
+
+      copy.canvas.width = cropX;
+      copy.canvas.height = cropY;
+      copy.putImageData(cropped, 0, 0);
+
+      return copy.canvas;
     }
 
   </script>
