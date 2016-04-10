@@ -4,88 +4,126 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var fs = require('fs');
-var path = require('path');
 var url = require('url');
+var https = require('https');
 var querystring = require('querystring');
 
 var electron = require('electron');
-var Dropbox = require('dropbox');
+var _ = require('lodash');
+
+//------------------------------------------------------------------------------
+// Constants
+//------------------------------------------------------------------------------
+
+var DROPBOX_APP_KEY = 'kpcl06276lsh12t';
+
+var DROPBOX_UPLOAD_ENDPOINT = 'https://content.dropboxapi.com/2/files/upload';
+var DROPBOX_SHARE_ENDPOINT = 'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings';
+
+// Has size limit 150MB https://www.dropbox.com/developers/documentation/http/documentation#files-upload
+var DROPBOX_SIZE_LIMIT = 150;
+
+var REDIRECT_URI = 'hanshot://uploaders/dropbox/dummy';
 
 //------------------------------------------------------------------------------
 // Private
 //------------------------------------------------------------------------------
 
-var APP_KEY = 'kpcl06276lsh12t';
-var REDIRECT_URI = 'hanshot://uploaders/dropbox/dummy';
+function upload(image, token, callback) {
+  var urlObj = url.parse(DROPBOX_UPLOAD_ENDPOINT);
 
-function upload(filePath, token, cb) {
+  var requestData = image.toPngBuffer();
 
-  var client = new Dropbox.Client({
-    key: APP_KEY,
-    token: token
+  var requestOptions = {
+    host: urlObj.host,
+    path: urlObj.path,
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Dropbox-API-Arg': '{"path":"/' + image.getFileName() + '"}',
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': requestData.length
+    }
+  };
+
+  var req = https.request(requestOptions, function (res) {
+    var body = '';
+
+    res.on('data', function (chunk) {
+      body += chunk;
+    });
+    res.on('end', function () {
+      if (res.statusCode === 200) {
+        var json = JSON.parse(body);
+        callback(null);
+      } else {
+        // handle error
+      }
+    });
   });
 
-  client.authenticate({ interactive: false }, function (err, client) {
-    if (err) throw err;
+  req.on('error', function (err) {
+    // handle error
+  });
 
-    fs.readFile(filePath, function (err, buffer) {
-      if (err) throw err;
+  req.write(requestData);
+  req.end();
+}
 
-      var fileName = path.basename(filePath);
+function share(image, token, callback) {
+  callback = callback || function () {};
 
-      // TODO: these two operations take a lot of time
-      client.writeFile(fileName, buffer, function (err, response) {
-        if (err) throw err;
+  var urlObj = url.parse(DROPBOX_SHARE_ENDPOINT);
 
-        client.makeUrl(fileName, function (err, response) {
-          if (err) throw err;
+  var requestData = JSON.stringify({
+    path: '/' + image.getFileName()
+  });
 
-          cb(null, response.url);
+  var requestOptions = {
+    host: urlObj.host,
+    path: urlObj.path,
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    }
+  };
 
-        });
+  var req = https.request(requestOptions, function (res) {
+    var body = '';
 
-      });
+    res.on('data', function (chunk) {
+      body += chunk;
+    });
+    res.on('end', function () {
+
+      if (res.statusCode === 200) {
+
+        var json = JSON.parse(body);
+
+        callback(null, json.url);
+
+      } else {
+        // handle error
+      }
 
     });
   });
 
+  req.on('error', function (err) {
+    // handle error
+  });
+
+  req.write(requestData);
+  req.end();
 }
 
-//------------------------------------------------------------------------------
-// Public Interface
-//------------------------------------------------------------------------------
-
-function DropboxUploader(cache) {
-  this.cache = cache;
-}
-
-DropboxUploader.prototype.upload = function (image, cb) {
-  var filePath = image.getFilePath();
-
-  var token = this.cache.get('uploaders.dropbox.token');
-
-  if (token) {
-
-    upload(filePath, token, cb);
-
-  } else {
-
-    this.authorize(function (err, token) {
-      if (err) throw err;
-
-      upload(filePath, token, cb);
-    });
-
-  }
-
-};
-
-DropboxUploader.prototype.authorize = function (cb) {
+function authorize(callback) {
+  callback = callback || function () {};
 
   var authUrl = 'https://www.dropbox.com/1/oauth2/authorize?' +
     'response_type=token' +
-    '&client_id=kpcl06276lsh12t' +
+    '&client_id=' + DROPBOX_APP_KEY +
     '&redirect_uri=' + REDIRECT_URI;
 
   var window = new electron.BrowserWindow({
@@ -116,20 +154,62 @@ DropboxUploader.prototype.authorize = function (cb) {
 
       var token = queryStringObj.access_token;
 
-      this.cache.set('uploaders.dropbox.token', token);
+      callback(null, token);
 
-      cb(null, token);
+      window.close();
 
     }
 
-  }.bind(this));
+  });
 
   window.loadURL(authUrl);
 
   window.on('close', function () {
     window = null;
   });
+}
 
-};
+//------------------------------------------------------------------------------
+// Public Interface
+//------------------------------------------------------------------------------
+
+function DropboxUploader(cache) {
+  this.cache = cache;
+}
+
+DropboxUploader.prototype.upload = function (image, callback) {
+  callback = callback || function () {};
+
+  var self = this;
+
+  var token = this.cache.get('uploaders.dropbox.token');
+  if (token) {
+
+    upload(image, token, function (err) {
+      if (err) throw err;
+      share(image, token, function (err, link) {
+        if (err) throw err;
+        callback(null, link);
+      });
+    });
+
+  } else {
+    authorize(function (err, token) {
+      if (err) throw err;
+
+      self.cache.set('uploaders.dropbox.token', token);
+
+      upload(image, token, function (err) {
+        if (err) throw err;
+        share(image, token, function (err, link) {
+          if (err) throw err;
+          callback(null, link);
+        });
+      });
+
+    });
+  }
+
+}
 
 module.exports = DropboxUploader;
