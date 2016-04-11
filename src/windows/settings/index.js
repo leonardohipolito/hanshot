@@ -67,6 +67,12 @@ SettingsWindow.prototype.open = function () {
           click: function () {
             self.window.webContents.openDevTools();
           }
+        },
+        {
+          label: 'Reload',
+          click: function () {
+            self.window.reload();
+          }
         }
       ]
     }

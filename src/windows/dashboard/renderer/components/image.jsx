@@ -19,8 +19,10 @@ var Image = React.createClass({
 
     return (
       <div className="panel panel-default image-container">
-        <div className="panel-heading">{this.props.image.fileName}</div>
-        <div className="panel-body image-body">
+        <div className="panel-heading image-title">
+          {this.props.image.fileName}
+        </div>
+        <div className="panel-body image-content">
           <div
             className="image"
             style={{

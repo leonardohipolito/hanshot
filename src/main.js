@@ -44,7 +44,6 @@ var isLinux = (process.platform === 'linux');
 // so they won't be garbage collected when handler executes
 var api = null;
 var tray = null;
-var controller = null;
 
 // ---
 
@@ -76,15 +75,6 @@ var shouldQuit = app.makeSingleInstance(function (argv, workdir) {
 if (shouldQuit) {
   app.quit();
   return;
-}
-
-// ---
-
-if (isLinux) {
-  // http://electron.atom.io/docs/v0.36.8/api/frameless-window/#limitations
-  // Alpha channel doesn’t work on some NVidia drivers on Linux
-  app.commandLine.appendSwitch('enable-transparent-visuals');
-  app.commandLine.appendSwitch('disable-gpu');
 }
 
 // ---
@@ -251,7 +241,7 @@ app.on('ready', function () {
         api.captureWindow(action.windowId);
         break;
       case 'open-dashboard':
-        api.openWindow();
+        api.openDashboard();
         break;
       case 'open-settings':
         api.openSettings();

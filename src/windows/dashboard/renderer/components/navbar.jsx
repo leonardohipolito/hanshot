@@ -20,7 +20,7 @@ var Navbar = React.createClass({
   },
   render: function () {
     return (
-      <nav className="navbar navbar-default">
+      <nav className="navbar navbar-default dashboard-navbar">
         <div className="container-fluid">
           <div className="navbar-btn pull-left">
             <SnapDesktop displays={this.props.displays} />

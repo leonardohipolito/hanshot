@@ -67,7 +67,7 @@ function Api(
   this.gallery = gallery;
 }
 
-Api.prototype.openWindow = function () {
+Api.prototype.openDashboard = function () {
   this.dashboardWindow.open();
 };
 

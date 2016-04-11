@@ -30,7 +30,14 @@ var Dashboard = React.createClass({
           uploaders={this.state.uploaders}
           image={this.state.image}
         />
-        <div className="container-fluid dashboard-content">
+        <div className="dashboard-content">
+          <div className="error-container">
+            <div className="alert alert-warning" role="alert">
+              <strong>Warning!</strong>
+              {' '}
+              Better check yourself, you're not looking too good.
+            </div>
+          </div>
           <Image image={this.state.image} />
         </div>
       </div>
