@@ -16,6 +16,7 @@ var Cache = require('./cache');
 var Api = require('./api');
 var Tray = require('./tray');
 var Provider = require('./provider');
+var Dispatcher = require('./dispatcher');
 var Gallery = require('./image/gallery');
 
 var windows = {
@@ -102,6 +103,8 @@ app.on('ready', function () {
   var dashboardWindow = new windows.Dashboard();
   var settingsWindow = new windows.Settings();
   var selectionWindow = new windows.Selection();
+
+  var dispatcher = new Dispatcher();
 
   var settings = new Settings();
   var cache = new Cache();
@@ -232,34 +235,23 @@ app.on('ready', function () {
 
   tray = new Tray();
 
-  tray.on('action', function (actionName) {
-    switch (actionName) {
+  tray.on('action', dispatcher.dispatch.bind(dispatcher));
+  dashboardWindow.on('action', dispatcher.dispatch.bind(dispatcher));
+  settingsWindow.on('action', dispatcher.dispatch.bind(dispatcher));
+
+  dispatcher.register(function (action) {
+    switch (action.actionName) {
       case 'capture-desktop':
-        api.captureDesktop();
+        api.captureDesktop(action.displayId);
         break;
       case 'capture-selection':
-        api.captureSelection();
+        api.captureSelection(action.displayId);
+        break;
+      case 'capture-window':
+        api.captureWindow(action.windowId);
         break;
       case 'open-dashboard':
         api.openWindow();
-        break;
-      case 'open-settings':
-        api.openSettings();
-        break;
-      case 'force-quit':
-        quitApp();
-        break;
-    }
-  });
-
-  // Menu actions, TODO: combine with window actions
-  dashboardWindow.on('action', function (actionName) {
-    switch (actionName) {
-      case 'capture-desktop':
-        api.captureDesktop();
-        break;
-      case 'capture-selection':
-        api.captureSelection();
         break;
       case 'open-settings':
         api.openSettings();
@@ -309,94 +301,74 @@ app.on('ready', function () {
           api.saveFileAs(filePath, image);
         });
         break;
+      case 'upload':
+        var image = gallery.find(action.filePath);
+        if (!image) {
+          return;
+        }
+
+        var Uploader;
+
+        if (action.uploaderId) {
+          Uploader = uploaders[action.uploaderId];
+        } else {
+          var defaultUploader = settings.get('default-uploader');
+          if (defaultUploader) {
+            Uploader = uploaders[defaultUploader];
+          } else {
+            Uploader = uploaders.getDefault();
+          }
+        }
+
+        var uploader = new Uploader(cache);
+
+        uploader.upload(image, function (err, link) {
+          if (err) throw err;
+
+          electron.clipboard.writeText(link);
+
+          console.log('Uploaded');
+          console.log(link);
+
+        });
+        break;
+      case 'copy':
+        var copyId = data.copyId || 'image';
+
+        var image = gallery.find(data.filePath);
+        if (!image) {
+          return;
+        }
+
+        if (copyId === 'image') {
+          electron.clipboard.writeImage(image.getNative());
+        } else if (copyId === 'fileName') {
+          electron.clipboard.writeText(image.getFileName());
+        } else if (copyId === 'filePath') {
+          electron.clipboard.writeText(image.getFilePath());
+        }
+        break;
       case 'force-quit':
         quitApp();
         break;
+      case 'settings-changed':
+        settings.set(action.key, action.value);
+        break;
+      case 'settings-dialog':
+        electron.dialog.showOpenDialog({
+          defaultPath: settings.get('save-dir'),
+          properties: ['openDirectory', 'createDirectory']
+        }, function (directoryPaths) {
+          if (!directoryPaths) {
+            // "Cancel" pressed
+            return;
+          }
+          var directoryPath = directoryPaths[0];
+          settings.set('save_dir', directoryPath);
+          event.sender.send('settings-updated', settings.serialize());
+        });
+        break;
     }
-  });
-
-  // Other shit
-
-  electron.ipcMain.on('snapshot-requested', function (event, options) {
-    if (options.type === 'desktop') {
-      api.captureDesktop(options.displayId);
-    } else if (options.type === 'selection') {
-      api.captureSelection(options.displayId);
-    } else if (options.type === 'window') {
-      api.captureWindow(options.windowId);
-    }
-  });
-
-  electron.ipcMain.on('settings-changed', function (event, data) {
-    settings.set(data.key, data.value);
-  });
-
-  electron.ipcMain.on('settings-dialog', function (event) {
-    electron.dialog.showOpenDialog({
-      defaultPath: settings.get('save-dir'),
-      properties: ['openDirectory', 'createDirectory']
-    }, function (directoryPaths) {
-      if (!directoryPaths) {
-        // "Cancel" pressed
-        return;
-      }
-      var directoryPath = directoryPaths[0];
-      settings.set('save_dir', directoryPath);
-      event.sender.send('settings-updated', settings.serialize());
-    });
-  });
-
-  electron.ipcMain.on('upload-requested', function (event, data) {
-
-    var image = gallery.find(data.filePath);
-    if (!image) {
-      return;
-    }
-
-    var Uploader;
-
-    if (data.uploaderId) {
-      Uploader = uploaders[data.uploaderId];
-    } else {
-      var defaultUploader = settings.get('default-uploader');
-      if (defaultUploader) {
-        Uploader = uploaders[defaultUploader];
-      } else {
-        Uploader = uploaders.getDefault();
-      }
-    }
-
-    var uploader = new Uploader(cache);
-
-    uploader.upload(image, function (err, link) {
-      if (err) throw err;
-
-      electron.clipboard.writeText(link);
-
-      console.log('Uploaded');
-      console.log(link);
-
-    });
-
-  });
-
-  electron.ipcMain.on('copy-requested', function (event, data) {
-
-    var copyId = data.copyId || 'image';
-
-    var image = gallery.find(data.filePath);
-    if (!image) {
-      return;
-    }
-
-    if (copyId === 'image') {
-      electron.clipboard.writeImage(image.getNative());
-    } else if (copyId === 'fileName') {
-      electron.clipboard.writeText(image.getFileName());
-    } else if (copyId === 'filePath') {
-      electron.clipboard.writeText(image.getFilePath());
-    }
-
   });
 
   if (action.capture === 'desktop') {

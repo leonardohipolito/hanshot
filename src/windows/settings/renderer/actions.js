@@ -1,12 +1,19 @@
 var electron = electronRequire('electron');
 
+function sendAction(data) {
+  electron.ipcRenderer.send('settings-action', data);
+}
+
 exports.updateSetting = function (key, newValue) {
-  electron.ipcRenderer.send('settings-changed', {
+  sendAction({
+    actionName: 'settings-changed',
     key: key,
     value: newValue
   });
 };
 
 exports.openDialog = function () {
-  electron.ipcRenderer.send('settings-dialog');
+  sendAction({
+    actionName: 'settings-dialog'
+  });
 };

@@ -1,35 +1,41 @@
 var electron = electronRequire('electron');
 
+function sendAction(data) {
+  electron.ipcRenderer.send('dashboard-action', data);
+}
+
 exports.snapDesktop = function (displayId) {
-  electron.ipcRenderer.send('snapshot-requested', {
-    type: 'desktop',
+  sendAction({
+    actionName: 'capture-desktop',
     displayId: displayId
   });
 };
 
 exports.snapSelection = function (displayId) {
-  electron.ipcRenderer.send('snapshot-requested', {
-    type: 'selection',
+  sendAction({
+    actionName: 'capture-selection',
     displayId: displayId
   });
 };
 
 exports.snapWindow = function (windowId) {
-  electron.ipcRenderer.send('snapshot-requested', {
-    type: 'window',
+  sendAction({
+    actionName: 'capture-window',
     windowId: windowId
   });
 };
 
 exports.upload = function (filePath, uploaderId) {
-  electron.ipcRenderer.send('upload-requested', {
+  sendAction({
+    actionName: 'upload',
     filePath: filePath,
     uploaderId: uploaderId
   });
 };
 
 exports.copy = function (filePath, copyId) {
-  electron.ipcRenderer.send('copy-requested', {
+  sendAction({
+    actionName: 'copy',
     filePath: filePath,
     copyId: copyId
   });

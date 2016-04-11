@@ -25,7 +25,7 @@ function Tray() {
     {
       label: 'Open',
       click: function () {
-        self.emit('action', 'open-dashboard');
+        self.emit('action', { actionName: 'open-dashboard' });
       }
     },
     {
@@ -34,13 +34,13 @@ function Tray() {
     {
       label: 'Desktop',
       click: function () {
-        self.emit('action', 'capture-desktop');
+        self.emit('action', { actionName: 'capture-desktop' });
       }
     },
     {
       label: 'Selection',
       click: function () {
-        self.emit('action', 'capture-selection');
+        self.emit('action', { actionName: 'capture-selection' });
       }
     },
     {
@@ -49,7 +49,7 @@ function Tray() {
     {
       label: 'Settings',
       click: function () {
-        self.emit('action', 'open-settings');
+        self.emit('action', { actionName: 'open-settings' });
       }
     },
     {
@@ -58,7 +58,7 @@ function Tray() {
     {
       label: 'Quit',
       click: function () {
-        self.emit('action', 'force-quit');
+        self.emit('action', { actionName: 'force-quit' });
       }
     }
   ];

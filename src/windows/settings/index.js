@@ -17,10 +17,17 @@ var _ = require('lodash');
 function SettingsWindow() {
   EventEmitter.call(this);
 
+  var self = this;
+
   this.state = {};
   this.window = null;
 
-  this.onReady = this.onReady.bind(this);
+  this.onReady = function () {
+    self.emit('ready');
+  };
+  this.onAction = function (event, action) {
+    self.emit('action', action);
+  };
 };
 
 util.inherits(SettingsWindow, EventEmitter);
@@ -70,12 +77,9 @@ SettingsWindow.prototype.open = function () {
   this.window.setMenu(menu);
 
   electron.ipcMain.on('settings-ready', this.onReady);
+  electron.ipcMain.on('settings-action', this.onAction);
 
   // this.window.webContents.openDevTools();
-};
-
-SettingsWindow.prototype.onReady = function () {
-  this.emit('ready');
 };
 
 SettingsWindow.prototype.close = function () {
@@ -86,6 +90,7 @@ SettingsWindow.prototype.close = function () {
   this.window.destroy();
   this.window = null;
   electron.ipcMain.removeListener('settings-ready', this.onReady);
+  electron.ipcMain.removeListener('settings-action', this.onAction);
 };
 
 SettingsWindow.prototype.updateState = function (newState) {
