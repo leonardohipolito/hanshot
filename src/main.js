@@ -26,17 +26,12 @@ var windows = {
 
 var createStore = require('./store');
 var storeActions = require('./store/actions');
+var alerts = require('./config/alerts');
 
 var cli = require('./cli');
 var uploaders = require('./uploaders');
 
 var app = electron.app;
-
-//------------------------------------------------------------------------------
-// Helpers
-//------------------------------------------------------------------------------
-
-var isLinux = (process.platdorm === 'linux');
 
 //------------------------------------------------------------------------------
 // Private
@@ -308,6 +303,14 @@ app.on('ready', function () {
 
         var uploader = new Uploader(cache);
 
+        if (!uploader.isAuthorized()) {
+          store.dispatch(storeActions.showAlert(
+            alerts.uploaderAuth(uploader.id, uploader.name)
+          ));
+          dashboardWindow.open();
+          return;
+        }
+
         uploader.upload(image, function (err, link) {
           if (err) throw err;
 
@@ -318,6 +321,23 @@ app.on('ready', function () {
 
         });
         break;
+
+      case 'uploader-auth':
+
+        var Uploader = uploaders[action.uploaderId];
+        if (!Uploader) {
+          return;
+        }
+
+        var uploader = new Uploader(cache);
+        if (uploader.isAuthorized()) {
+          return;
+        }
+
+        uploader.authorize();
+
+        break;
+
       case 'copy':
         var copyId = data.copyId || 'image';
 
@@ -353,6 +373,9 @@ app.on('ready', function () {
           settings.set('save_dir', directoryPath);
           event.sender.send('settings-updated', settings.serialize());
         });
+        break;
+      case 'close-alert':
+        store.dispatch( storeActions.closeAlert( action.alertId ) );
         break;
     }
   });

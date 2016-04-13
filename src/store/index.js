@@ -6,6 +6,7 @@
 
 var Redux = require('redux');
 var ReduxThunk = require('redux-thunk').default;
+var _ = require('lodash');
 
 //------------------------------------------------------------------------------
 // Private
@@ -61,12 +62,29 @@ var imageReducer = function (state, action) {
   }
 };
 
+var alertsReducer = function (state, action) {
+  state = state || [];
+  switch (action.type) {
+    case 'SHOW_ALERT':
+      var isPresent = _.find(state, { id: action.alert.id });
+      if (isPresent) return state;
+      return state.concat([action.alert]);
+    case 'CLOSE_ALERT':
+      return state.filter(function (alert) {
+        return alert.id !== action.alertId;
+      });
+    default:
+      return state;
+  }
+};
+
 var rootReducer = Redux.combineReducers({
   displays: displaysReducer,
   windows: windowsReducer,
   settings: settingsReducer,
   uploaders: uploadersReducer,
-  image: imageReducer
+  image: imageReducer,
+  alerts: alertsReducer
 });
 
 //------------------------------------------------------------------------------

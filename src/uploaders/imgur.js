@@ -28,8 +28,15 @@ var IMGUR_SIZE_LIMIT = 10;
 //------------------------------------------------------------------------------
 
 function ImgurUploader(cache) {
+  this.id = 'Imgur';
+  this.name = 'Imgur';
+
   this.cache = cache;
 }
+
+ImgurUploader.prototype.isAuthorized = function () {
+  return true;
+};
 
 // https://api.imgur.com/endpoints/image#image-upload
 ImgurUploader.prototype.upload = function (image, options, callback) {

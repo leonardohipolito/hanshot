@@ -4,6 +4,10 @@ function sendAction(data) {
   electron.ipcRenderer.send('dashboard-action', data);
 }
 
+exports.send = function (action) {
+  sendAction(action);
+};
+
 exports.snapDesktop = function (displayId) {
   sendAction({
     actionName: 'capture-desktop',
@@ -38,5 +42,12 @@ exports.copy = function (filePath, copyId) {
     actionName: 'copy',
     filePath: filePath,
     copyId: copyId
+  });
+};
+
+exports.closeAlert = function (alertId) {
+  sendAction({
+    actionName: 'close-alert',
+    alertId: alertId
   });
 };

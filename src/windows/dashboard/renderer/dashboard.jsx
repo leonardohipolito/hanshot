@@ -4,6 +4,7 @@ var electron = electronRequire('electron');
 
 var Navbar = require('./components/navbar.jsx');
 var Image = require('./components/image.jsx');
+var AlertArea = require('./components/alert-area.jsx');
 
 var Dashboard = React.createClass({
   getInitialState: function () {
@@ -31,14 +32,12 @@ var Dashboard = React.createClass({
           image={this.state.image}
         />
         <div className="dashboard-content">
-          <div className="error-container">
-            <div className="alert alert-warning" role="alert">
-              <strong>Warning!</strong>
-              {' '}
-              Better check yourself, you're not looking too good.
-            </div>
-          </div>
-          <Image image={this.state.image} />
+          <AlertArea
+            alerts={this.state.alerts}
+          />
+          <Image
+            image={this.state.image}
+          />
         </div>
       </div>
     );

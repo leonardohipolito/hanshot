@@ -38,3 +38,17 @@ exports.receiveImage = function (image) {
     image: image
   };
 };
+
+exports.showAlert = function (alert) {
+  return {
+    type: 'SHOW_ALERT',
+    alert: alert
+  };
+};
+
+exports.closeAlert = function ( alertId ) {
+  return {
+    type: 'CLOSE_ALERT',
+    alertId: alertId
+  };
+};

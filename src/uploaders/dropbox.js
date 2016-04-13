@@ -174,42 +174,41 @@ function authorize(callback) {
 //------------------------------------------------------------------------------
 
 function DropboxUploader(cache) {
+  this.id = 'Dropbox';
+  this.name = 'Dropbox';
+
   this.cache = cache;
 }
+
+DropboxUploader.prototype.isAuthorized = function () {
+  return !!this.cache.get('uploaders.dropbox.token');
+};
 
 DropboxUploader.prototype.upload = function (image, callback) {
   callback = callback || function () {};
 
-  var self = this;
-
-  var token = this.cache.get('uploaders.dropbox.token');
-  if (token) {
-
-    upload(image, token, function (err) {
-      if (err) throw err;
-      share(image, token, function (err, link) {
-        if (err) throw err;
-        callback(null, link);
-      });
-    });
-
-  } else {
-    authorize(function (err, token) {
-      if (err) throw err;
-
-      self.cache.set('uploaders.dropbox.token', token);
-
-      upload(image, token, function (err) {
-        if (err) throw err;
-        share(image, token, function (err, link) {
-          if (err) throw err;
-          callback(null, link);
-        });
-      });
-
-    });
+  if (!this.isAuthorized()) {
+    throw new Error('Requires authorization');
   }
 
+  var token = this.cache.get('uploaders.dropbox.token');
+
+  upload(image, token, function (err) {
+    if (err) throw err;
+    share(image, token, function (err, link) {
+      if (err) throw err;
+      callback(null, link);
+    });
+  });
+
 }
+
+DropboxUploader.prototype.authorize = function () {
+  var self = this;
+  authorize(function (err, token) {
+    if (err) throw err;
+    self.cache.set('uploaders.dropbox.token', token);
+  });
+};
 
 module.exports = DropboxUploader;
