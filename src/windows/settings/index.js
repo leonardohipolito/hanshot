@@ -8,7 +8,6 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 var electron = require('electron');
-var _ = require('lodash');
 
 //------------------------------------------------------------------------------
 // Public Interface
@@ -99,16 +98,11 @@ SettingsWindow.prototype.close = function () {
   electron.ipcMain.removeListener('settings-action', this.onAction);
 };
 
-SettingsWindow.prototype.updateState = function (newState) {
+SettingsWindow.prototype.sendState = function (state) {
   if (!this.window) {
     return;
   }
-  if (!_.isUndefined(newState)) {
-    _.merge(this.state, newState);
-  }
-  if (this.window) {
-    this.window.webContents.send('settings-state-updated', this.state);
-  }
+  this.window.webContents.send('settings-state-updated', state);
 };
 
 module.exports = SettingsWindow;

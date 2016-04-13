@@ -15,7 +15,6 @@ var Settings = require('./settings');
 var Cache = require('./cache');
 var Api = require('./api');
 var Tray = require('./tray');
-var Provider = require('./provider');
 var Dispatcher = require('./dispatcher');
 var Gallery = require('./image/gallery');
 
@@ -24,6 +23,9 @@ var windows = {
   Settings: require('./windows/settings'),
   Selection: require('./windows/selection')
 };
+
+var createStore = require('./store');
+var storeActions = require('./store/actions');
 
 var cli = require('./cli');
 var uploaders = require('./uploaders');
@@ -34,7 +36,7 @@ var app = electron.app;
 // Helpers
 //------------------------------------------------------------------------------
 
-var isLinux = (process.platform === 'linux');
+var isLinux = (process.platdorm === 'linux');
 
 //------------------------------------------------------------------------------
 // Private
@@ -101,23 +103,34 @@ app.on('ready', function () {
   var screen = new Screen();
   var gallery = new Gallery(cache.get('recent', []));
 
-  // Create providers
+  // Create store
 
-  var displaysProvider = new Provider(function (params, provide) {
-    provide(null, screen.getDisplayList());
+  var store = createStore();
+
+  store.subscribe(function () {
+    dashboardWindow.sendState(store.getState());
+    settingsWindow.sendState(store.getState());
   });
 
-  var windowsProvider = new Provider(function (params, provide) {
-    screen.getWindowList(function (err, data) {
-      provide(err, data);
-    });
-  });
+  // Dependent store actions
 
-  var settingsProvider = new Provider(function (params, provide) {
-    provide(null, settings.serialize());
-  });
+  var fetchDisplays = function () {
+    return storeActions.receiveDisplays(screen.getDisplayList());
+  };
 
-  var uploadersProvider = new Provider(function (params, provide) {
+  var fetchWindows = function () {
+    return function (dispatch) {
+      screen.getWindowList(function (err, windows) {
+        dispatch(storeActions.receiveWindows(windows));
+      });
+    };
+  };
+
+  var fetchSettings = function () {
+    return storeActions.receiveSettings(settings.serialize());
+  };
+
+  var fetchUploaders = function () {
     var uploadersList = uploaders.getList();
 
     var defaultUploader = settings.get('default-uploader');
@@ -127,34 +140,35 @@ app.on('ready', function () {
       });
     }
 
-    provide(null, uploadersList);
+    return storeActions.receiveUploaders(uploadersList);
+  };
+
+  var fetchImage = function () {
+    return storeActions.receiveImage(gallery.last());
+  };
+
+  // Store dispatchers
+
+  store.dispatch(fetchWindows());
+  store.dispatch(fetchDisplays());
+  store.dispatch(fetchSettings());
+  store.dispatch(fetchUploaders());
+  store.dispatch(fetchImage());
+
+  gallery.on('added', function (image) {
+    store.dispatch(fetchImage());
   });
 
-  var imageProvider = new Provider(function (param, provide) {
-    provide(null, gallery.last());
+  screen.on('display-added', function () {
+    store.dispatch(fetchDisplays());
   });
 
-  // Listen providers
-
-  displaysProvider.addUpdateListener(function (err, data) {
-    dashboardWindow.updateState({ displays: data });
+  screen.on('display-removed', function () {
+    store.dispatch(fetchDisplays());
   });
 
-  windowsProvider.addUpdateListener(function (err, data) {
-    dashboardWindow.updateState({ windows: data });
-  });
-
-  settingsProvider.addUpdateListener(function (err, data) {
-    settingsWindow.updateState({ settings: data });
-  });
-
-  uploadersProvider.addUpdateListener(function (err, data) {
-    dashboardWindow.updateState({ uploaders: data });
-    settingsWindow.updateState({ uploaders: data });
-  });
-
-  imageProvider.addUpdateListener(function (err, data) {
-    dashboardWindow.updateState({ image: data });
+  screen.on('display-updated', function () {
+    store.dispatch(fetchDisplays());
   });
 
   // Create windows
@@ -181,38 +195,20 @@ app.on('ready', function () {
     }
   });
 
+  dashboardWindow.on('ready', function () {
+    dashboardWindow.sendState(store.getState());
+  });
+
+  dashboardWindow.on('focus', function () {
+    store.dispatch(fetchWindows());
+  });
+
   settingsWindow.on('close', function () {
     settings.save();
   });
 
-  // Trigger providers
-
-  dashboardWindow.on('ready', function () {
-    displaysProvider.triggerUpdate();
-    windowsProvider.triggerUpdate();
-    uploadersProvider.triggerUpdate();
-    imageProvider.triggerUpdate();
-  });
-
   settingsWindow.on('ready', function (event) {
-    settingsProvider.triggerUpdate();
-    uploadersProvider.triggerUpdate();
-  });
-
-  gallery.on('added', function (image) {
-    imageProvider.triggerUpdate();
-  });
-
-  screen.on('display-added', function () {
-    displaysProvider.triggerUpdate();
-  });
-
-  screen.on('display-removed', function () {
-    displaysProvider.triggerUpdate();
-  });
-
-  screen.on('display-updated', function () {
-    displaysProvider.triggerUpdate();
+    settingsWindow.sendState(store.getState());
   });
 
   // Work with actions

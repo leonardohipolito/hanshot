@@ -8,7 +8,6 @@ var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
 var electron = require('electron');
-var _ = require('lodash');
 
 //------------------------------------------------------------------------------
 // Public Interface
@@ -164,14 +163,11 @@ DashboardWindow.prototype.close = function () {
   electron.ipcMain.removeListener('dashboard-action', this.onAction);
 };
 
-DashboardWindow.prototype.updateState = function (newState) {
+DashboardWindow.prototype.sendState = function (state) {
   if (!this.window) {
     return;
   }
-  if (!_.isUndefined(newState)) {
-    _.merge(this.state, newState);
-  }
-  this.window.webContents.send('dashboard-state-updated', this.state);
+  this.window.webContents.send('dashboard-state-updated', state);
 };
 
 DashboardWindow.prototype.show = function () {
