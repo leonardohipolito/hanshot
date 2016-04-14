@@ -8,6 +8,7 @@ var SnapSelection = require('./controls/snap-selection.jsx');
 var SnapWindow = require('./controls/snap-window.jsx');
 var Upload = require('./controls/upload.jsx');
 var Copy = require('./controls/copy.jsx');
+var Urls = require('./controls/urls.jsx');
 
 // TODO: do not use navbar in data flow, just as a component container
 var Navbar = React.createClass({
@@ -30,6 +31,10 @@ var Navbar = React.createClass({
             <SnapWindow windows={this.props.windows} />
           </div>
           <div className="navbar-btn pull-right">
+            <Urls
+              image={this.props.image}
+            />
+            {' '}
             <Copy
               image={this.props.image}
             />

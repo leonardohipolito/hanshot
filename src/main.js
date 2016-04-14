@@ -96,7 +96,7 @@ app.on('ready', function () {
   var settings = new Settings();
   var cache = new Cache();
   var screen = new Screen();
-  var gallery = new Gallery(cache.get('recent', []));
+  var gallery = new Gallery(cache.get('gallery', []));
 
   // Create store
 
@@ -150,8 +150,13 @@ app.on('ready', function () {
   store.dispatch(fetchUploaders());
   store.dispatch(fetchImage());
 
-  gallery.on('added', function (image) {
+  gallery.on('added', function () {
     store.dispatch(fetchImage());
+  });
+  gallery.on('updated', function (filePath) {
+    if (store.getState().image.filePath === filePath) {
+      store.dispatch(fetchImage());
+    }
   });
 
   screen.on('display-added', function () {
@@ -169,8 +174,7 @@ app.on('ready', function () {
   // Create windows
 
   var quitApp = function () {
-    var recentPaths = gallery.getPaths();
-    cache.set('recent', recentPaths);
+    cache.set('gallery', gallery.serialize());
 
     // TODO: use promises or callbacks to make async writes
     // now cache and settings are saved synchronously (is it bad?)
@@ -311,10 +315,19 @@ app.on('ready', function () {
           return;
         }
 
-        uploader.upload(image, function (err, link) {
+        var buffer = null;
+        if (settings.get('image-format') === 'jpg') {
+          buffer = image.toJpgBuffer(settings.get('jpg-quality'));
+        } else {
+          buffer = image.toPngBuffer();
+        }
+
+        uploader.upload(image.getFileName(), buffer, function (err, link) {
           if (err) throw err;
 
           electron.clipboard.writeText(link);
+
+          gallery.addPublicUrl(image.getFilePath(), link);
 
           console.log('Uploaded');
           console.log(link);
@@ -353,6 +366,9 @@ app.on('ready', function () {
         } else if (copyId === 'filePath') {
           electron.clipboard.writeText(image.getFilePath());
         }
+        break;
+      case 'copy-text':
+        electron.clipboard.writeText(action.text);
         break;
       case 'force-quit':
         quitApp();

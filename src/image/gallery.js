@@ -7,28 +7,33 @@
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
+var _ = require('lodash');
+
 var Image = require('./image');
 
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
 
-function Gallery(paths) {
+function Gallery(collection) {
   EventEmitter.call(this);
 
-  this.paths = paths || [];
+  this.collection = collection || [];
 
   this.currentImage = null;
 }
 
 util.inherits(Gallery, EventEmitter);
 
-Gallery.prototype.load = function (filePath) {
-  if (this.currentImage && this.currentImage.getFilePath() === filePath) {
+Gallery.prototype.load = function (item) {
+  if (this.currentImage && this.currentImage.getFilePath() === item.filePath) {
     return this.currentImage;
   }
 
-  var image = Image.createFromPath(filePath);
+  var image = Image.createFromPath(item.filePath);
+  if (image) {
+    image.publicUrls = item.publicUrls;
+  }
 
   this.currentImage = image;
 
@@ -39,22 +44,46 @@ Gallery.prototype.add = function (image) {
   if (!image) {
     return;
   }
-  this.currentImage = image;
-  this.paths.push(image.getFilePath());
-  this.emit('added', image);
+  this.collection.push({
+    filePath: image.getFilePath(),
+    publicUrls: []
+  });
+  this.emit('added', image.getFilePath());
+};
+
+Gallery.prototype.addPublicUrl = function (filePath, publicUrl) {
+  var index = this.findIndex(filePath);
+  if (index === -1) {
+    return;
+  }
+
+  var item = this.collection[index];
+
+  if (!item.publicUrls) {
+    item.publicUrls = [];
+  }
+  item.publicUrls.push(publicUrl);
+
+  this.emit('updated', filePath);
 };
 
 Gallery.prototype.find = function (filePath) {
-  var index = this.paths.indexOf(filePath);
+  var index = this.findIndex(filePath);
   return this.get(index);
 };
 
+Gallery.prototype.findIndex = function (filePath) {
+  return _.findIndex(this.collection, {
+    filePath: filePath
+  });
+};
+
 Gallery.prototype.get = function (index) {
-  var filePath = this.paths[index];
-  if (!filePath) {
+  var item = this.collection[index];
+  if (!item) {
     return null;
   }
-  return this.load(filePath);
+  return this.load(item);
 };
 
 Gallery.prototype.first = function () {
@@ -62,11 +91,15 @@ Gallery.prototype.first = function () {
 };
 
 Gallery.prototype.last = function () {
-  return this.get(this.paths.length - 1);
+  return this.get(this.size() - 1);
 };
 
-Gallery.prototype.getPaths = function () {
-  return this.paths;
+Gallery.prototype.size = function () {
+  return this.collection.length;
+};
+
+Gallery.prototype.serialize = function () {
+  return this.collection;
 };
 
 module.exports = Gallery;

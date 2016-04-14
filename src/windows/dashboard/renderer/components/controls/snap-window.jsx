@@ -33,7 +33,7 @@ var SnapWindow = React.createClass({
             {' Window '}
             <span className="caret"></span>
           </button>
-          <ul className="dropdown-menu windows-dropdown">
+          <ul className="dropdown-menu fixed-dropdown">
             {listNodes}
           </ul>
         </div>

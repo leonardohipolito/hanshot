@@ -29,10 +29,10 @@ var REDIRECT_URI = 'hanshot://uploaders/dropbox/dummy';
 // Private
 //------------------------------------------------------------------------------
 
-function upload(image, token, callback) {
+function upload(fileName, buffer, token, callback) {
   var urlObj = url.parse(DROPBOX_UPLOAD_ENDPOINT);
 
-  var requestData = image.toPngBuffer();
+  var requestData = buffer;
 
   var requestOptions = {
     host: urlObj.host,
@@ -40,7 +40,7 @@ function upload(image, token, callback) {
     method: 'POST',
     headers: {
       'Authorization': 'Bearer ' + token,
-      'Dropbox-API-Arg': '{"path":"/' + image.getFileName() + '"}',
+      'Dropbox-API-Arg': '{"path":"/' + fileName + '"}',
       'Content-Type': 'application/octet-stream',
       'Content-Length': requestData.length
     }
@@ -70,13 +70,13 @@ function upload(image, token, callback) {
   req.end();
 }
 
-function share(image, token, callback) {
+function share(fileName, buffer, token, callback) {
   callback = callback || function () {};
 
   var urlObj = url.parse(DROPBOX_SHARE_ENDPOINT);
 
   var requestData = JSON.stringify({
-    path: '/' + image.getFileName()
+    path: '/' + fileName
   });
 
   var requestOptions = {
@@ -184,7 +184,7 @@ DropboxUploader.prototype.isAuthorized = function () {
   return !!this.cache.get('uploaders.dropbox.token');
 };
 
-DropboxUploader.prototype.upload = function (image, callback) {
+DropboxUploader.prototype.upload = function (fileName, buffer, callback) {
   callback = callback || function () {};
 
   if (!this.isAuthorized()) {
@@ -193,9 +193,9 @@ DropboxUploader.prototype.upload = function (image, callback) {
 
   var token = this.cache.get('uploaders.dropbox.token');
 
-  upload(image, token, function (err) {
+  upload(fileName, buffer, token, function (err) {
     if (err) throw err;
-    share(image, token, function (err, link) {
+    share(fileName, buffer, token, function (err, link) {
       if (err) throw err;
       callback(null, link);
     });

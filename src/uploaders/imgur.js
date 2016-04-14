@@ -39,13 +39,13 @@ ImgurUploader.prototype.isAuthorized = function () {
 };
 
 // https://api.imgur.com/endpoints/image#image-upload
-ImgurUploader.prototype.upload = function (image, options, callback) {
+ImgurUploader.prototype.upload = function (fileName, buffer, callback) {
   callback = callback || function () {};
 
   var urlObj = url.parse(IMGUR_UPLOAD_ENDPOINT);
 
   var requestData = querystring.stringify({
-    image: image.toBase64(),
+    image: buffer.toString('base64'),
     type: 'base64'
   });
 
