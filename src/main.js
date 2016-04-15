@@ -24,13 +24,17 @@ var windows = {
   Selection: require('./windows/selection')
 };
 
+var uploaders = {
+  imgur: require('./uploaders/imgur'),
+  dropbox: require('./uploaders/dropbox')
+};
+
 var createStore = require('./store');
 var storeActions = require('./store/actions');
 var alerts = require('./config/alerts');
 var metadata = require('./config/metadata');
 
 var cli = require('./cli');
-var uploaders = require('./uploaders');
 
 var app = electron.app;
 
@@ -126,19 +130,6 @@ app.on('ready', function () {
     return storeActions.receiveSettings(settings.serialize());
   };
 
-  var fetchUploaders = function () {
-    var uploadersList = uploaders.getList();
-
-    var defaultUploader = settings.get('default-uploader');
-    if (defaultUploader) {
-      uploadersList.forEach(function (uploader) {
-        uploader.isDefault = defaultUploader === uploader.id;
-      });
-    }
-
-    return storeActions.receiveUploaders(uploadersList);
-  };
-
   var fetchImage = function () {
     return storeActions.receiveImage(gallery.last());
   };
@@ -152,7 +143,6 @@ app.on('ready', function () {
   store.dispatch(fetchWindows());
   store.dispatch(fetchDisplays());
   store.dispatch(fetchSettings());
-  store.dispatch(fetchUploaders());
   store.dispatch(fetchImage());
   store.dispatch(fetchMetadata());
 
@@ -293,22 +283,20 @@ app.on('ready', function () {
         });
         break;
       case 'upload':
-        var image = gallery.find(action.filePath);
-        if (!image) {
+
+        var uploaderId = action.uploaderId;
+        if (!uploaderId) {
+          uploaderId = settings.get('default-uploader');
+        }
+
+        var Uploader = uploaders[uploaderId];
+        if (!Uploader) {
           return;
         }
 
-        var Uploader;
-
-        if (action.uploaderId) {
-          Uploader = uploaders[action.uploaderId];
-        } else {
-          var defaultUploader = settings.get('default-uploader');
-          if (defaultUploader) {
-            Uploader = uploaders[defaultUploader];
-          } else {
-            Uploader = uploaders.getDefault();
-          }
+        var image = gallery.find(action.filePath);
+        if (!image) {
+          return;
         }
 
         var uploader = new Uploader(cache);

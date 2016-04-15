@@ -16,7 +16,7 @@ var Navbar = React.createClass({
     return {
       displays: [],
       windows: [],
-      uploaders: []
+      metadata: {}
     };
   },
   render: function () {
@@ -40,7 +40,7 @@ var Navbar = React.createClass({
             />
             {' '}
             <Upload
-              uploaders={this.props.uploaders}
+              metadata={this.props.metadata}
               image={this.props.image}
             />
           </div>

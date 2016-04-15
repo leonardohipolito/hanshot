@@ -1,43 +1,33 @@
 var React = electronRequire('react');
 
+var Dropdown = require('../common/dropdown.jsx');
+var DropdownItem = require('../common/dropdown-item.jsx');
+
 var actions = require('../../actions');
 
 var SnapWindow = React.createClass({
-  handleSelected: function (windowId) {
-    actions.snapWindow(windowId);
-  },
-  renderListNode: function (windowItem) {
-    return (
-      <li key={windowItem.id}
-        onClick={this.handleSelected.bind(this, windowItem.id)}
-      >
-        <a href="#">{windowItem.name}</a>
-      </li>
-    );
-  },
   render: function () {
-
-    if (!this.props.windows.length) {
+    var windows = this.props.windows;
+    if (!(windows && windows.length)) {
       return null;
     }
-
-    var listNodes = this.props.windows.map(this.renderListNode);
-
     return (
-      <div className="btn-group">
-        <div className="dropdown">
-          <button type="button"
-            className="btn btn-default dropdown-toggle"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
-          >
-            {' Window '}
-            <span className="caret"></span>
-          </button>
-          <ul className="dropdown-menu fixed-dropdown">
-            {listNodes}
-          </ul>
-        </div>
-      </div>
+      <Dropdown
+        title="Window"
+      >
+        {windows.map(function (win) {
+          return (
+            <DropdownItem
+              key={win.id}
+              onClick={function () {
+                actions.snapWindow(win.id);
+              }}
+            >
+              {win.name}
+            </DropdownItem>
+          );
+        }, this)}
+      </Dropdown>
     );
   }
 });
