@@ -25,6 +25,14 @@ exports.receiveSettings = function (settings) {
   };
 };
 
+exports.updateSetting = function (key, value) {
+  return {
+    type: 'UPDATE_SETTING',
+    key: key,
+    value: value
+  };
+};
+
 exports.receiveUploaders = function (uploaders) {
   return {
     type: 'UPLOADERS_RECEIVED',
@@ -50,5 +58,12 @@ exports.closeAlert = function ( alertId ) {
   return {
     type: 'CLOSE_ALERT',
     alertId: alertId
+  };
+};
+
+exports.receiveMetadata = function (metadata) {
+  return {
+    type: 'RECEIVE_METADATA',
+    metadata: metadata
   };
 };

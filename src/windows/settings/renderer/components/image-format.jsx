@@ -1,80 +1,57 @@
 var React = electronRequire('react');
 
 var Range = require('./common/range.jsx');
+var Select = require('./common/select.jsx');
 
 var actions = require('../actions');
 
+// Container component
 var ImageFormat = React.createClass({
-  getInitialState: function () {
-    return {
-      selectedFormat: this.props.imageFormat,
-      jpgQuality: this.props.jpgQuality
-    };
-  },
-  componentWillReceiveProps: function (newProps) {
-    this.setState({
-      selectedFormat: newProps.imageFormat,
-      jpgQuality: newProps.jpgQuality
-    });
-  },
-  selectFormat: function (event) {
-    var value = event.target.value;
-    this.setState({ selectedFormat: value });
-    actions.updateSetting('image-format', value);
-  },
-  handleJPGQualityChange: function (value) {
-    this.setState({ jpgQuality: value });
-    actions.updateSetting('jpg-quality', value);
-  },
-  renderJPGSettings: function () {
-    return (
-      <div className="form-group">
-        Quality
-        {' '}
-        <Range
-          initialValue={this.props.jpgQuality}
-          min={0}
-          max={100}
-          step={10}
-          onChange={this.handleJPGQualityChange}
-        />
-      </div>
-    );
-  },
-  renderFormatOption: function (format) {
-    return (
-      <option key={format.id} value={format.id}>
-        {format.name}
-      </option>
-    );
-  },
   render: function () {
 
-    var formats = [
-      { id: 'jpg', name: 'JPEG' },
-      { id: 'png', name: 'PNG' }
-    ];
-
-    var formatOptions = formats.map(this.renderFormatOption);
-
-    var formatSettings = null;
-    if (this.state.selectedFormat === 'jpg') {
-      formatSettings = this.renderJPGSettings();
+    var formats = this.props.metadata.imageFormats;
+    if (!(formats && formats.length)) {
+      return null;
     }
 
     return (
       <div>
+        <h4>Image format</h4>
         <div className="form-group">
-          <label htmlFor="image-format">Image format</label>
-          <select id="image-format"
-            className="form-control"
-            value={this.state.selectedFormat}
-            onChange={this.selectFormat}
+          <Select
+            value={this.props.settings['image-format']}
+            onChange={function (value) {
+              actions.updateSetting('image-format', value);
+            }}
           >
-            {formatOptions}
-          </select>
+            {formats.map(function (format) {
+              return (
+                <option key={format.id} value={format.id}>
+                  {format.name}
+                </option>
+              );
+            })}
+          </Select>
         </div>
-        {formatSettings}
+        {(function () {
+          if (this.props.settings['image-format'] === 'jpg') {
+            return (
+              <div className="form-group">
+                Quality
+                {' '}
+                <Range
+                  initialValue={this.props.settings['jpg-quality']}
+                  min={0}
+                  max={100}
+                  step={10}
+                  onChange={function (value) {
+                    actions.updateSetting('jpg-quality', value);
+                  }}
+                />
+              </div>
+            );
+          }
+        }).call(this)}
       </div>
     );
   }

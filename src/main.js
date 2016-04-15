@@ -27,6 +27,7 @@ var windows = {
 var createStore = require('./store');
 var storeActions = require('./store/actions');
 var alerts = require('./config/alerts');
+var metadata = require('./config/metadata');
 
 var cli = require('./cli');
 var uploaders = require('./uploaders');
@@ -142,6 +143,10 @@ app.on('ready', function () {
     return storeActions.receiveImage(gallery.last());
   };
 
+  var fetchMetadata = function () {
+    return storeActions.receiveMetadata(metadata);
+  };
+
   // Store dispatchers
 
   store.dispatch(fetchWindows());
@@ -149,6 +154,7 @@ app.on('ready', function () {
   store.dispatch(fetchSettings());
   store.dispatch(fetchUploaders());
   store.dispatch(fetchImage());
+  store.dispatch(fetchMetadata());
 
   gallery.on('added', function () {
     store.dispatch(fetchImage());
@@ -375,6 +381,7 @@ app.on('ready', function () {
         break;
       case 'settings-changed':
         settings.set(action.key, action.value);
+        store.dispatch( storeActions.updateSetting(action.key, action.value) );
         break;
       case 'settings-dialog':
         electron.dialog.showOpenDialog({

@@ -37,6 +37,10 @@ var settingsReducer = function (state, action) {
   switch (action.type) {
     case 'SETTINGS_RECEIVED':
       return action.settings;
+    case 'UPDATE_SETTING':
+      var settings = Object.assign({}, state);
+      settings[action.key] = action.value;
+      return settings;
     default:
       return state;
   }
@@ -78,13 +82,24 @@ var alertsReducer = function (state, action) {
   }
 };
 
+var metadataReducer = function (state, action) {
+  state = state || {};
+  switch (action.type) {
+    case 'RECEIVE_METADATA':
+      return action.metadata;
+    default:
+      return state;
+  }
+};
+
 var rootReducer = Redux.combineReducers({
   displays: displaysReducer,
   windows: windowsReducer,
   settings: settingsReducer,
   uploaders: uploadersReducer,
   image: imageReducer,
-  alerts: alertsReducer
+  alerts: alertsReducer,
+  metadata: metadataReducer
 });
 
 //------------------------------------------------------------------------------

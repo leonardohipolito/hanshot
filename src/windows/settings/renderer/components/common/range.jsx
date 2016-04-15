@@ -1,5 +1,6 @@
 var React = electronRequire('react');
 
+// Representation component
 var Range = React.createClass({
   getInitialState: function () {
     return {
