@@ -13,7 +13,6 @@ var _ = require('lodash');
 var Screen = require('./screen');
 var Settings = require('./settings');
 var Cache = require('./cache');
-var Api = require('./api');
 var Tray = require('./tray');
 var Dispatcher = require('./dispatcher');
 var Gallery = require('./image/gallery');
@@ -29,14 +28,13 @@ var uploaders = {
   dropbox: require('./uploaders/dropbox')
 };
 
+var createApi = require('./api');
 var createStore = require('./store');
 var storeActions = require('./store/actions');
 var alerts = require('./config/alerts');
 var metadata = require('./config/metadata');
 
 var cli = require('./cli');
-
-var app = electron.app;
 
 //------------------------------------------------------------------------------
 // Private
@@ -50,7 +48,7 @@ var tray = null;
 // ---
 
 // Keep one running instance and prevent second instance from starting
-var shouldQuit = app.makeSingleInstance(function (argv, workdir) {
+var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
   console.log('There is an already running instance');
   var args = argv.slice(2);
 
@@ -60,34 +58,34 @@ var shouldQuit = app.makeSingleInstance(function (argv, workdir) {
   }
 
   if (!args.length) {
-    api.openWindow();
+    api.window.openDashboard();
     return;
   }
 
   var action = cli.parseAction(args);
   if (action.capture === 'desktop') {
-    api.captureDesktop();
+    api.capture.desktop();
   } else if (action.capture === 'selection') {
-    api.captureSelection();
+    api.capture.selection();
   } else if (action.capture === 'window') {
-    api.captureWindow();
+    api.capture.window();
   }
 });
 
 if (shouldQuit) {
-  app.quit();
+  electron.app.quit();
   return;
 }
 
 // ---
 
-app.on('window-all-closed', function () {
+electron.app.on('window-all-closed', function () {
   if (process.platform != 'darwin') {
-    app.quit();
+    electron.app.quit();
   }
 });
 
-app.on('ready', function () {
+electron.app.on('ready', function () {
 
   var args = process.argv.slice(2);
   var action = cli.parseAction(args);
@@ -177,7 +175,7 @@ app.on('ready', function () {
     screen.destroy();
     cache.save();
     settings.save();
-    app.quit();
+    electron.app.quit();
   };
 
   dashboardWindow.open(action);
@@ -208,11 +206,20 @@ app.on('ready', function () {
 
   // Work with actions
 
+  var application = {
+    windows: {
+      dashboard: dashboardWindow,
+      settings: settingsWindow,
+      selection: selectionWindow
+    },
+    settings: settings,
+    cache: cache,
+    screen: screen,
+    gallery: gallery
+  };
+
   // TODO: decide if API is required, maybe just gather all major instances
-  api = new Api(
-    dashboardWindow, settingsWindow, selectionWindow,
-    screen, settings, cache, gallery
-  );
+  api = createApi(application);
 
   tray = new Tray();
 
@@ -223,22 +230,22 @@ app.on('ready', function () {
   dispatcher.register(function (action) {
     switch (action.actionName) {
       case 'capture-desktop':
-        api.captureDesktop(action.displayId);
+        api.capture.desktop(action.displayId);
         break;
       case 'capture-selection':
-        api.captureSelection(action.displayId);
+        api.capture.selection(action.displayId);
         break;
       case 'capture-window':
-        api.captureWindow(action.windowId);
+        api.capture.window(action.windowId);
         break;
       case 'open-dashboard':
-        api.openDashboard();
+        api.window.openDashboard();
         break;
       case 'open-settings':
-        api.openSettings();
+        api.window.openSettings();
         break;
       case 'import-clipboard':
-        api.importFile();
+        api.file.import();
         break;
       case 'import-open':
         electron.dialog.showOpenDialog({
@@ -256,7 +263,7 @@ app.on('ready', function () {
             return;
           }
           var filePath = filePaths[0];
-          api.openFile(filePath);
+          api.file.open(filePath);
         });
         break;
       case 'save-as':
@@ -279,7 +286,7 @@ app.on('ready', function () {
             // "Cancel" pressed
             return;
           }
-          api.saveFileAs(filePath, image);
+          api.file.saveAs(filePath, image);
         });
         break;
       case 'upload':
@@ -392,11 +399,11 @@ app.on('ready', function () {
   });
 
   if (action.capture === 'desktop') {
-    api.captureDesktop();
+    api.capture.desktop();
   } else if (action.capture === 'selection') {
-    api.captureSelection();
+    api.capture.selection();
   } else if (action.capture === 'window') {
-    api.captureWindow();
+    api.capture.window();
   }
 
   // "printscreen" is not supported yet. FUCK
