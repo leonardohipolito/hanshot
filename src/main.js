@@ -23,16 +23,15 @@ var windows = {
   Selection: require('./windows/selection')
 };
 
-var uploaders = {
-  imgur: require('./uploaders/imgur'),
-  dropbox: require('./uploaders/dropbox')
-};
-
 var createApi = require('./api');
 var createStore = require('./store');
 var storeActions = require('./store/actions');
-var alerts = require('./config/alerts');
 var metadata = require('./config/metadata');
+
+var factory = {
+  alert: require('./factory/alert'),
+  dialog: require('./factory/dialog')
+};
 
 var cli = require('./cli');
 
@@ -215,7 +214,8 @@ electron.app.on('ready', function () {
     settings: settings,
     cache: cache,
     screen: screen,
-    gallery: gallery
+    gallery: gallery,
+    store: store
   };
 
   // TODO: decide if API is required, maybe just gather all major instances
@@ -248,21 +248,7 @@ electron.app.on('ready', function () {
         api.file.import();
         break;
       case 'import-open':
-        electron.dialog.showOpenDialog({
-          defaultPath: electron.app.getPath('pictures'),
-          properties: ['openFile'],
-          filters: [
-            {
-              name: 'All Compatible Image Formats',
-              extensions: ['jpg', 'png']
-            }
-          ],
-        }, function (filePaths) {
-          if (!filePaths) {
-            // "Cancel" pressed
-            return;
-          }
-          var filePath = filePaths[0];
+        factory.dialog.openImage(function (filePath) {
           api.file.open(filePath);
         });
         break;
@@ -271,85 +257,16 @@ electron.app.on('ready', function () {
         if (!image) {
           return;
         }
-        electron.dialog.showSaveDialog({
-          defaultPath: path.join(electron.app.getPath('pictures'), image.getFileName()),
-          filters: [
-            {
-              name: 'All Compatible Image Formats',
-              extensions: ['jpg', 'png']
-            },
-            { name: 'PNG', extensions: ['png'] },
-            { name: 'JPEG', extensions: ['jpg'] }
-          ]
-        }, function (filePath) {
-          if (!filePath) {
-            // "Cancel" pressed
-            return;
-          }
+        factory.dialog.saveImageAs(image.getFileName(), function (filePath) {
           api.file.saveAs(filePath, image);
         });
         break;
       case 'upload':
-
-        var uploaderId = action.uploaderId;
-        if (!uploaderId) {
-          uploaderId = settings.get('default-uploader');
-        }
-
-        var Uploader = uploaders[uploaderId];
-        if (!Uploader) {
-          return;
-        }
-
-        var image = gallery.find(action.filePath);
-        if (!image) {
-          return;
-        }
-
-        var uploader = new Uploader(cache);
-
-        if (!uploader.isAuthorized()) {
-          store.dispatch(storeActions.showAlert(
-            alerts.uploaderAuth(uploader.id, uploader.name)
-          ));
-          dashboardWindow.open();
-          return;
-        }
-
-        var buffer = null;
-        if (settings.get('image-format') === 'jpg') {
-          buffer = image.toJpgBuffer(settings.get('jpg-quality'));
-        } else {
-          buffer = image.toPngBuffer();
-        }
-
-        uploader.upload(image.getFileName(), buffer, function (err, link) {
-          if (err) throw err;
-
-          electron.clipboard.writeText(link);
-
-          gallery.addPublicUrl(image.getFilePath(), link);
-
-          console.log('Uploaded');
-          console.log(link);
-
-        });
+        api.uploader.upload(action.uploaderId, action.filePath);
         break;
 
       case 'uploader-auth':
-
-        var Uploader = uploaders[action.uploaderId];
-        if (!Uploader) {
-          return;
-        }
-
-        var uploader = new Uploader(cache);
-        if (uploader.isAuthorized()) {
-          return;
-        }
-
-        uploader.authorize();
-
+        api.uploader.authorize(action.uploaderId);
         break;
 
       case 'copy':
@@ -379,17 +296,10 @@ electron.app.on('ready', function () {
         store.dispatch( storeActions.updateSetting(action.key, action.value) );
         break;
       case 'settings-dialog':
-        electron.dialog.showOpenDialog({
-          defaultPath: settings.get('save-dir'),
-          properties: ['openDirectory', 'createDirectory']
-        }, function (directoryPaths) {
-          if (!directoryPaths) {
-            // "Cancel" pressed
-            return;
-          }
-          var directoryPath = directoryPaths[0];
-          settings.set('save_dir', directoryPath);
-          event.sender.send('settings-updated', settings.serialize());
+        var currentDirPath = settings.get('save-dir');
+        factory.dialog.saveImagesTo(currentDirPath, function (dirPath) {
+          settings.set('save_dir', dirPath);
+          store.dispatch( storeActions.updateSetting('save_dir', dirPath) );
         });
         break;
       case 'close-alert':

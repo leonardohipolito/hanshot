@@ -7,6 +7,7 @@
 var apiCreators = {
   capture: require('./capture'),
   file: require('./file'),
+  uploader: require('./uploader'),
   window: require('./window')
 };
 
