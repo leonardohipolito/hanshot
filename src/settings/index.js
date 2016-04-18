@@ -18,7 +18,7 @@ var _ = require('lodash');
 //       create Storage base class
 function Settings() {
 
-  this.defaultSettings = require('./default.json');
+  this.defaultSettings = require('./default');
 
   var cacheBasePath = electron.app.getPath('appData');
   this.userSettingsPath = path.join(cacheBasePath, 'hanshot', 'settings.json');
@@ -40,8 +40,8 @@ function Settings() {
   this.settings = _.merge({}, this.defaultSettings, this.userSettings);
 
   // TODO: check if directory does not exist, think of default strategy
-  if (this.settings['save-dir'] === null) {
-    this.settings['save-dir'] = electron.app.getPath('pictures');
+  if (this.settings['save-dir-path'] === null) {
+    this.settings['save-dir-path'] = electron.app.getPath('pictures');
   }
 
 };

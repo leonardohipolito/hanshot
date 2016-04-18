@@ -49,7 +49,7 @@ exports.saveImageAs = function (fileName, callback) {
   });
 };
 
-exports.saveImagesTo = function (dirPath) {
+exports.saveImagesTo = function (dirPath, callback) {
   electron.dialog.showOpenDialog({
     defaultPath: dirPath,
     properties: ['openDirectory', 'createDirectory']

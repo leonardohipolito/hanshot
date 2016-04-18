@@ -11,6 +11,7 @@ var electron = require('electron');
 var mkdirp = require('mkdirp');
 
 var Image = require('../image/image');
+var notify = require('../notification');
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -53,7 +54,7 @@ function createExt(imageFormat) {
 // Public Interface
 //------------------------------------------------------------------------------
 
-module.exports = function createWriteApi(app) {
+module.exports = function createWriteApi(app, api) {
 
   return {
 
@@ -85,8 +86,8 @@ module.exports = function createWriteApi(app) {
 
       var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-      if (app.settings.get('auto-save')) {
-        fileDir = app.settings.get('save-dir');
+      if (app.settings.get('save-dir-selected')) {
+        fileDir = app.settings.get('save-dir-path');
       }
 
       var filePath = path.join(fileDir, fileName);
@@ -125,8 +126,8 @@ module.exports = function createWriteApi(app) {
 
       var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
 
-      if (app.settings.get('auto-save')) {
-        fileDir = app.settings.get('save-dir');
+      if (app.settings.get('save-dir-selected')) {
+        fileDir = app.settings.get('save-dir-path');
       }
 
       var filePath = path.join(fileDir, fileName);
@@ -139,7 +140,12 @@ module.exports = function createWriteApi(app) {
 
           app.gallery.add(new Image(nativeImage, filePath));
 
-          console.log('Shot');
+          if (app.settings.get('upload-after-capture')) {
+            api.uploader.upload(null, filePath);
+          } else {
+            notify('Screenshot saved');
+          }
+
         });
       });
 

@@ -15,19 +15,19 @@ var Save = React.createClass({
         <h4>Save</h4>
         <div className="form-group">
           <Checkbox
-            checked={this.props.settings['auto-save']}
+            checked={this.props.settings['save-dir-selected']}
             onChange={function (value) {
-              actions.updateSetting('auto-save', value);
+              actions.updateSetting('save-dir-selected', value);
             }}
           >
             Auto save to directory
           </Checkbox>
           <div
-            className={this.props.settings['auto-save'] ? '' : 'disabled-area'}
+            className={this.props.settings['save-dir-selected'] ? '' : 'disabled-area'}
           >
-            Directory: {this.props.settings['save-dir']}
+            Directory: {this.props.settings['save-dir-path']}
             <button className="btn btn-default"
-              disabled={!this.props.settings['auto-save']}
+              disabled={!this.props.settings['save-dir-selected']}
               onClick={function () {
                 actions.openDialog();
               }}

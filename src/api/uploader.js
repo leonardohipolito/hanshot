@@ -11,6 +11,7 @@ var uploaders = {
   dropbox: require('../uploaders/dropbox')
 };
 var alert = require('../factory/alert');
+var notify = require('../notification');
 
 //------------------------------------------------------------------------------
 // Public Interface
@@ -52,7 +53,7 @@ module.exports = function createUploaderApi(app) {
         return;
       }
 
-      var uploader = new Uploader(cache);
+      var uploader = new Uploader(app.cache);
 
       if (!uploader.isAuthorized()) {
         // store.dispatch(storeActions.showAlert(
@@ -64,7 +65,7 @@ module.exports = function createUploaderApi(app) {
 
       var buffer = null;
       if (app.settings.get('image-format') === 'jpg') {
-        buffer = image.toJpgBuffer(settings.get('jpg-quality'));
+        buffer = image.toJpgBuffer(app.settings.get('jpg-quality'));
       } else {
         buffer = image.toPngBuffer();
       }
@@ -75,6 +76,8 @@ module.exports = function createUploaderApi(app) {
         electron.clipboard.writeText(link);
 
         app.gallery.addPublicUrl(image.getFilePath(), link);
+
+        notify('<b>Screenshot uploaded</b><br>Public URL is in clipboard');
 
         console.log('Uploaded');
         console.log(link);

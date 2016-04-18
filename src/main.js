@@ -28,12 +28,20 @@ var createStore = require('./store');
 var storeActions = require('./store/actions');
 var metadata = require('./config/metadata');
 
+var notify = require('./notification');
+
 var factory = {
   alert: require('./factory/alert'),
   dialog: require('./factory/dialog')
 };
 
 var cli = require('./cli');
+
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+var isLinux = (process.platform === 'linux');
 
 //------------------------------------------------------------------------------
 // Private
@@ -74,6 +82,27 @@ var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
 if (shouldQuit) {
   electron.app.quit();
   return;
+}
+
+// ---
+
+process.on('uncaughtException', function (err) {
+  electron.dialog.showErrorBox(
+    'Uncaught exception, app will now quit',
+    err.stack
+  );
+  console.log('Uncaught exception: ', err);
+  console.log(err.stack);
+  electron.app.quit();
+});
+
+// ---
+
+if (isLinux) {
+  // http://electron.atom.io/docs/v0.36.8/api/frameless-window/#limitations
+  // Alpha channel doesn’t work on some NVidia drivers on Linux
+  electron.app.commandLine.appendSwitch('enable-transparent-visuals');
+  electron.app.commandLine.appendSwitch('disable-gpu');
 }
 
 // ---
@@ -177,7 +206,9 @@ electron.app.on('ready', function () {
     electron.app.quit();
   };
 
-  dashboardWindow.open(action);
+  if (settings.get('show-on-start')) {
+    dashboardWindow.open();
+  }
   dashboardWindow.on('close', function () {
     if (settings.get('tray-on-close')) {
       cache.save();
@@ -296,10 +327,10 @@ electron.app.on('ready', function () {
         store.dispatch( storeActions.updateSetting(action.key, action.value) );
         break;
       case 'settings-dialog':
-        var currentDirPath = settings.get('save-dir');
+        var currentDirPath = settings.get('save-dir-path');
         factory.dialog.saveImagesTo(currentDirPath, function (dirPath) {
-          settings.set('save_dir', dirPath);
-          store.dispatch( storeActions.updateSetting('save_dir', dirPath) );
+          settings.set('save-dir-path', dirPath);
+          store.dispatch( storeActions.updateSetting('save-dir-path', dirPath) );
         });
         break;
       case 'close-alert':
