@@ -37,11 +37,10 @@ exports.upload = function (filePath, uploaderId) {
   });
 };
 
-exports.copy = function (filePath, copyId) {
+exports.copyImage = function (filePath) {
   sendAction({
-    actionName: 'copy',
-    filePath: filePath,
-    copyId: copyId
+    actionName: 'copy-image',
+    filePath: filePath
   });
 };
 

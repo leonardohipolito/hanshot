@@ -300,24 +300,11 @@ electron.app.on('ready', function () {
         api.uploader.authorize(action.uploaderId);
         break;
 
-      case 'copy':
-        var copyId = data.copyId || 'image';
-
-        var image = gallery.find(data.filePath);
-        if (!image) {
-          return;
-        }
-
-        if (copyId === 'image') {
-          electron.clipboard.writeImage(image.getNative());
-        } else if (copyId === 'fileName') {
-          electron.clipboard.writeText(image.getFileName());
-        } else if (copyId === 'filePath') {
-          electron.clipboard.writeText(image.getFilePath());
-        }
+      case 'copy-image':
+        api.copy.image(action.filePath);
         break;
       case 'copy-text':
-        electron.clipboard.writeText(action.text);
+        api.copy.text(action.text);
         break;
       case 'force-quit':
         quitApp();
