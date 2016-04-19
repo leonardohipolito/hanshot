@@ -7,26 +7,21 @@
 var electron = require('electron');
 
 //------------------------------------------------------------------------------
-// Public Interface
+// Module
 //------------------------------------------------------------------------------
 
-module.exports = function createCopyApi(app) {
+module.exports = function (dispatcher, components) {
 
-  return {
-
-    image: function (filePath) {
-      console.log(filePath);
-      var image = app.gallery.find(filePath);
-      if (!image) {
-        return false;
-      }
-      electron.clipboard.writeImage(image.getNative());
-    },
-
-    text: function (text) {
-      electron.clipboard.writeText(text);
+  dispatcher.on('copy-image', function (action) {
+    var image = components.gallery.find(action.filePath);
+    if (!image) {
+      return false;
     }
+    electron.clipboard.writeImage(image.getNative());
+  });
 
-  };
+  dispatcher.on('copy-text', function (action) {
+    electron.clipboard.writeText(action.text);
+  });
 
 };

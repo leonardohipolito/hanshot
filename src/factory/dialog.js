@@ -4,13 +4,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
+var path = require('path');
+
 var electron = require('electron');
 
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
 
-exports.openImage = function () {
+exports.openImage = function (callback) {
   electron.dialog.showOpenDialog({
     defaultPath: electron.app.getPath('pictures'),
     properties: ['openFile'],

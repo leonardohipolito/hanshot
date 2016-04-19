@@ -174,7 +174,7 @@ function authorize(callback) {
 //------------------------------------------------------------------------------
 
 function DropboxUploader(cache) {
-  this.id = 'Dropbox';
+  this.id = 'dropbox';
   this.name = 'Dropbox';
 
   this.cache = cache;

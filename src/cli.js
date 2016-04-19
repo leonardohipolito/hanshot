@@ -2,20 +2,21 @@
 
 exports.parseAction = function (args) {
 
-  var action = {
-    capture: false,
-  };
+  var action = null;
 
-  if (args.indexOf('-d') > -1) {
-    action.capture = 'desktop';
-  }
-  if (args.indexOf('-s') > -1) {
-    action.capture = 'selection';
-  }
-  if (args.indexOf('-w') > -1) {
-    action.capture = 'window';
+  if (args.indexOf('--desktop') > -1) {
+    action = {
+      actionName: 'capture-desktop'
+    };
+  } else if (args.indexOf('--selection') > -1) {
+    action = {
+      actionName: 'capture-selection'
+    };
+  } else if (args.indexOf('--window') > -1) {
+    action = {
+      actionName: 'capture-window'
+    };
   }
 
   return action;
-
 };

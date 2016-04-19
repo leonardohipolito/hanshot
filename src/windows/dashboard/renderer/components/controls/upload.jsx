@@ -16,6 +16,11 @@ var Upload = React.createClass({
   },
   render: function () {
 
+    var image = this.props.image;
+    if (!image) {
+      return null;
+    }
+
     var hosts = this.props.metadata.uploadHosts;
     if (!(hosts && hosts.length)) {
       return null;
@@ -26,7 +31,7 @@ var Upload = React.createClass({
         title="Upload"
         right={true}
         onButtonClick={function () {
-          actions.upload(this.props.image.filePath);
+          actions.upload(image.filePath);
         }}
       >
         {hosts.map(function (host) {
@@ -34,7 +39,7 @@ var Upload = React.createClass({
               <DropdownItem
                 key={host.id}
                 onClick={function () {
-                  actions.upload(this.props.image.filePath, host.id);
+                  actions.upload(image.filePath, host.id);
                 }}
               >
                 {host.name}

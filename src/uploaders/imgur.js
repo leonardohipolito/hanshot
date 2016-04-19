@@ -28,7 +28,7 @@ var IMGUR_SIZE_LIMIT = 10;
 //------------------------------------------------------------------------------
 
 function ImgurUploader(cache) {
-  this.id = 'Imgur';
+  this.id = 'imgur';
   this.name = 'Imgur';
 
   this.cache = cache;

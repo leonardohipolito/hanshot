@@ -2,7 +2,7 @@ var React = electronRequire('react');
 
 function DropdownItem(props) {
   return (
-    <li>
+    <li {...props}>
       <a href="#">
         {props.children}
       </a>

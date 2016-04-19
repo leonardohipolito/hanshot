@@ -14,7 +14,7 @@ var Screen = require('./screen');
 var Settings = require('./settings');
 var Cache = require('./cache');
 var Tray = require('./tray');
-var Dispatcher = require('./dispatcher');
+
 var Gallery = require('./image/gallery');
 
 var windows = {
@@ -23,7 +23,7 @@ var windows = {
   Selection: require('./windows/selection')
 };
 
-var createApi = require('./api');
+var createApp = require('./app');
 var createStore = require('./store');
 var storeActions = require('./store/actions');
 var metadata = require('./config/metadata');
@@ -49,8 +49,7 @@ var isLinux = (process.platform === 'linux');
 
 // Initialize variables used inside app.on('ready'),
 // so they won't be garbage collected when handler executes
-var api = null;
-var tray = null;
+var app = null;
 
 // ---
 
@@ -59,24 +58,18 @@ var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
   console.log('There is an already running instance');
   var args = argv.slice(2);
 
-  if (!api) {
+  if (!app) {
     console.log('Unable to use already running instance');
     return;
   }
 
   if (!args.length) {
-    api.window.openDashboard();
+    app.perform({ actionName: 'open-dashboard' });
     return;
   }
 
-  var action = cli.parseAction(args);
-  if (action.capture === 'desktop') {
-    api.capture.desktop();
-  } else if (action.capture === 'selection') {
-    api.capture.selection();
-  } else if (action.capture === 'window') {
-    api.capture.window();
-  }
+  var cliAction = cli.parseAction(args);
+  dispatcher.dispatch(cliAction);
 });
 
 if (shouldQuit) {
@@ -115,14 +108,11 @@ electron.app.on('window-all-closed', function () {
 
 electron.app.on('ready', function () {
 
-  var args = process.argv.slice(2);
-  var action = cli.parseAction(args);
-
   var dashboardWindow = new windows.Dashboard();
   var settingsWindow = new windows.Settings();
   var selectionWindow = new windows.Selection();
 
-  var dispatcher = new Dispatcher();
+  var tray = new Tray();
 
   var settings = new Settings();
   var cache = new Cache();
@@ -132,6 +122,22 @@ electron.app.on('ready', function () {
   // Create store
 
   var store = createStore();
+
+  var components = {
+    windows: {
+      dashboard: dashboardWindow,
+      settings: settingsWindow,
+      selection: selectionWindow
+    },
+    settings: settings,
+    cache: cache,
+    screen: screen,
+    gallery: gallery,
+    tray: tray,
+    store: store
+  };
+
+  app = createApp(components);
 
   store.subscribe(function () {
     dashboardWindow.sendState(store.getState());
@@ -214,7 +220,7 @@ electron.app.on('ready', function () {
       cache.save();
       settings.save();
     } else {
-      quitApp();
+      app.perform({ actionName: 'force-quit' });
     }
   });
 
@@ -234,105 +240,10 @@ electron.app.on('ready', function () {
     settingsWindow.sendState(store.getState());
   });
 
-  // Work with actions
 
-  var application = {
-    windows: {
-      dashboard: dashboardWindow,
-      settings: settingsWindow,
-      selection: selectionWindow
-    },
-    settings: settings,
-    cache: cache,
-    screen: screen,
-    gallery: gallery,
-    store: store
-  };
-
-  // TODO: decide if API is required, maybe just gather all major instances
-  api = createApi(application);
-
-  tray = new Tray();
-
-  tray.on('action', dispatcher.dispatch.bind(dispatcher));
-  dashboardWindow.on('action', dispatcher.dispatch.bind(dispatcher));
-  settingsWindow.on('action', dispatcher.dispatch.bind(dispatcher));
-
-  dispatcher.register(function (action) {
-    switch (action.actionName) {
-      case 'capture-desktop':
-        api.capture.desktop(action.displayId);
-        break;
-      case 'capture-selection':
-        api.capture.selection(action.displayId);
-        break;
-      case 'capture-window':
-        api.capture.window(action.windowId);
-        break;
-      case 'open-dashboard':
-        api.window.openDashboard();
-        break;
-      case 'open-settings':
-        api.window.openSettings();
-        break;
-      case 'import-clipboard':
-        api.file.import();
-        break;
-      case 'import-open':
-        factory.dialog.openImage(function (filePath) {
-          api.file.open(filePath);
-        });
-        break;
-      case 'save-as':
-        var image = gallery.last();
-        if (!image) {
-          return;
-        }
-        factory.dialog.saveImageAs(image.getFileName(), function (filePath) {
-          api.file.saveAs(filePath, image);
-        });
-        break;
-      case 'upload':
-        api.uploader.upload(action.uploaderId, action.filePath);
-        break;
-
-      case 'uploader-auth':
-        api.uploader.authorize(action.uploaderId);
-        break;
-
-      case 'copy-image':
-        api.copy.image(action.filePath);
-        break;
-      case 'copy-text':
-        api.copy.text(action.text);
-        break;
-      case 'force-quit':
-        quitApp();
-        break;
-      case 'settings-changed':
-        settings.set(action.key, action.value);
-        store.dispatch( storeActions.updateSetting(action.key, action.value) );
-        break;
-      case 'settings-dialog':
-        var currentDirPath = settings.get('save-dir-path');
-        factory.dialog.saveImagesTo(currentDirPath, function (dirPath) {
-          settings.set('save-dir-path', dirPath);
-          store.dispatch( storeActions.updateSetting('save-dir-path', dirPath) );
-        });
-        break;
-      case 'close-alert':
-        store.dispatch( storeActions.closeAlert( action.alertId ) );
-        break;
-    }
-  });
-
-  if (action.capture === 'desktop') {
-    api.capture.desktop();
-  } else if (action.capture === 'selection') {
-    api.capture.selection();
-  } else if (action.capture === 'window') {
-    api.capture.window();
-  }
+  var args = process.argv.slice(2);
+  var cliAction = cli.parseAction(args);
+  app.perform(cliAction);
 
   // "printscreen" is not supported yet. FUCK
   // https://github.com/atom/electron/issues/4663
