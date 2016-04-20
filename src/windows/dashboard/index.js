@@ -40,7 +40,9 @@ DashboardWindow.prototype.open = function () {
 
   var self = this;
 
-  this.window = new electron.BrowserWindow();
+  this.window = new electron.BrowserWindow({
+    show: false
+  });
 
   this.window.loadURL('file://' + __dirname + '/renderer/dashboard.html');
 

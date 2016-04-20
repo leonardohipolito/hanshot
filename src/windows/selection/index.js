@@ -28,15 +28,25 @@ SelectionWindow.prototype.open = function (options, callback) {
     return;
   }
 
+  // Window can't be "show: false" and "fullscreen: true" at the same time,
+  // two modes are considered conflicting.
+  // https://github.com/electron/electron/issues/3228
   this.window = new electron.BrowserWindow({
     show: false,
-    fullscreen: true,
-    frame: false
+    frame: false,
+    // Setting zero width and height to not to have weird flickers
+    // when window tries to transition to a fullscreen mode. Otherwise, it
+    // will show original window for a second, and then fullscreened one.
+    width: 0,
+    height: 0,
+    // Transparency allows to hide white flickering background
+    // when transitioning to fullscreen
+    transparent: true
   });
 
-  // this.window.webContents.openDevTools();
-
+  // Send image when window is ready
   this.window.webContents.once('did-finish-load', function () {
+
     electron.ipcMain.once('selection-complete', function (event, err, dataURL) {
       if (err) {
         callback(err);
@@ -46,13 +56,16 @@ SelectionWindow.prototype.open = function (options, callback) {
         self.close();
       }
     });
+
     electron.ipcMain.once('selection-ready', function () {
-      self.window.show();
+      self.window.setFullScreen(true);
     });
+
     self.window.webContents.send('selection-image', {
       dataURL: options.dataURL,
       displayBounds: options.displayBounds
     });
+
   });
 
   this.window.loadURL('file://' + __dirname + '/renderer/selection.html');

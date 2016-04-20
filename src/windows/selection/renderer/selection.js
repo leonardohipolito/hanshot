@@ -15,10 +15,16 @@ electron.ipcRenderer.on('selection-image', function (event, options) {
   container.style.width = options.displayBounds.width + 'px';
   container.style.height = options.displayBounds.height + 'px';
 
-  var cropper;
+  image.addEventListener('load', function () {
 
-  image.addEventListener('built', function () {
-    electron.ipcRenderer.send('selection-ready');
+    var cropper = new Cropper(image, {
+      highlight: false,
+      movable: false,
+      rotatable: false,
+      scalable: false,
+      zoomable: false,
+      zoomOnWheel: false
+    });
 
     function onEnter(event) {
       if (event.keyCode !== KEY_ENTER) {
@@ -36,18 +42,12 @@ electron.ipcRenderer.on('selection-image', function (event, options) {
     }
 
     document.addEventListener('keyup', onEnter, true);
+
+    electron.ipcRenderer.send('selection-ready');
+
   });
 
   image.src = options.dataURL;
-
-  cropper = new Cropper(image, {
-    highlight: false,
-    movable: false,
-    rotatable: false,
-    scalable: false,
-    zoomable: false,
-    zoomOnWheel: false
-  });
 
 });
 
