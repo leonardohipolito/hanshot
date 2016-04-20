@@ -4,38 +4,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var fs = require('fs');
-var path = require('path');
-
 var electron = require('electron');
-var _ = require('lodash');
-
-var Screen = require('./screen');
-var Settings = require('./settings');
-var Cache = require('./cache');
-var Tray = require('./tray');
-
-var Gallery = require('./image/gallery');
-
-var windows = {
-  Dashboard: require('./windows/dashboard'),
-  Settings: require('./windows/settings'),
-  Selection: require('./windows/selection')
-};
-
-var createApp = require('./app');
-var createStore = require('./store');
-var storeActions = require('./store/actions');
-var metadata = require('./config/metadata');
-
-var notify = require('./notification');
-
-var factory = {
-  alert: require('./factory/alert'),
-  dialog: require('./factory/dialog')
-};
 
 var cli = require('./cli');
+var initApp = require('./app');
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -44,14 +16,13 @@ var cli = require('./cli');
 var isLinux = (process.platform === 'linux');
 
 //------------------------------------------------------------------------------
-// Private
+// Module
 //------------------------------------------------------------------------------
 
 // Initialize variables used inside app.on('ready'),
 // so they won't be garbage collected when handler executes
 var app = null;
 
-// ---
 
 // Keep one running instance and prevent second instance from starting
 var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
@@ -69,9 +40,10 @@ var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
   }
 
   var cliAction = cli.parseAction(args);
-  dispatcher.dispatch(cliAction);
+  app.perform(cliAction);
 });
 
+// Kill second process, if one is already running
 if (shouldQuit) {
   electron.app.quit();
   return;
@@ -108,138 +80,7 @@ electron.app.on('window-all-closed', function () {
 
 electron.app.on('ready', function () {
 
-  var dashboardWindow = new windows.Dashboard();
-  var settingsWindow = new windows.Settings();
-  var selectionWindow = new windows.Selection();
-
-  var tray = new Tray();
-
-  var settings = new Settings();
-  var cache = new Cache();
-  var screen = new Screen();
-  var gallery = new Gallery(cache.get('gallery', []));
-
-  // Create store
-
-  var store = createStore();
-
-  var components = {
-    windows: {
-      dashboard: dashboardWindow,
-      settings: settingsWindow,
-      selection: selectionWindow
-    },
-    settings: settings,
-    cache: cache,
-    screen: screen,
-    gallery: gallery,
-    tray: tray,
-    store: store
-  };
-
-  app = createApp(components);
-
-  store.subscribe(function () {
-    dashboardWindow.sendState(store.getState());
-    settingsWindow.sendState(store.getState());
-  });
-
-  // Dependent store actions
-
-  var fetchDisplays = function () {
-    return storeActions.receiveDisplays(screen.getDisplayList());
-  };
-
-  var fetchWindows = function () {
-    return function (dispatch) {
-      screen.getWindowList(function (err, windows) {
-        dispatch(storeActions.receiveWindows(windows));
-      });
-    };
-  };
-
-  var fetchSettings = function () {
-    return storeActions.receiveSettings(settings.serialize());
-  };
-
-  var fetchImage = function () {
-    return storeActions.receiveImage(gallery.last());
-  };
-
-  var fetchMetadata = function () {
-    return storeActions.receiveMetadata(metadata);
-  };
-
-  // Store dispatchers
-
-  store.dispatch(fetchWindows());
-  store.dispatch(fetchDisplays());
-  store.dispatch(fetchSettings());
-  store.dispatch(fetchImage());
-  store.dispatch(fetchMetadata());
-
-  gallery.on('added', function () {
-    store.dispatch(fetchImage());
-  });
-  gallery.on('updated', function (filePath) {
-    if (store.getState().image.filePath === filePath) {
-      store.dispatch(fetchImage());
-    }
-  });
-
-  screen.on('display-added', function () {
-    store.dispatch(fetchDisplays());
-  });
-
-  screen.on('display-removed', function () {
-    store.dispatch(fetchDisplays());
-  });
-
-  screen.on('display-updated', function () {
-    store.dispatch(fetchDisplays());
-  });
-
-  // Create windows
-
-  var quitApp = function () {
-    cache.set('gallery', gallery.serialize());
-
-    // TODO: use promises or callbacks to make async writes
-    // now cache and settings are saved synchronously (is it bad?)
-    screen.destroy();
-    cache.save();
-    settings.save();
-    electron.app.quit();
-  };
-
-  if (settings.get('show-on-start')) {
-    dashboardWindow.open();
-  }
-  dashboardWindow.on('close', function () {
-    if (settings.get('tray-on-close')) {
-      cache.save();
-      settings.save();
-    } else {
-      app.perform({ actionName: 'force-quit' });
-    }
-  });
-
-  dashboardWindow.on('ready', function () {
-    dashboardWindow.sendState(store.getState());
-  });
-
-  dashboardWindow.on('focus', function () {
-    store.dispatch(fetchWindows());
-  });
-
-  settingsWindow.on('close', function () {
-    settings.save();
-  });
-
-  settingsWindow.on('ready', function (event) {
-    settingsWindow.sendState(store.getState());
-  });
-
+  app = initApp();
 
   var args = process.argv.slice(2);
   var cliAction = cli.parseAction(args);
