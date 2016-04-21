@@ -12,7 +12,8 @@ module.exports = function (dispatcher, components) {
     }
     components.screen.captureDisplay(action.displayId, function (err, dataURL) {
       if (err) throw err;
-      dispatcher.emit('write-file', {
+      dispatcher.dispatch({
+        actionName: 'write-file',
         type: 'desktop',
         dataURL: dataURL
       });
@@ -28,7 +29,8 @@ module.exports = function (dispatcher, components) {
     }
     components.screen.captureWindow(action.windowId, function (err, dataURL) {
       if (err) throw err;
-      dispatcher.emit('write-file', {
+      dispatcher.dispatch({
+        actionName: 'write-file',
         type: 'window',
         dataURL: dataURL
       });
@@ -58,7 +60,8 @@ module.exports = function (dispatcher, components) {
         if (err) {
           // Failed or cancelled
         } else {
-          dispatcher.emit('write-file', {
+          dispatcher.dispatch({
+            actionName: 'write-file',
             type: 'selection',
             dataURL: selectionDataURL
           });

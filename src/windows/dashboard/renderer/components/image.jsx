@@ -1,6 +1,8 @@
 var React = electronRequire('react');
 var electron = electronRequire('electron');
 
+var actions = require('../actions');
+
 var Image = React.createClass({
   getDefaultProps: function () {
     return {
@@ -13,32 +15,35 @@ var Image = React.createClass({
     );
   },
   render: function () {
-    if (!this.props.image) {
+    var image = this.props.image;
+    if (!image) {
       return this.renderEmpty();
     }
-
     return (
       <div className="panel panel-default image-container">
         <div className="panel-heading image-title">
-          {this.props.image.fileName}
+          {image.fileName}
         </div>
         <div className="panel-body image-content">
           <div
             className="image"
+            onContextMenu={function () {
+              actions.contextMenu(image.filePath);
+            }}
             style={{
-              backgroundImage: 'url(' + this.props.image.dataURL + ')',
-              maxWidth: this.props.image.width,
-              maxHeight: this.props.image.height
+              backgroundImage: 'url(' + image.dataURL + ')',
+              maxWidth: image.width,
+              maxHeight: image.height
             }}
           ></div>
         </div>
         <div className="panel-footer image-info">
           <span>
-            {this.props.image.width} x {this.props.image.height} pixels
+            {image.width} x {image.height} pixels
           </span>
           {' '}
           <span>
-            {this.props.image.fileSizeHuman}
+            {image.fileSizeHuman}
           </span>
         </div>
       </div>

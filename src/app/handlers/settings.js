@@ -23,7 +23,8 @@ module.exports = function (dispatcher, components) {
   dispatcher.on('settings-dialog', function (action) {
     var currentDirPath = components.settings.get('save-dir-path');
     dialog.saveImagesTo(currentDirPath, function (dirPath) {
-      dispatcher.emit('settings-changed', {
+      dispatcher.dispatch({
+        actionName: 'settings-changed',
         key: 'save-dir-path',
         value: dirPath
       });

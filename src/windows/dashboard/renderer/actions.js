@@ -57,3 +57,10 @@ exports.closeAlert = function (alertId) {
     alertId: alertId
   });
 };
+
+exports.contextMenu = function (filePath) {
+  sendAction({
+    actionName: 'context-menu',
+    filePath: filePath
+  });
+};

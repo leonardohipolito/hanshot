@@ -9,8 +9,10 @@ var util = require('util');
 
 var electron = require('electron');
 
+var menuFactory = require('../../factory/menu');
+
 //------------------------------------------------------------------------------
-// Public Interface
+// Module
 //------------------------------------------------------------------------------
 
 function DashboardWindow() {
@@ -20,6 +22,11 @@ function DashboardWindow() {
 
   this.state = {};
   this.window = null;
+
+  var template = menuFactory.dashboard(function dispatch(action) {
+    self.emit('action', action);
+  });
+  this.menu = electron.Menu.buildFromTemplate(template);
 
   this.onReady = function () {
     self.emit('ready');
@@ -31,7 +38,6 @@ function DashboardWindow() {
 
 util.inherits(DashboardWindow, EventEmitter);
 
-// TODO: rethink actions
 DashboardWindow.prototype.open = function () {
   if (this.window) {
     this.window.show();
@@ -55,98 +61,7 @@ DashboardWindow.prototype.open = function () {
     self.emit('focus');
   });
 
-  var template = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'New',
-          submenu: [
-            {
-              label: 'Desktop',
-              click: function () {
-                self.emit('action', { actionName: 'capture-desktop' });
-              }
-            },
-            {
-              label: 'Selection',
-              click: function () {
-                self.emit('action', { actionName: 'capture-selection' });
-              }
-            },
-            {
-              type: 'separator'
-            },
-            {
-              label: 'Import from clipboard',
-              click: function () {
-                self.emit('action', { actionName: 'import-clipboard' });
-              }
-            }
-          ]
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Open...',
-          click: function () {
-            self.emit('action', { actionName: 'import-open' });
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Save as...',
-          click: function () {
-            self.emit('action', { actionName: 'save-as' });
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Quit',
-          click: function () {
-            self.emit('action', { actionName: 'force-quit' });
-          }
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        {
-          label: 'Settings',
-          click: function () {
-            self.emit('action', { actionName: 'open-settings' });
-          }
-        }
-      ]
-    },
-    {
-      label: 'Developer',
-      submenu: [
-        {
-          label: 'Open dev tools',
-          click: function () {
-            self.window.webContents.openDevTools();
-          }
-        },
-        {
-          label: 'Reload',
-          click: function () {
-            self.window.reload();
-          }
-        }
-      ]
-    }
-  ];
-
-  var menu = electron.Menu.buildFromTemplate(template);
-
-  this.window.setMenu(menu);
+  this.window.setMenu(this.menu);
 
   electron.ipcMain.on('dashboard-ready', this.onReady);
   electron.ipcMain.on('dashboard-action', this.onAction);

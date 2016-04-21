@@ -4,10 +4,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var EventEmitter = require('events').EventEmitter;
-
 var electron = require('electron');
 
+var Dispatcher = require('../dispatcher');
 var Screen = require('../screen');
 var Settings = require('../settings');
 var Cache = require('../cache');
@@ -26,6 +25,7 @@ var handlers = [
   require('./handlers/capture'),
   require('./handlers/copy'),
   require('./handlers/file'),
+  require('./handlers/menu'),
   require('./handlers/settings'),
   require('./handlers/store'),
   require('./handlers/upload'),
@@ -56,21 +56,15 @@ module.exports = function () {
 
   // Handle events from app components
 
-  var dispatcher = new EventEmitter();
+  var dispatcher = new Dispatcher();
 
   handlers.forEach(function (registerHandlers) {
     registerHandlers(dispatcher, components);
   });
 
-  var perform = function (action) {
-    console.log('Action: ', action);
-    if (!action) return;
-    dispatcher.emit(action.actionName, action);
-  }
-
-  components.windows.dashboard.on('action', perform);
-  components.windows.settings.on('action', perform);
-  components.tray.on('action', perform);
+  components.windows.dashboard.on('action', dispatcher.dispatch);
+  components.windows.settings.on('action', dispatcher.dispatch);
+  components.tray.on('action', dispatcher.dispatch);
 
   // Store
 
@@ -147,6 +141,7 @@ module.exports = function () {
 
   if (components.settings.get('show-on-start')) {
     components.windows.dashboard.open();
+    components.windows.dashboard.show();
   }
 
   components.windows.dashboard.on('ready', function () {
@@ -164,7 +159,7 @@ module.exports = function () {
       cache.save();
       settings.save();
     } else {
-      perform({ actionName: 'force-quit' });
+      dispatcher.dispatch({ actionName: 'force-quit' });
     }
   });
 
@@ -182,6 +177,6 @@ module.exports = function () {
   // App public methods
 
   return {
-    perform: perform
+    perform: dispatcher.dispatch
   };
 };
