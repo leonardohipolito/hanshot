@@ -72,6 +72,18 @@ Image.prototype.toBase64 = function () {
   return parts[1];
 };
 
+Image.prototype.serialize = function () {
+  return {
+    dataURL: this.dataURL,
+    width: this.width,
+    height: this.height,
+    filePath: this.filePath,
+    fileName: this.fileName,
+    fileSize: this.fileSize,
+    fileSizeHuman: this.fileSizeHuman
+  };
+};
+
 Image.createFromPath = function (filePath) {
   var native = electron.nativeImage.createFromPath(filePath);
   if (native.isEmpty()) {

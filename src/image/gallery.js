@@ -4,6 +4,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
+var fs = require('fs');
+var path = require('path');
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
@@ -21,23 +23,76 @@ function Gallery(collection) {
   this.collection = collection || [];
 
   this.currentImage = null;
+  this.watcher = null;
 }
 
 util.inherits(Gallery, EventEmitter);
 
 Gallery.prototype.load = function (item) {
+  var self = this;
+
   if (this.currentImage && this.currentImage.getFilePath() === item.filePath) {
     return this.currentImage;
   }
 
-  var image = Image.createFromPath(item.filePath);
-  if (image) {
-    image.publicUrls = item.publicUrls;
+  if (this.watcher) {
+    this.watcher.close();
+    this.watcher = null;
   }
+
+  var image = Image.createFromPath(item.filePath);
+  if (!image) {
+    this.currentImage = null;
+    return null;
+  }
+
+  image.publicUrls = item.publicUrls;
 
   this.currentImage = image;
 
+  console.log('loaded');
+
+  this.watcher = fs.watch(item.filePath, function (event, fileName) {
+
+    console.log(event, fileName);
+
+    if (event === 'change') {
+
+      self.currentImage = null;
+      self.load(item);
+      self.emit('updated', item.filePath);
+
+    } else if (event === 'rename') {
+
+      // Can't rely on fileName argument
+      // https://nodejs.org/docs/latest/api/fs.html#fs_fs_watch_filename_options_listener
+      if (fileName) {
+
+        var newFilePath = path.join(path.dirname(item.filePath), fileName);
+        self.load({ filePath: newFilePath });
+
+      } else {
+
+        self.unload();
+
+      }
+
+    } else {
+      console.log(event, fileName);
+    }
+
+  });
+
   return this.currentImage;
+};
+
+Gallery.prototype.unload = function () {
+  this.currentImage = null;
+  if (this.watcher) {
+    this.watcher.close();
+    this.watcher = null;
+  }
+  this.emit('unloaded');
 };
 
 Gallery.prototype.add = function (image) {
@@ -105,6 +160,10 @@ Gallery.prototype.size = function () {
 
 Gallery.prototype.serialize = function () {
   return this.collection;
+};
+
+Gallery.prototype.destroy = function () {
+  this.unload();
 };
 
 module.exports = Gallery;

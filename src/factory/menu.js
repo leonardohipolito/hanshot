@@ -10,7 +10,7 @@ var metadata = require('../config/metadata');
 // Module
 //------------------------------------------------------------------------------
 
-exports.imageContext = function (dispatch, galleryItem) {
+exports.imageContext = function (dispatch, image) {
 
   var uploadersSubMenu = metadata.uploadHosts.map(function (host) {
     return {
@@ -19,13 +19,13 @@ exports.imageContext = function (dispatch, galleryItem) {
         dispatch({
           actionName: 'upload',
           uploaderId: host.id,
-          filePath: galleryItem.filePath
+          filePath: image.filePath
         });
       }
     };
   });
 
-  var publicUrlsSubMenu = galleryItem.publicUrls.map(function (publicUrl) {
+  var publicUrlsSubMenu = image.publicUrls.map(function (publicUrl) {
     return {
       label: publicUrl,
       click: function () {
@@ -43,7 +43,7 @@ exports.imageContext = function (dispatch, galleryItem) {
       click: function () {
         dispatch({
           actionName: 'open-directory',
-          filePath: galleryItem.filePath
+          filePath: image.filePath
         })
       }
     },
@@ -72,7 +72,7 @@ exports.imageContext = function (dispatch, galleryItem) {
       click: function () {
         dispatch({
           actionName: 'copy-image',
-          filePath: galleryItem.filePath
+          filePath: image.filePath
         });
       }
     }

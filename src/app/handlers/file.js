@@ -59,7 +59,7 @@ module.exports = function (dispatcher, components) {
 
   dispatcher.on('import-open', function () {
     dialog.openImage(function (filePath) {
-      components.gallery.add(Image.createFromPath(filePath));
+      components.imageLoader.load(filePath);
     });
   });
 
@@ -98,7 +98,7 @@ module.exports = function (dispatcher, components) {
       fs.writeFile(filePath, buffer, function (err) {
         if (err) throw err;
 
-        components.gallery.add(new Image(nativeImage, filePath));
+        components.imageLoader.load(filePath);
 
         console.log('Import');
       });
@@ -107,7 +107,7 @@ module.exports = function (dispatcher, components) {
   });
 
   dispatcher.on('save-as', function () {
-    var image = components.gallery.last();
+    var image = components.imageLoader.getImage();
     if (!image) {
       return;
     }
@@ -161,7 +161,7 @@ module.exports = function (dispatcher, components) {
       fs.writeFile(filePath, buffer, function (err) {
         if (err) throw err;
 
-        components.gallery.add(new Image(nativeImage, filePath));
+        components.imageLoader.load(filePath);
 
         if (components.settings.get('upload-after-capture')) {
           api.uploader.upload(null, filePath);

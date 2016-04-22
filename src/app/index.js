@@ -11,7 +11,7 @@ var Screen = require('../screen');
 var Settings = require('../settings');
 var Cache = require('../cache');
 var Tray = require('../tray');
-var Gallery = require('../image/gallery');
+var ImageLoader = require('../image/loader');
 var windows = {
   Dashboard: require('../windows/dashboard'),
   Settings: require('../windows/settings'),
@@ -39,8 +39,6 @@ var handlers = [
 
 module.exports = function () {
 
-  var cache = new Cache();
-
   var components = {
     windows: {
       dashboard: new windows.Dashboard(),
@@ -48,12 +46,20 @@ module.exports = function () {
       selection: new windows.Selection()
     },
     settings: new Settings(),
-    cache: cache,
+    cache: new Cache(),
     screen: new Screen(),
-    gallery: new Gallery(cache.get('gallery', [])),
+    imageLoader: new ImageLoader(),
     tray: new Tray(),
     store: createStore()
   };
+
+  // Preload image
+
+  var cachedGallery = components.cache.get('gallery', []);
+  var cachedImage = cachedGallery[cachedGallery.length - 1];
+  if (cachedImage) {
+    components.imageLoader.load(cachedImage.filePath, cachedImage.publicUrls);
+  }
 
   // Handle events from app components
 
@@ -91,7 +97,7 @@ module.exports = function () {
   };
 
   var fetchImage = function () {
-    return storeActions.receiveImage(components.gallery.last());
+    return storeActions.receiveImage(components.imageLoader.getImage());
   };
 
   var fetchSettings = function () {
@@ -126,16 +132,18 @@ module.exports = function () {
     components.store.dispatch(fetchDisplays());
   });
 
-  // Gallery
+  // Image loader
 
-  components.gallery.on('added', function () {
+  components.imageLoader.on('loaded', function () {
     components.store.dispatch(fetchImage());
   });
 
-  components.gallery.on('updated', function (filePath) {
-    if (components.store.getState().image.filePath === filePath) {
-      components.store.dispatch(fetchImage());
-    }
+  components.imageLoader.on('updated', function () {
+    components.store.dispatch(fetchImage());
+  });
+
+  components.imageLoader.on('unloaded', function () {
+    components.store.dispatch(fetchImage());
   });
 
   // Windows - dashboard

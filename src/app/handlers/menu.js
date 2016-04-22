@@ -15,14 +15,12 @@ var menuFactory = require('../../factory/menu');
 module.exports = function (dispatcher, components) {
 
   dispatcher.on('context-menu', function (action) {
-    var galleryItem = components.gallery.findItem(action.filePath);
-    if (!galleryItem) {
-      galleryItem = {
-        filePath: action.filePath,
-        publicUrls: []
-      };
+    var image = components.imageLoader.getImage();
+    if (!image) {
+      console.log('No image for context menu');
+      return;
     }
-    var template = menuFactory.imageContext(dispatcher.dispatch, galleryItem);
+    var template = menuFactory.imageContext(dispatcher.dispatch, image);
     var menu = electron.Menu.buildFromTemplate(template);
     menu.popup();
   });

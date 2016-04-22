@@ -51,7 +51,7 @@ module.exports = function (dispatcher, components) {
       return;
     }
 
-    var image = components.gallery.find(action.filePath);
+    var image = components.imageLoader.getImage();
     if (!image) {
       console.log('Image not found');
       return;
@@ -80,7 +80,7 @@ module.exports = function (dispatcher, components) {
 
       electron.clipboard.writeText(link);
 
-      components.gallery.addPublicUrl(image.getFilePath(), link);
+      components.imageLoader.addPublicUrl(link);
 
       notify('<b>Screenshot uploaded</b><br>Public URL is in clipboard');
 
