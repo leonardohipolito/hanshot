@@ -1,21 +1,84 @@
 'use strict';
 
 //------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+var metadata = require('../config/metadata');
+
+//------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-exports.imageContext = function (dispatch, filePath) {
-  return [
+exports.imageContext = function (dispatch, galleryItem) {
+
+  var uploadersSubMenu = metadata.uploadHosts.map(function (host) {
+    return {
+      label: host.name,
+      click: function () {
+        dispatch({
+          actionName: 'upload',
+          uploaderId: host.id,
+          filePath: galleryItem.filePath
+        });
+      }
+    };
+  });
+
+  var publicUrlsSubMenu = galleryItem.publicUrls.map(function (publicUrl) {
+    return {
+      label: publicUrl,
+      click: function () {
+        dispatch({
+          actionName: 'copy-text',
+          text: publicUrl
+        });
+      }
+    };
+  });
+
+  var template = [
+    {
+      label: 'Show in folder',
+      click: function () {
+        dispatch({
+          actionName: 'open-directory',
+          filePath: galleryItem.filePath
+        })
+      }
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Upload',
+      submenu: uploadersSubMenu
+    }
+  ];
+
+  if (publicUrlsSubMenu.length) {
+    template.push({
+      label: 'Public URLs',
+      submenu: publicUrlsSubMenu
+    });
+  }
+
+  template = template.concat([
+    {
+      type: 'separator'
+    },
     {
       label: 'Copy',
       click: function () {
         dispatch({
           actionName: 'copy-image',
-          filePath: filePath
+          filePath: galleryItem.filePath
         });
       }
     }
-  ];
+  ]);
+
+  return template;
 };
 
 exports.dashboard = function (dispatch) {

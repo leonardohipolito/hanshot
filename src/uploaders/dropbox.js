@@ -57,13 +57,15 @@ function upload(fileName, buffer, token, callback) {
         var json = JSON.parse(body);
         callback(null);
       } else {
-        // handle error
+        console.log('dropbox error');
+        console.log(body);
       }
     });
   });
 
   req.on('error', function (err) {
-    // handle error
+    console.log('request error');
+    console.log(err);
   });
 
   req.write(requestData);
@@ -104,14 +106,16 @@ function share(fileName, buffer, token, callback) {
         callback(null, json.url);
 
       } else {
-        // handle error
+        console.log('dropbox error');
+        console.log(body);
       }
 
     });
   });
 
   req.on('error', function (err) {
-    // handle error
+    console.log('request error');
+    console.log(err);
   });
 
   req.write(requestData);

@@ -72,6 +72,11 @@ Gallery.prototype.find = function (filePath) {
   return this.get(index);
 };
 
+Gallery.prototype.findItem = function (filePath) {
+  var index = this.findIndex(filePath);
+  return this.collection[index];
+};
+
 Gallery.prototype.findIndex = function (filePath) {
   return _.findIndex(this.collection, {
     filePath: filePath

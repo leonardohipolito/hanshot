@@ -27,6 +27,7 @@ var handlers = [
   require('./handlers/file'),
   require('./handlers/menu'),
   require('./handlers/settings'),
+  require('./handlers/shell'),
   require('./handlers/store'),
   require('./handlers/upload'),
   require('./handlers/window')

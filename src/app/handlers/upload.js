@@ -41,22 +41,26 @@ module.exports = function (dispatcher, components) {
     var uploaderId = action.uploaderId;
 
     if (!uploaderId) {
+      console.log('Using default uploader');
       uploaderId = components.settings.get('default-uploader');
     }
 
     var Uploader = uploaders[uploaderId];
     if (!Uploader) {
+      console.log('Uploader not found');
       return;
     }
 
     var image = components.gallery.find(action.filePath);
     if (!image) {
+      console.log('Image not found');
       return;
     }
 
     var uploader = new Uploader(components.cache);
 
     if (!uploader.isAuthorized()) {
+      console.log('Upload not authorized');
       components.store.dispatch(storeActions.showAlert(
         alert.uploaderAuth(uploader.id, uploader.name)
       ));

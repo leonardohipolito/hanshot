@@ -74,14 +74,16 @@ ImgurUploader.prototype.upload = function (fileName, buffer, callback) {
         callback(null, json.data.link);
 
       } else {
-        // handle error
+        console.log('imgur error');
+        console.log(json);
       }
 
     });
   });
 
   req.on('error', function (err) {
-    // handle error
+    console.log('request error');
+    console.log(err);
   });
 
   req.write(requestData);
