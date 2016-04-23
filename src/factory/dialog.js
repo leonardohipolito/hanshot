@@ -31,26 +31,6 @@ exports.openImage = function (callback) {
   });
 };
 
-exports.saveImageAs = function (fileName, callback) {
-  electron.dialog.showSaveDialog({
-    defaultPath: path.join(electron.app.getPath('pictures'), fileName),
-    filters: [
-      {
-        name: 'All Compatible Image Formats',
-        extensions: ['jpg', 'png']
-      },
-      { name: 'PNG', extensions: ['png'] },
-      { name: 'JPEG', extensions: ['jpg'] }
-    ]
-  }, function (filePath) {
-    if (filePath) {
-      callback(filePath);
-    } else {
-      // "Cancel" pressed
-    }
-  });
-};
-
 exports.saveImagesTo = function (dirPath, callback) {
   electron.dialog.showOpenDialog({
     defaultPath: dirPath,

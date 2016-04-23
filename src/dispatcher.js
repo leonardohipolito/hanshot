@@ -1,12 +1,34 @@
 'use strict';
 
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var EventEmitter = require('events').EventEmitter;
+
+var _ = require('lodash');
+
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+function logAction(action) {
+  var out = _.extend({}, action);
+  if (out['dataURL']) {
+    out['dataURL'] = '... replaced ...';
+  }
+  console.log('Action: ', out);
+}
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 function Dispatcher() {
   var emitter = new EventEmitter();
 
   this.dispatch = function (action) {
-    console.log('Action:', action);
+    logAction(action);
     if (!action) return;
     emitter.emit(action.actionName, action);
   }.bind(this);

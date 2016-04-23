@@ -13,15 +13,9 @@ var electron = require('electron');
 module.exports = function (dispatcher, components) {
 
   dispatcher.on('force-quit', function () {
-    var cachedImage = components.imageLoader.getImage();
-    if (cachedImage) {
-        var cachedGallery = components.cache.get('gallery', []);
-        cachedGallery.push(cachedImage);
-        components.cache.set('gallery', cachedGallery);
-    }
+    components.cache.set('gallery', components.gallery.serialize());
     // TODO: use promises or callbacks to make async writes
     // now cache and settings are saved synchronously (is it bad?)
-    components.imageLoader.destroy();
     components.screen.destroy();
     components.cache.save();
     components.settings.save();

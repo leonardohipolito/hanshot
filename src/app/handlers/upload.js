@@ -51,7 +51,7 @@ module.exports = function (dispatcher, components) {
       return;
     }
 
-    var image = components.imageLoader.getImage();
+    var image = components.gallery.findByFilePath(action.filePath);
     if (!image) {
       console.log('Image not found');
       return;
@@ -68,6 +68,12 @@ module.exports = function (dispatcher, components) {
       return;
     }
 
+    image.load();
+    if (image.isEmpty()) {
+      console.log('Image is empty');
+      return;
+    }
+
     var buffer = null;
     if (components.settings.get('image-format') === 'jpg') {
       buffer = image.toJpgBuffer(components.settings.get('jpg-quality'));
@@ -80,7 +86,8 @@ module.exports = function (dispatcher, components) {
 
       electron.clipboard.writeText(link);
 
-      components.imageLoader.addPublicUrl(link);
+      image.addPublicUrl(link);
+      components.gallery.update(image.getFilePath(), image);
 
       notify('<b>Screenshot uploaded</b><br>Public URL is in clipboard');
 

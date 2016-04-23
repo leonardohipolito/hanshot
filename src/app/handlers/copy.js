@@ -13,12 +13,12 @@ var electron = require('electron');
 module.exports = function (dispatcher, components) {
 
   dispatcher.on('copy-image', function (action) {
-    var image = components.imageLoader.getImage();
+    var image = components.gallery.findByFilePath(action.filePath);
     if (!image) {
       console.log('No image found for copy');
       return false;
     }
-    electron.clipboard.writeImage(image.getNative());
+    electron.clipboard.writeImage(image.load().getNative());
   });
 
   dispatcher.on('copy-text', function (action) {

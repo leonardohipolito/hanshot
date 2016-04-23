@@ -11,7 +11,7 @@ var Screen = require('../screen');
 var Settings = require('../settings');
 var Cache = require('../cache');
 var Tray = require('../tray');
-var ImageLoader = require('../image/loader');
+var Gallery = require('../image/gallery');
 var windows = {
   Dashboard: require('../windows/dashboard'),
   Settings: require('../windows/settings'),
@@ -48,18 +48,14 @@ module.exports = function () {
     settings: new Settings(),
     cache: new Cache(),
     screen: new Screen(),
-    imageLoader: new ImageLoader(),
+    gallery: new Gallery(),
     tray: new Tray(),
     store: createStore()
   };
 
   // Preload image
 
-  var cachedGallery = components.cache.get('gallery', []);
-  var cachedImage = cachedGallery[cachedGallery.length - 1];
-  if (cachedImage) {
-    components.imageLoader.load(cachedImage.filePath, cachedImage.publicUrls);
-  }
+  components.gallery.reset(components.cache.get('gallery', []));
 
   // Handle events from app components
 
@@ -97,7 +93,8 @@ module.exports = function () {
   };
 
   var fetchImage = function () {
-    return storeActions.receiveImage(components.imageLoader.getImage());
+    var image = components.gallery.getLast().load();
+    return storeActions.receiveImage(image);
   };
 
   var fetchSettings = function () {
@@ -134,15 +131,11 @@ module.exports = function () {
 
   // Image loader
 
-  components.imageLoader.on('loaded', function () {
+  components.gallery.on('added', function () {
     components.store.dispatch(fetchImage());
   });
 
-  components.imageLoader.on('updated', function () {
-    components.store.dispatch(fetchImage());
-  });
-
-  components.imageLoader.on('unloaded', function () {
+  components.gallery.on('updated', function () {
     components.store.dispatch(fetchImage());
   });
 

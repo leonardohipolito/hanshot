@@ -132,7 +132,7 @@ Screen.prototype.captureDisplay = function (displayId, callback) {
 
   this.callWhenReady(function () {
 
-    electron.ipcMain.on('screen-capture-display-ready', function (event, err, dataURL) {
+    electron.ipcMain.once('screen-capture-display-ready', function (event, err, dataURL) {
       if (err) throw err;
 
       callback(null, dataURL);
@@ -157,7 +157,7 @@ Screen.prototype.captureWindow = function (windowId, callback) {
 
   this.callWhenReady(function () {
 
-    electron.ipcMain.on('screen-capture-window-ready', function (event, err, dataURL) {
+    electron.ipcMain.once('screen-capture-window-ready', function (event, err, dataURL) {
       if (err) throw err;
 
       callback(null, dataURL);

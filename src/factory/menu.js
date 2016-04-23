@@ -19,13 +19,13 @@ exports.imageContext = function (dispatch, image) {
         dispatch({
           actionName: 'upload',
           uploaderId: host.id,
-          filePath: image.filePath
+          filePath: image.getFilePath()
         });
       }
     };
   });
 
-  var publicUrlsSubMenu = image.publicUrls.map(function (publicUrl) {
+  var publicUrlsSubMenu = image.getPublicUrls().map(function (publicUrl) {
     return {
       label: publicUrl,
       click: function () {
@@ -39,12 +39,12 @@ exports.imageContext = function (dispatch, image) {
 
   var template = [
     {
-      label: 'Show in folder',
+      label: 'Copy',
       click: function () {
         dispatch({
-          actionName: 'open-directory',
-          filePath: image.filePath
-        })
+          actionName: 'copy-image',
+          filePath: image.getFilePath()
+        });
       }
     },
     {
@@ -68,12 +68,12 @@ exports.imageContext = function (dispatch, image) {
       type: 'separator'
     },
     {
-      label: 'Copy',
+      label: 'Show in folder',
       click: function () {
         dispatch({
-          actionName: 'copy-image',
-          filePath: image.filePath
-        });
+          actionName: 'open-directory',
+          filePath: image.getFilePath()
+        })
       }
     }
   ]);
@@ -119,15 +119,6 @@ exports.dashboard = function (dispatch) {
           label: 'Open...',
           click: function () {
             dispatch({ actionName: 'import-open' });
-          }
-        },
-        {
-          type: 'separator'
-        },
-        {
-          label: 'Save as...',
-          click: function () {
-            dispatch({ actionName: 'save-as' });
           }
         },
         {

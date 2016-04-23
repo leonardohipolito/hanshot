@@ -59,7 +59,7 @@ module.exports = function (dispatcher, components) {
 
   dispatcher.on('import-open', function () {
     dialog.openImage(function (filePath) {
-      components.imageLoader.load(filePath);
+      components.gallery.add(new Image(filePath));
     });
   });
 
@@ -98,35 +98,14 @@ module.exports = function (dispatcher, components) {
       fs.writeFile(filePath, buffer, function (err) {
         if (err) throw err;
 
-        components.imageLoader.load(filePath);
+        var image = new Image(filePath);
+        image.load(nativeImage);
+        components.gallery.add(image);
 
         console.log('Import');
       });
     });
 
-  });
-
-  dispatcher.on('save-as', function () {
-    var image = components.imageLoader.getImage();
-    if (!image) {
-      return;
-    }
-    dialog.saveImageAs(image.getFileName(), function (filePath) {
-
-      var buffer = null;
-      var ext = path.extname(filePath).toLowerCase();
-      if (ext === '.jpg' || ext === '.jpeg') {
-        buffer = image.toJpgBuffer(components.settings.get('jpg-quality'));
-      } else {
-        buffer = image.toPngBuffer();
-      }
-
-      fs.writeFile(filePath, buffer, function (err) {
-        if (err) throw err;
-
-        console.log('Save as');
-      });
-    });
   });
 
   dispatcher.on('write-file', function (action) {
@@ -161,10 +140,15 @@ module.exports = function (dispatcher, components) {
       fs.writeFile(filePath, buffer, function (err) {
         if (err) throw err;
 
-        components.imageLoader.load(filePath);
+        var image = new Image(filePath);
+        image.load(nativeImage);
+        components.gallery.add(image);
 
         if (components.settings.get('upload-after-capture')) {
-          api.uploader.upload(null, filePath);
+          dispatcher.dispatch({
+            actionName: 'upload',
+            filePath: filePath
+          });
         } else {
           notify('Screenshot saved');
         }
