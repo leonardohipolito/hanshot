@@ -12,10 +12,6 @@ exports.parseAction = function (args) {
     action = {
       actionName: 'capture-selection'
     };
-  } else if (args.indexOf('--window') > -1) {
-    action = {
-      actionName: 'capture-window'
-    };
   }
 
   return action;

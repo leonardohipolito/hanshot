@@ -27,7 +27,6 @@ var Dashboard = React.createClass({
       <div className="dashboard-container">
         <Navbar
           displays={this.state.displays}
-          windows={this.state.windows}
           metadata={this.state.metadata}
           image={this.state.image}
         />

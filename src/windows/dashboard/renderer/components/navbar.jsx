@@ -5,7 +5,6 @@ var ipcRenderer = electron.ipcRenderer;
 
 var SnapDesktop = require('./controls/snap-desktop.jsx');
 var SnapSelection = require('./controls/snap-selection.jsx');
-var SnapWindow = require('./controls/snap-window.jsx');
 var Upload = require('./controls/upload.jsx');
 var Copy = require('./controls/copy.jsx');
 var Urls = require('./controls/urls.jsx');
@@ -15,7 +14,6 @@ var Navbar = React.createClass({
   getDefaultProps: function () {
     return {
       displays: [],
-      windows: [],
       metadata: {}
     };
   },
@@ -27,8 +25,6 @@ var Navbar = React.createClass({
             <SnapDesktop displays={this.props.displays} />
             {' '}
             <SnapSelection displays={this.props.displays} />
-            {' '}
-            <SnapWindow windows={this.props.windows} />
           </div>
           <div className="navbar-btn pull-right">
             <Urls

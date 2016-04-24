@@ -84,14 +84,6 @@ module.exports = function () {
     );
   };
 
-  var fetchWindows = function () {
-    return function (dispatch) {
-      components.screen.getWindowList(function (err, windows) {
-        dispatch(storeActions.receiveWindows(windows));
-      });
-    };
-  };
-
   var fetchImage = function () {
     var image = components.gallery.getLast().load();
     return storeActions.receiveImage(image);
@@ -109,7 +101,6 @@ module.exports = function () {
 
   // Fill store with data on start
 
-  components.store.dispatch(fetchWindows());
   components.store.dispatch(fetchDisplays());
   components.store.dispatch(fetchSettings());
   components.store.dispatch(fetchImage());
@@ -150,10 +141,6 @@ module.exports = function () {
     components.windows.dashboard.sendState(
       components.store.getState()
     );
-  });
-
-  components.windows.dashboard.on('focus', function () {
-    components.store.dispatch(fetchWindows());
   });
 
   components.windows.dashboard.on('close', function () {

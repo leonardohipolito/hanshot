@@ -11,13 +11,6 @@ exports.receiveDisplays = function (displays) {
   };
 };
 
-exports.receiveWindows = function (windows) {
-  return {
-    type: 'WINDOWS_RECEIVED',
-    windows: windows
-  };
-};
-
 exports.receiveSettings = function (settings) {
   return {
     type: 'SETTINGS_RECEIVED',

@@ -22,16 +22,6 @@ var displaysReducer = function (state, action) {
   }
 };
 
-var windowsReducer = function (state, action) {
-  state = state || [];
-  switch (action.type) {
-    case 'WINDOWS_RECEIVED':
-      return action.windows;
-    default:
-      return state;
-  }
-};
-
 var settingsReducer = function (state, action) {
   state = state || {};
   switch (action.type) {
@@ -94,7 +84,6 @@ var metadataReducer = function (state, action) {
 
 var rootReducer = Redux.combineReducers({
   displays: displaysReducer,
-  windows: windowsReducer,
   settings: settingsReducer,
   uploaders: uploadersReducer,
   image: imageReducer,

@@ -145,11 +145,6 @@ Screen.prototype.captureDisplay = function (displayId, callback) {
   });
 };
 
-Screen.prototype.captureActiveDisplay = function (callback) {
-  var activeDisplay = this.getActiveDisplay();
-  this.captureDisplay(activeDisplay.id, callback);
-};
-
 Screen.prototype.captureWindow = function (windowId, callback) {
 
   var overallBounds = this.getOverallBounds();
