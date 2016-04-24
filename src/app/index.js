@@ -20,6 +20,7 @@ var windows = {
 var metadata = require('../config/metadata');
 var createStore = require('../store');
 var storeActions = require('../store/actions');
+var appActions = require('./actions');
 var handlers = [
   require('./handlers/app'),
   require('./handlers/capture'),
@@ -45,11 +46,11 @@ module.exports = function () {
       settings: new windows.Settings(),
       selection: new windows.Selection()
     },
+    tray: new Tray(),
     settings: new Settings(),
     cache: new Cache(),
     screen: new Screen(),
     gallery: new Gallery(),
-    tray: new Tray(),
     store: createStore()
   };
 
@@ -148,7 +149,7 @@ module.exports = function () {
       cache.save();
       settings.save();
     } else {
-      dispatcher.dispatch({ actionName: 'force-quit' });
+      dispatcher.dispatch(appActions.appQuit());
     }
   });
 

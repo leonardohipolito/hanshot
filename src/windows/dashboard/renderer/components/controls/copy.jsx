@@ -1,27 +1,34 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../../view-dispatch');
+var appActions = require('../../../../../app/actions');
 
 var Button = require('../common/button.jsx');
 
-var actions = require('../../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
-var Copy = React.createClass({
-  render: function () {
+function Copy(props) {
+  return (
+    <Button onClick={function () {
+      viewDispatch(appActions.copyImage(props.image.filePath));
+    }}>
+      Copy
+    </Button>
+  );
+}
 
-    var image = this.props.image;
-    if (!image) {
-      return null;
-    }
-
-    return (
-      <Button
-        onClick={function () {
-          actions.copyImage(image.filePath);
-        }}
-      >
-        Copy
-      </Button>
-    );
-  }
-});
+Copy.propTypes = {
+  image: React.PropTypes.shape({
+    filePath: React.PropTypes.string.isRequired
+  }).isRequired
+};
 
 module.exports = Copy;

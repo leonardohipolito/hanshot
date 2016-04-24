@@ -5,7 +5,6 @@
 //------------------------------------------------------------------------------
 
 var Redux = require('redux');
-var ReduxThunk = require('redux-thunk').default;
 var _ = require('lodash');
 
 //------------------------------------------------------------------------------
@@ -96,11 +95,6 @@ var rootReducer = Redux.combineReducers({
 //------------------------------------------------------------------------------
 
 module.exports = function createStore() {
-
-  var store = Redux.createStore(
-    rootReducer,
-    Redux.applyMiddleware(ReduxThunk)
-  );
-
+  var store = Redux.createStore(rootReducer);
   return store;
 };

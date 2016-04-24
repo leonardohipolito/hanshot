@@ -4,7 +4,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var dialog = require('../../factory/dialog');
+var dialog = require('../../factories/dialog');
 var storeActions = require('../../store/actions');
 
 //------------------------------------------------------------------------------

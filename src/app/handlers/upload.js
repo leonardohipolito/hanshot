@@ -10,9 +10,10 @@ var uploaders = {
   imgur: require('../../uploaders/imgur'),
   dropbox: require('../../uploaders/dropbox')
 };
-var alert = require('../../factory/alert');
 var notify = require('../../notification');
 var storeActions = require('../../store/actions');
+var alertFactory = require('../../factories/alert');
+var notificationFactory = require('../../factories/notification');
 
 //------------------------------------------------------------------------------
 // Module
@@ -62,7 +63,7 @@ module.exports = function (dispatcher, components) {
     if (!uploader.isAuthorized()) {
       console.log('Upload not authorized');
       components.store.dispatch(storeActions.showAlert(
-        alert.uploaderAuth(uploader.id, uploader.name)
+        alertFactory.uploaderAuth(uploader.id, uploader.name)
       ));
       components.windows.dashboard.open();
       return;
@@ -89,7 +90,7 @@ module.exports = function (dispatcher, components) {
       image.addPublicUrl(link);
       components.gallery.update(image.getFilePath(), image);
 
-      notify('<b>Screenshot uploaded</b><br>Public URL is in clipboard');
+      notify(notificationFactory.screenshotUploaded());
 
       console.log('Uploaded');
       console.log(link);

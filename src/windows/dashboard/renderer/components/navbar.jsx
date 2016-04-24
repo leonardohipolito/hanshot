@@ -18,6 +18,28 @@ var Navbar = React.createClass({
     };
   },
   render: function () {
+
+    // TODO: looks bad
+    var imageControls;
+    if (this.props.image) {
+      imageControls = (
+        <div className="navbar-btn pull-right">
+          <Urls
+            image={this.props.image}
+          />
+          {' '}
+          <Copy
+            image={this.props.image}
+          />
+          {' '}
+          <Upload
+            metadata={this.props.metadata}
+            image={this.props.image}
+          />
+        </div>
+      );
+    }
+
     return (
       <nav className="navbar navbar-default dashboard-navbar">
         <div className="container-fluid">
@@ -26,20 +48,7 @@ var Navbar = React.createClass({
             {' '}
             <SnapSelection displays={this.props.displays} />
           </div>
-          <div className="navbar-btn pull-right">
-            <Urls
-              image={this.props.image}
-            />
-            {' '}
-            <Copy
-              image={this.props.image}
-            />
-            {' '}
-            <Upload
-              metadata={this.props.metadata}
-              image={this.props.image}
-            />
-          </div>
+          {imageControls}
         </div>
       </nav>
     );

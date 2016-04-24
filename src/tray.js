@@ -10,6 +10,8 @@ var util = require('util');
 
 var electron = require('electron');
 
+var appActions = require('./app/actions');
+
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
@@ -58,7 +60,7 @@ function Tray() {
     {
       label: 'Quit',
       click: function () {
-        self.emit('action', { actionName: 'force-quit' });
+        self.emit('action', appActions.appQuit());
       }
     }
   ];

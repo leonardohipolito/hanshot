@@ -9,7 +9,7 @@ var util = require('util');
 
 var electron = require('electron');
 
-var menuFactory = require('../../factory/menu');
+var menuFactory = require('../../factories/menu');
 
 //------------------------------------------------------------------------------
 // Module

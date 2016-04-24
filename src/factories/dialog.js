@@ -4,25 +4,37 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var path = require('path');
-
 var electron = require('electron');
 
+var metadata = require('../config/metadata');
+
 //------------------------------------------------------------------------------
-// Public Interface
+// Module
 //------------------------------------------------------------------------------
 
 exports.openImage = function (callback) {
+
+  var defaultPath = electron.app.getPath('home');
+
+  var extensions = [];
+  var names = [];
+
+  metadata.imageFormats.forEach(function (format) {
+    extensions = extensions.concat(format.extensions);
+    names.push(format.name);
+  });
+
   electron.dialog.showOpenDialog({
-    defaultPath: electron.app.getPath('pictures'),
+    defaultPath: defaultPath,
     properties: ['openFile'],
     filters: [
       {
-        name: 'All Compatible Image Formats',
-        extensions: ['jpg', 'png']
+        name: 'Supported images (' + names.join(', ') + ')',
+        extensions: extensions
       }
     ],
   }, function (filePaths) {
+    // Call back only if path selected
     if (filePaths) {
       callback(filePaths[0]);
     } else {
@@ -31,11 +43,12 @@ exports.openImage = function (callback) {
   });
 };
 
-exports.saveImagesTo = function (dirPath, callback) {
+exports.saveImagesTo = function (defaultPath, callback) {
   electron.dialog.showOpenDialog({
-    defaultPath: dirPath,
+    defaultPath: defaultPath,
     properties: ['openDirectory', 'createDirectory']
   }, function (dirPaths) {
+    // Call back only if path selected
     if (dirPaths) {
       callback(dirPaths[0]);
     } else {

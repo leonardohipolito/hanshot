@@ -11,8 +11,9 @@ var electron = require('electron');
 var mkdirp = require('mkdirp');
 
 var Image = require('../../image/image');
-var dialog = require('../../factory/dialog');
 var notify = require('../../notification');
+var dialogFactory = require('../../factories/dialog');
+var notificationFactory = require('../../factories/notification');
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -58,7 +59,7 @@ function createExt(imageFormat) {
 module.exports = function (dispatcher, components) {
 
   dispatcher.on('import-open', function () {
-    dialog.openImage(function (filePath) {
+    dialogFactory.openImage(function (filePath) {
       components.gallery.add(new Image(filePath));
     });
   });
@@ -150,7 +151,7 @@ module.exports = function (dispatcher, components) {
             filePath: filePath
           });
         } else {
-          notify('Screenshot saved');
+          notify(notificationFactory.screenshotSaved());
         }
 
       });

@@ -37,20 +37,6 @@ exports.upload = function (filePath, uploaderId) {
   });
 };
 
-exports.copyImage = function (filePath) {
-  sendAction({
-    actionName: 'copy-image',
-    filePath: filePath
-  });
-};
-
-exports.copyText = function (text) {
-  sendAction({
-    actionName: 'copy-text',
-    text: text
-  });
-};
-
 exports.closeAlert = function (alertId) {
   sendAction({
     actionName: 'close-alert',

@@ -5,18 +5,19 @@
 //------------------------------------------------------------------------------
 
 var metadata = require('../config/metadata');
+var appActions = require('../app/actions');
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-exports.imageContext = function (dispatch, image) {
+exports.imageContext = function (appDispatch, image) {
 
   var uploadersSubMenu = metadata.uploadHosts.map(function (host) {
     return {
       label: host.name,
       click: function () {
-        dispatch({
+        appDispatch({
           actionName: 'upload',
           uploaderId: host.id,
           filePath: image.getFilePath()
@@ -29,10 +30,7 @@ exports.imageContext = function (dispatch, image) {
     return {
       label: publicUrl,
       click: function () {
-        dispatch({
-          actionName: 'copy-text',
-          text: publicUrl
-        });
+        appDispatch(appActions.copyText(publicUrl));
       }
     };
   });
@@ -41,10 +39,7 @@ exports.imageContext = function (dispatch, image) {
     {
       label: 'Copy',
       click: function () {
-        dispatch({
-          actionName: 'copy-image',
-          filePath: image.getFilePath()
-        });
+        appDispatch(appActions.copyImage(image.getFilePath()));
       }
     },
     {
@@ -70,7 +65,7 @@ exports.imageContext = function (dispatch, image) {
     {
       label: 'Show in folder',
       click: function () {
-        dispatch({
+        appDispatch({
           actionName: 'open-directory',
           filePath: image.getFilePath()
         })
@@ -81,7 +76,7 @@ exports.imageContext = function (dispatch, image) {
   return template;
 };
 
-exports.dashboard = function (dispatch) {
+exports.dashboard = function (appDispatch) {
   return [
     {
       label: 'File',
@@ -92,13 +87,13 @@ exports.dashboard = function (dispatch) {
             {
               label: 'Desktop',
               click: function () {
-                dispatch({ actionName: 'capture-desktop' });
+                appDispatch({ actionName: 'capture-desktop' });
               }
             },
             {
               label: 'Selection',
               click: function () {
-                dispatch({ actionName: 'capture-selection' });
+                appDispatch({ actionName: 'capture-selection' });
               }
             },
             {
@@ -107,7 +102,7 @@ exports.dashboard = function (dispatch) {
             {
               label: 'Import from clipboard',
               click: function () {
-                dispatch({ actionName: 'import-clipboard' });
+                appDispatch({ actionName: 'import-clipboard' });
               }
             }
           ]
@@ -118,7 +113,7 @@ exports.dashboard = function (dispatch) {
         {
           label: 'Open...',
           click: function () {
-            dispatch({ actionName: 'import-open' });
+            appDispatch({ actionName: 'import-open' });
           }
         },
         {
@@ -127,7 +122,7 @@ exports.dashboard = function (dispatch) {
         {
           label: 'Quit',
           click: function () {
-            dispatch({ actionName: 'force-quit' });
+            appDispatch(appActions.appQuit());
           }
         }
       ]
@@ -138,7 +133,7 @@ exports.dashboard = function (dispatch) {
         {
           label: 'Settings',
           click: function () {
-            dispatch({ actionName: 'open-settings' });
+            appDispatch({ actionName: 'open-settings' });
           }
         }
       ]

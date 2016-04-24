@@ -26,7 +26,7 @@ electron.ipcRenderer.on('screen-capture-window', function (event, options) {
   getSource(options.windowId, function (err, source) {
     if (err) throw err;
     captureWindow(source, options, function (err, dataURL) {
-  //     event.sender.send('screen-capture-window-ready', null, dataURL);
+      event.sender.send('screen-capture-window-ready', null, dataURL);
     });
   });
 });
