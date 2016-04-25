@@ -59,13 +59,13 @@ function createExt(imageFormat) {
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.FILE_OPEN, function () {
+  dispatcher.on(appActions.SHOW_DIALOG_TO_OPEN_IMAGE, function () {
     dialogFactory.openImage(function (filePath) {
       components.gallery.add(new Image(filePath));
     });
   });
 
-  dispatcher.on(appActions.FILE_IMPORT_FROM_CLIPBOARD, function () {
+  dispatcher.on(appActions.IMPORT_IMAGE_FROM_CLIPBOARD, function () {
     var nativeImage = electron.clipboard.readImage();
     if (nativeImage.isEmpty()) {
       console.warn('Image is empty');
@@ -110,7 +110,7 @@ module.exports = function (dispatcher, components) {
 
   });
 
-  dispatcher.on(appActions.FILE_WRITE, function (action) {
+  dispatcher.on(appActions.SAVE_IMAGE, function (action) {
 
     var nativeImage = electron.nativeImage.createFromDataURL(action.dataURL);
 

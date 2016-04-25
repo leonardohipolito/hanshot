@@ -6,10 +6,10 @@
 
 // App
 
-exports.APP_QUIT = 'APP_QUIT';
-exports.appQuit = function () {
+exports.QUIT_APP = 'QUIT_APP';
+exports.quitApp = function () {
   return {
-    actionName: exports.APP_QUIT
+    actionName: exports.QUIT_APP
   };
 };
 
@@ -59,24 +59,24 @@ exports.copyText = function (text) {
 
 // File
 
-exports.FILE_OPEN = 'FILE_OPEN';
-exports.fileOpen = function () {
+exports.SHOW_DIALOG_TO_OPEN_IMAGE = 'SHOW_DIALOG_TO_OPEN_IMAGE';
+exports.showDialogToOpenImage = function () {
   return {
-    actionName: exports.FILE_OPEN
+    actionName: exports.SHOW_DIALOG_TO_OPEN_IMAGE
   };
 };
 
-exports.FILE_IMPORT_FROM_CLIPBOARD = 'FILE_IMPORT_FROM_CLIPBOARD';
-exports.fileImportFromClipboard = function () {
+exports.IMPORT_IMAGE_FROM_CLIPBOARD = 'IMPORT_IMAGE_FROM_CLIPBOARD';
+exports.importImageFromClipboard = function () {
   return {
-    actionName: exports.FILE_IMPORT_FROM_CLIPBOARD
+    actionName: exports.IMPORT_IMAGE_FROM_CLIPBOARD
   };
 };
 
-exports.FILE_WRITE = 'FILE_WRITE';
-exports.fileWrite = function (type, dataURL) {
+exports.SAVE_IMAGE = 'SAVE_IMAGE';
+exports.saveImage = function (type, dataURL) {
   return {
-    actionName: exports.FILE_WRITE,
+    actionName: exports.SAVE_IMAGE,
     type: type,
     dataURL: dataURL
   };
@@ -84,10 +84,10 @@ exports.fileWrite = function (type, dataURL) {
 
 // Menu
 
-exports.CONTEXT_MENU = 'CONTEXT_MENU';
-exports.contextMenu = function (filePath) {
+exports.OPEN_IMAGE_CONTEXT_MENU = 'OPEN_IMAGE_CONTEXT_MENU';
+exports.openImageContextMenu = function (filePath) {
   return {
-    actionName: exports.CONTEXT_MENU,
+    actionName: exports.OPEN_IMAGE_CONTEXT_MENU,
     filePath: filePath
   };
 };

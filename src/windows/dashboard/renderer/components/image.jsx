@@ -39,7 +39,7 @@ var Image = React.createClass({
           <div
             className="image"
             onContextMenu={function () {
-              viewDispatch(appActions.contextMenu(image.filePath));
+              viewDispatch(appActions.openImageContextMenu(image.filePath));
             }}
             style={{
               backgroundImage: 'url(' + image.dataURL + ')',

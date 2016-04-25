@@ -14,7 +14,7 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.APP_QUIT, function () {
+  dispatcher.on(appActions.QUIT_APP, function () {
     components.cache.set('gallery', components.gallery.serialize());
     // TODO: use promises or callbacks to make async writes
     // now cache and settings are saved synchronously (is it bad?)

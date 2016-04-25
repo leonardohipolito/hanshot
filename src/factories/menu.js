@@ -95,7 +95,7 @@ exports.dashboard = function (appDispatch) {
             {
               label: 'Import from clipboard',
               click: function () {
-                appDispatch(appActions.fileImportFromClipboard());
+                appDispatch(appActions.importImageFromClipboard());
               }
             }
           ]
@@ -106,7 +106,7 @@ exports.dashboard = function (appDispatch) {
         {
           label: 'Open...',
           click: function () {
-            appDispatch(appActions.fileOpen());
+            appDispatch(appActions.showDialogToOpenImage());
           }
         },
         {
@@ -115,7 +115,7 @@ exports.dashboard = function (appDispatch) {
         {
           label: 'Quit',
           click: function () {
-            appDispatch(appActions.appQuit());
+            appDispatch(appActions.quitApp());
           }
         }
       ]

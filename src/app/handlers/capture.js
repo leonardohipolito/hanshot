@@ -18,7 +18,7 @@ module.exports = function (dispatcher, components) {
     }
     components.screen.captureDisplay(action.displayId, function (err, dataURL) {
       if (err) throw err;
-      dispatcher.dispatch(appActions.fileWrite('desktop', dataURL));
+      dispatcher.dispatch(appActions.saveImage('desktop', dataURL));
       if (components.settings.get('open-after-capture')) {
         components.windows.dashboard.show();
       }
@@ -45,7 +45,7 @@ module.exports = function (dispatcher, components) {
         if (err) {
           // Failed or cancelled
         } else {
-          dispatcher.dispatch(appActions.fileWrite('selection', selectionDataURL));
+          dispatcher.dispatch(appActions.saveImage('selection', selectionDataURL));
         }
         if (components.settings.get('open-after-capture')) {
           components.windows.dashboard.show();
@@ -60,7 +60,7 @@ module.exports = function (dispatcher, components) {
     }
     components.screen.captureWindow(action.windowId, function (err, dataURL) {
       if (err) throw err;
-      dispatcher.dispatch(appActions.fileWrite('window', dataURL));
+      dispatcher.dispatch(appActions.saveImage('window', dataURL));
       if (components.settings.get('open-after-capture')) {
         components.windows.dashboard.show();
       }

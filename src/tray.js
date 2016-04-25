@@ -60,7 +60,7 @@ function Tray() {
     {
       label: 'Quit',
       click: function () {
-        self.emit('action', appActions.appQuit());
+        self.emit('action', appActions.quitApp());
       }
     }
   ];

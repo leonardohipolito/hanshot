@@ -149,7 +149,7 @@ module.exports = function () {
       cache.save();
       settings.save();
     } else {
-      dispatcher.dispatch(appActions.appQuit());
+      dispatcher.dispatch(appActions.quitApp());
     }
   });
 
