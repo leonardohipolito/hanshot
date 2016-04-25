@@ -17,6 +17,7 @@ var windows = {
   Settings: require('../windows/settings'),
   Selection: require('../windows/selection')
 };
+var config = require('../config');
 var metadata = require('../config/metadata');
 var createStore = require('../store');
 var storeActions = require('../store/actions');
@@ -48,7 +49,7 @@ module.exports = function () {
     },
     tray: new Tray(),
     settings: new Settings(),
-    cache: new Cache(),
+    cache: new Cache(config.CACHE_PATH),
     screen: new Screen(),
     gallery: new Gallery(),
     store: createStore()

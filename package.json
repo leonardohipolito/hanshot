@@ -17,12 +17,17 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.2.0",
     "browserify": "^13.0.0",
-    "electron-prebuilt": "0.37.6"
+    "chai": "^3.5.0",
+    "electron-prebuilt": "0.37.6",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.4",
+    "sinon": "^1.17.3"
   },
   "scripts": {
     "build-dashboard": "browserify -t [ babelify --presets [ react ] ] src/windows/dashboard/renderer/dashboard.jsx -o src/windows/dashboard/renderer/dashboard.built.js",
     "build-settings": "browserify -t [ babelify --presets [ react ] ] src/windows/settings/renderer/settings.jsx -o src/windows/settings/renderer/settings.built.js",
     "build": "npm run build-dashboard && npm run build-settings",
-    "start": "npm run build && electron ."
+    "start": "npm run build && electron .",
+    "test": "mocha 'test/**/*.test.js'"
   }
 }

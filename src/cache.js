@@ -5,55 +5,57 @@
 //------------------------------------------------------------------------------
 
 var fs = require('fs');
-var path = require('path');
 
-var electron = require('electron');
 var _ = require('lodash');
 
 //------------------------------------------------------------------------------
-// Public Interface
+// Module
 //------------------------------------------------------------------------------
 
-// TODO: most of implementation can be moved to one place along with Settings
-//       create Storage base class
-function Cache() {
+function Cache(cacheFilePath) {
 
-  var cacheBasePath = electron.app.getPath('appData');
-  this.cacheFilePath = path.join(cacheBasePath, 'hanshot', 'cache.json');
+  // TODO: supress logs in tests (add logger?)
+  console.log('Cache path', cacheFilePath);
 
-  console.log('Cache path', this.cacheFilePath);
+  var cache = {};
 
-  this.cache = {};
+  var fileContents = '';
   try {
-    this.cache = require(this.cacheFilePath);
-  } catch(err) {
-    if (err.code === 'MODULE_NOT_FOUND') {
-      // It's fine if cache file does not exist, it will be created when any
-      // action that uses cache happens
-    } else {
-      throw err;
+    fileContents = fs.readFileSync(cacheFilePath, 'utf8');
+  } catch (err) {
+    // It's fine if cache file does not exist, it will be created on save
+    if (err.code !== 'ENOENT') {
+      throw new Error(err);
     }
   }
-}
 
-Cache.prototype.get = function (key, defaultValue) {
-  if (_.isUndefined(key)) {
-    return this.cache;
+  try {
+    cache = JSON.parse(fileContents);
+  } catch (err) {
+    // Bad content of cache file, it will be overriden on save then
   }
-  return _.get(this.cache, key, defaultValue);
-};
 
-Cache.prototype.set = function (key, value) {
-  this.cache[key] = value;
-  return this.cache;
-};
+  return {
 
-Cache.prototype.save = function () {
-  var json = JSON.stringify(this.cache);
-  // TODO: writing sync because cache is saved on app exit, seems like 
-  // async operation might be cancelled on exit
-  fs.writeFileSync(this.cacheFilePath, json);
-  console.log('Cache saved');
-};
+    get: function (key, defaultValue) {
+      return _.get(cache, key, defaultValue);
+    },
+
+    set: function (key, value) {
+      _.set(cache, key, value);
+      return this;
+    },
+
+    save: function () {
+      var json = JSON.stringify(cache);
+      // TODO: writing sync because cache is saved on app exit, seems like
+      // async operation might be cancelled on exit
+      fs.writeFileSync(cacheFilePath, json);
+      console.log('Cache saved');
+    }
+
+  };
+
+}
 
 module.exports = Cache;
