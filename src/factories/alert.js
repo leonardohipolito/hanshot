@@ -1,6 +1,12 @@
 'use strict';
 
 //------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+var appActions = require('../app/actions');
+
+//------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
@@ -13,11 +19,8 @@ exports.uploaderAuth = function (id, title) {
       {
         title: 'Authorize',
         type: 'danger',
-        role: 'action',
-        action: {
-          actionName: 'uploader-auth',
-          uploaderId: id
-        }
+        role: 'appAction',
+        appAction: appActions.authorizeUploader(id)
       },
       {
         title: 'Cancel',

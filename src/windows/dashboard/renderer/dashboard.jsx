@@ -1,3 +1,9 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
 var ReactDOM = electronRequire('react-dom');
 var electron = electronRequire('electron');
@@ -5,6 +11,10 @@ var electron = electronRequire('electron');
 var Navbar = require('./components/navbar.jsx');
 var Image = require('./components/image.jsx');
 var AlertArea = require('./components/alert-area.jsx');
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 var Dashboard = React.createClass({
   getInitialState: function () {

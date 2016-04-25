@@ -1,9 +1,20 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
 var _ = electronRequire('lodash');
 
+var viewDispatch = require('../view-dispatch');
+var appActions = require('../../../../app/actions');
+
 var Radio = require('./common/radio.jsx');
 
-var actions = require('../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 // Container component
 var Upload = React.createClass({
@@ -28,7 +39,7 @@ var Upload = React.createClass({
                 name="upload-host"
                 checked={host.id === this.props.settings['default-uploader']}
                 onChange={function (value) {
-                  actions.updateSetting('default-uploader', value);
+                  viewDispatch(appActions.updateSetting('default-uploader', value));
                 }}
               >
                 {host.name}

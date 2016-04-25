@@ -1,8 +1,19 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../view-dispatch');
+var appActions = require('../../../../app/actions');
 
 var Checkbox = require('./common/checkbox.jsx');
 
-var actions = require('../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 // Container component
 var Behavior = React.createClass({
@@ -14,7 +25,7 @@ var Behavior = React.createClass({
           <Checkbox
             checked={this.props.settings['close-before-capture']}
             onChange={function (value) {
-              actions.updateSetting('close-before-capture', value);
+              viewDispatch(appActions.updateSetting('close-before-capture', value));
             }}
           >
             Close dashboard before capture
@@ -24,7 +35,7 @@ var Behavior = React.createClass({
           <Checkbox
             checked={this.props.settings['open-after-capture']}
             onChange={function (value) {
-              actions.updateSetting('open-after-capture', value);
+              viewDispatch(appActions.updateSetting('open-after-capture', value));
             }}
           >
             Open dashboard after capture
@@ -34,7 +45,7 @@ var Behavior = React.createClass({
           <Checkbox
             checked={this.props.settings['tray-on-close']}
             onChange={function (value) {
-              actions.updateSetting('tray-on-close', value);
+              viewDispatch(appActions.updateSetting('tray-on-close', value));
             }}
           >
             Minimize app to tray when closing dashboard
@@ -44,7 +55,7 @@ var Behavior = React.createClass({
           <Checkbox
             checked={this.props.settings['upload-after-capture']}
             onChange={function (value) {
-              actions.updateSetting('upload-after-capture', value);
+              viewDispatch(appActions.updateSetting('upload-after-capture', value));
             }}
           >
             Upload after capture
@@ -54,7 +65,7 @@ var Behavior = React.createClass({
           <Checkbox
             checked={this.props.settings['show-on-start']}
             onChange={function (value) {
-              actions.updateSetting('show-on-start', value);
+              viewDispatch(appActions.updateSetting('show-on-start', value));
             }}
           >
             Show dashboard on app start

@@ -27,7 +27,7 @@ function Tray() {
     {
       label: 'Open',
       click: function () {
-        self.emit('action', { actionName: 'open-dashboard' });
+        self.emit('action', appActions.openDashboard());
       }
     },
     {
@@ -36,13 +36,13 @@ function Tray() {
     {
       label: 'Desktop',
       click: function () {
-        self.emit('action', { actionName: 'capture-desktop' });
+        self.emit('action', appActions.captureDesktop());
       }
     },
     {
       label: 'Selection',
       click: function () {
-        self.emit('action', { actionName: 'capture-selection' });
+        self.emit('action', appActions.captureSelection());
       }
     },
     {
@@ -51,7 +51,7 @@ function Tray() {
     {
       label: 'Settings',
       click: function () {
-        self.emit('action', { actionName: 'open-settings' });
+        self.emit('action', appActions.openSettings());
       }
     },
     {

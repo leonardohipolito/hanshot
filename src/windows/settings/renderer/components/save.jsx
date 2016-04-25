@@ -1,14 +1,22 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../view-dispatch');
+var appActions = require('../../../../app/actions');
 
 var Checkbox = require('./common/checkbox.jsx');
 
-var actions = require('../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 // Container component
 var Save = React.createClass({
-  openDialog: function () {
-    actions.openDialog();
-  },
   render: function () {
     return (
       <div>
@@ -17,7 +25,7 @@ var Save = React.createClass({
           <Checkbox
             checked={this.props.settings['save-dir-selected']}
             onChange={function (value) {
-              actions.updateSetting('save-dir-selected', value);
+              viewDispatch(appActions.updateSetting('save-dir-selected', value));
             }}
           >
             Auto save to directory
@@ -29,7 +37,7 @@ var Save = React.createClass({
             <button className="btn btn-default"
               disabled={!this.props.settings['save-dir-selected']}
               onClick={function () {
-                actions.openDialog();
+                viewDispatch(appActions.showDialogToPickSaveDir());
               }}
             >
               Change

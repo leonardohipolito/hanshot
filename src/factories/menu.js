@@ -17,11 +17,7 @@ exports.imageContext = function (appDispatch, image) {
     return {
       label: host.name,
       click: function () {
-        appDispatch({
-          actionName: 'upload',
-          uploaderId: host.id,
-          filePath: image.getFilePath()
-        });
+        appDispatch(appActions.uploadImage(image.getFilePath(), host.id));
       }
     };
   });
@@ -65,10 +61,7 @@ exports.imageContext = function (appDispatch, image) {
     {
       label: 'Show in folder',
       click: function () {
-        appDispatch({
-          actionName: 'open-directory',
-          filePath: image.getFilePath()
-        })
+        appDispatch(appActions.showImageInFolder(image.getFilePath()));
       }
     }
   ]);
@@ -87,13 +80,13 @@ exports.dashboard = function (appDispatch) {
             {
               label: 'Desktop',
               click: function () {
-                appDispatch({ actionName: 'capture-desktop' });
+                appDispatch(appActions.captureDesktop());
               }
             },
             {
               label: 'Selection',
               click: function () {
-                appDispatch({ actionName: 'capture-selection' });
+                appDispatch(appActions.captureSelection());
               }
             },
             {
@@ -102,7 +95,7 @@ exports.dashboard = function (appDispatch) {
             {
               label: 'Import from clipboard',
               click: function () {
-                appDispatch({ actionName: 'import-clipboard' });
+                appDispatch(appActions.fileImportFromClipboard());
               }
             }
           ]
@@ -113,7 +106,7 @@ exports.dashboard = function (appDispatch) {
         {
           label: 'Open...',
           click: function () {
-            appDispatch({ actionName: 'import-open' });
+            appDispatch(appActions.fileOpen());
           }
         },
         {
@@ -133,7 +126,7 @@ exports.dashboard = function (appDispatch) {
         {
           label: 'Settings',
           click: function () {
-            appDispatch({ actionName: 'open-settings' });
+            appDispatch(appActions.openSettings());
           }
         }
       ]

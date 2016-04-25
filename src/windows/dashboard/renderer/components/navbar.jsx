@@ -1,13 +1,21 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
 var electron = electronRequire('electron');
-
-var ipcRenderer = electron.ipcRenderer;
 
 var SnapDesktop = require('./controls/snap-desktop.jsx');
 var SnapSelection = require('./controls/snap-selection.jsx');
 var Upload = require('./controls/upload.jsx');
 var Copy = require('./controls/copy.jsx');
 var Urls = require('./controls/urls.jsx');
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 // TODO: do not use navbar in data flow, just as a component container
 var Navbar = React.createClass({

@@ -1,8 +1,19 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../view-dispatch');
+var appActions = require('../../../../app/actions');
 
 var Alert = require('./alert.jsx');
 
-var actions = require('../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 var AlertArea = React.createClass({
   getDefaultProps: function () {
@@ -31,21 +42,21 @@ var AlertArea = React.createClass({
                     <button
                       className={'btn btn-' + button.type}
                       onClick={function () {
-                        if (button.role === 'action') {
-                          actions.send(button.action);
+                        if (button.role === 'appAction') {
+                          viewDispatch(button.appAction);
                         }
-                        actions.closeAlert(alert.id);
+                        viewDispatch(appActions.closeAlert(alert.id));
                       }}
                     >
                       {button.title}
                     </button>,
                     ' '
                   ];
-                }, this)}
+                })}
               </p>
             </Alert>
           );
-        }, this)}
+        })}
       </div>
     );
   }

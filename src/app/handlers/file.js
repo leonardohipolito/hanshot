@@ -10,6 +10,7 @@ var path = require('path');
 var electron = require('electron');
 var mkdirp = require('mkdirp');
 
+var appActions = require('../actions');
 var Image = require('../../image/image');
 var notify = require('../../notification');
 var dialogFactory = require('../../factories/dialog');
@@ -58,13 +59,13 @@ function createExt(imageFormat) {
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on('import-open', function () {
+  dispatcher.on(appActions.FILE_OPEN, function () {
     dialogFactory.openImage(function (filePath) {
       components.gallery.add(new Image(filePath));
     });
   });
 
-  dispatcher.on('import-clipboard', function () {
+  dispatcher.on(appActions.FILE_IMPORT_FROM_CLIPBOARD, function () {
     var nativeImage = electron.clipboard.readImage();
     if (nativeImage.isEmpty()) {
       console.warn('Image is empty');
@@ -109,7 +110,7 @@ module.exports = function (dispatcher, components) {
 
   });
 
-  dispatcher.on('write-file', function (action) {
+  dispatcher.on(appActions.FILE_WRITE, function (action) {
 
     var nativeImage = electron.nativeImage.createFromDataURL(action.dataURL);
 
@@ -146,10 +147,7 @@ module.exports = function (dispatcher, components) {
         components.gallery.add(image);
 
         if (components.settings.get('upload-after-capture')) {
-          dispatcher.dispatch({
-            actionName: 'upload',
-            filePath: filePath
-          });
+          dispatcher.dispatch(appActions.uploadImage(filePath));
         } else {
           notify(notificationFactory.screenshotSaved());
         }

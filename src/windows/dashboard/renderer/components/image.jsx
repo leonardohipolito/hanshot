@@ -1,7 +1,18 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
 var electron = electronRequire('electron');
 
-var actions = require('../actions');
+var viewDispatch = require('../view-dispatch');
+var appActions = require('../../../../app/actions');
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 var Image = React.createClass({
   getDefaultProps: function () {
@@ -28,7 +39,7 @@ var Image = React.createClass({
           <div
             className="image"
             onContextMenu={function () {
-              actions.contextMenu(image.filePath);
+              viewDispatch(appActions.contextMenu(image.filePath));
             }}
             style={{
               backgroundImage: 'url(' + image.dataURL + ')',

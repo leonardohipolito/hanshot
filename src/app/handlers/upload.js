@@ -12,6 +12,7 @@ var uploaders = {
 };
 var notify = require('../../notification');
 var storeActions = require('../../store/actions');
+var appActions = require('../actions');
 var alertFactory = require('../../factories/alert');
 var notificationFactory = require('../../factories/notification');
 
@@ -21,7 +22,7 @@ var notificationFactory = require('../../factories/notification');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on('uploader-auth', function (action) {
+  dispatcher.on(appActions.AUTHORIZE_UPLOADER, function (action) {
 
     var Uploader = uploaders[action.uploaderId];
     if (!Uploader) {
@@ -37,7 +38,7 @@ module.exports = function (dispatcher, components) {
 
   });
 
-  dispatcher.on('upload', function (action) {
+  dispatcher.on(appActions.UPLOAD_IMAGE, function (action) {
 
     var uploaderId = action.uploaderId;
 

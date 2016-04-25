@@ -1,9 +1,20 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../../view-dispatch');
+var appActions = require('../../../../../app/actions');
 
 var ButtonDropdown = require('../common/button-dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');
 
-var actions = require('../../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 var Upload = React.createClass({
   getDefaultProps: function () {
@@ -28,10 +39,10 @@ var Upload = React.createClass({
 
     return (
       <ButtonDropdown
-        title="Upload"
-        right={true}
+        buttonTitle="Upload"
+        alignMenuRight
         onButtonClick={function () {
-          actions.upload(image.filePath);
+          viewDispatch(appActions.uploadImage(image.filePath));
         }}
       >
         {hosts.map(function (host) {
@@ -39,7 +50,7 @@ var Upload = React.createClass({
               <DropdownItem
                 key={host.id}
                 onClick={function () {
-                  actions.upload(image.filePath, host.id);
+                  viewDispatch(appActions.uploadImage(image.filePath, host.id));
                 }}
               >
                 {host.name}

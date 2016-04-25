@@ -8,6 +8,7 @@ var electron = require('electron');
 
 var cli = require('./cli');
 var initApp = require('./app');
+var appActions = require('./app/actions');
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -35,12 +36,12 @@ var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
   }
 
   if (!args.length) {
-    app.perform({ actionName: 'open-dashboard' });
+    app.dispatch(appActions.openDashboard());
     return;
   }
 
   var cliAction = cli.parseAction(args);
-  app.perform(cliAction);
+  app.dispatch(cliAction);
 });
 
 // Kill second process, if one is already running
@@ -84,7 +85,7 @@ electron.app.on('ready', function () {
 
   var args = process.argv.slice(2);
   var cliAction = cli.parseAction(args);
-  app.perform(cliAction);
+  app.dispatch(cliAction);
 
   // "printscreen" is not supported yet. FUCK
   // https://github.com/atom/electron/issues/4663

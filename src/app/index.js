@@ -167,6 +167,6 @@ module.exports = function () {
   // App public methods
 
   return {
-    perform: dispatcher.dispatch
+    dispatch: dispatcher.dispatch
   };
 };

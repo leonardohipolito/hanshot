@@ -14,7 +14,7 @@ function Dropdown(props) {
         <ul
           className={[
             'dropdown-menu',
-            (props.right ? 'dropdown-menu-right' : '')
+            (props.alignMenuRight ? 'dropdown-menu-right' : '')
           ].join(' ')}
         >
           {props.children}

@@ -1,9 +1,20 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../../view-dispatch');
+var appActions = require('../../../../../app/actions');
 
 var Dropdown = require('../common/dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');
 
-var actions = require('../../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 var Urls = React.createClass({
   render: function () {
@@ -16,14 +27,14 @@ var Urls = React.createClass({
     return (
       <Dropdown
         title="Public URLs"
-        right={true}
+        alignMenuRight
       >
         {image.publicUrls.map(function (url, index) {
           return (
             <DropdownItem
               key={index}
               onClick={function () {
-                actions.copyText(url);
+                viewDispatch(appActions.copyText(url));
               }}
             >
               {url}

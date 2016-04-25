@@ -1,9 +1,20 @@
+'use strict';
+
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = electronRequire('react');
+
+var viewDispatch = require('../view-dispatch');
+var appActions = require('../../../../app/actions');
 
 var Range = require('./common/range.jsx');
 var Select = require('./common/select.jsx');
 
-var actions = require('../actions');
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 // Container component
 var ImageFormat = React.createClass({
@@ -21,7 +32,7 @@ var ImageFormat = React.createClass({
           <Select
             value={this.props.settings['image-format']}
             onChange={function (value) {
-              actions.updateSetting('image-format', value);
+              viewDispatch(appActions.updateSetting('image-format', value));
             }}
           >
             {formats.map(function (format) {
@@ -45,7 +56,7 @@ var ImageFormat = React.createClass({
                   max={100}
                   step={10}
                   onChange={function (value) {
-                    actions.updateSetting('jpg-quality', value);
+                    viewDispatch(appActions.updateSetting('jpg-quality', value));
                   }}
                 />
               </div>

@@ -8,7 +8,7 @@ function ButtonDropdown(props) {
         className="btn btn-default"
         onButtonClick={props.onButtonClick}
       >
-        {' ' + props.title + ' '}
+        {' ' + props.buttonTitle + ' '}
       </button>
       <button type="button"
           className="btn btn-default dropdown-toggle"
@@ -18,7 +18,7 @@ function ButtonDropdown(props) {
         </button>
         <ul className={[
             'dropdown-menu',
-            (props.right ? 'dropdown-menu-right' : '')
+            (props.alignMenuRight ? 'dropdown-menu-right' : '')
           ].join(' ')}
         >
           {props.children}
