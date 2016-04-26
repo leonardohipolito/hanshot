@@ -4,7 +4,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var assert = require('chai').assert;
+var test = require('tape');
 var sinon = require('sinon');
 var proxyquire = require('proxyquire');
 
@@ -12,44 +12,42 @@ var proxyquire = require('proxyquire');
 // Test
 //------------------------------------------------------------------------------
 
-var fsStub = {};
-var Cache;
-
-describe('cache', function () {
-
-  beforeEach(function () {
-    fsStub = {};
-    Cache = proxyquire('../src/cache', {
-      fs: fsStub
-    });
+test('cache: constructor: should read from file path in args', function (assert) {
+  var readFileSync = sinon.spy();
+  var Cache = proxyquire('../src/cache', {
+    fs: { readFileSync: readFileSync }
   });
 
-  describe('constructor', function () {
+  var cache = new Cache('/some/path');
 
-    it('should read from file path in args', function () {
-      fsStub.readFileSync = sinon.spy();
-      var cache = new Cache('/some/path');
-      assert.deepEqual(fsStub.readFileSync.args[0], ['/some/path', 'utf8']);
-    });
+  assert.deepEqual(readFileSync.args[0], ['/some/path', 'utf8']);
+  assert.end();
+});
 
-    it('should not throw if file does not exist', function () {
-      fsStub.readFileSync = function () { throw { code: 'ENOENT' }; };
-      var initCache = function initCache() {
-        var cache = new Cache('/some/path');
-      };
-      assert.doesNotThrow(initCache);
-    });
-
-    it('should throw any other read error', function () {
-      fsStub.readFileSync = function () {
-        var err = new Error(); err.code = 'SOMEERR'; throw err;
-      };
-      var initCache = function initCache() {
-        var cache = new Cache('/some/path');
-      };
-      assert.throws(initCache);
-    });
-
+test('cache: constructor: should not throw if file does not exist', function (assert) {
+  var readFileSync = sinon.stub().throws({ code: 'ENOENT' });
+  var Cache = proxyquire('../src/cache', {
+    fs: { readFileSync: readFileSync }
   });
 
+  var initCache = function initCache() {
+    var cache = new Cache('/some/path');
+  };
+
+  assert.doesNotThrow(initCache);
+  assert.end();
+});
+
+test('cache: constructor: shot throw any other read error', function (assert) {
+  var readFileSync = sinon.stub().throws();
+  var Cache = proxyquire('../src/cache', {
+    fs: { readFileSync: readFileSync }
+  });
+
+  var initCache = function initCache() {
+    var cache = new Cache('/some/path');
+  };
+
+  assert.throws(initCache);
+  assert.end();
 });
