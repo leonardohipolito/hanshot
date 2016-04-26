@@ -23,10 +23,8 @@ function Cache(cacheFilePath) {
   try {
     fileContents = fs.readFileSync(cacheFilePath, 'utf8');
   } catch (err) {
-    // It's fine if cache file does not exist, it will be created on save
-    if (err.code !== 'ENOENT') {
-      throw new Error(err);
-    }
+    // If failed to read cache from file - continue with empty cache
+    console.log('Cache read fail', err);
   }
 
   try {
@@ -46,12 +44,18 @@ function Cache(cacheFilePath) {
       return this;
     },
 
+    remove: function (key) {
+      // Returns true if key actually existed and it was succesfully removed
+      return _.has(cache, key) && _.unset(cache, key);
+    },
+
     save: function () {
       var json = JSON.stringify(cache);
       // TODO: writing sync because cache is saved on app exit, seems like
       // async operation might be cancelled on exit
       fs.writeFileSync(cacheFilePath, json);
       console.log('Cache saved');
+      return this;
     }
 
   };
