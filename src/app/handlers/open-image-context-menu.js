@@ -6,7 +6,7 @@
 
 var electron = require('electron');
 
-var appActions = require('../actions');
+var menuFactory = require('../../factories/menu');
 
 //------------------------------------------------------------------------------
 // Module
@@ -14,17 +14,15 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.COPY_IMAGE, function (action) {
+  return function (action) {
     var image = components.gallery.findByFilePath(action.filePath);
     if (!image) {
-      console.log('No image found for copy');
-      return false;
+      console.log('No image for context menu');
+      return;
     }
-    electron.clipboard.writeImage(image.load().getNative());
-  });
-
-  dispatcher.on(appActions.COPY_TEXT, function (action) {
-    electron.clipboard.writeText(action.text);
-  });
+    var template = menuFactory.imageContext(dispatcher.dispatch, image);
+    var menu = electron.Menu.buildFromTemplate(template);
+    menu.popup();
+  };
 
 };

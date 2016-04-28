@@ -4,7 +4,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var appActions = require('../actions');
+var electron = require('electron');
 
 //------------------------------------------------------------------------------
 // Module
@@ -12,12 +12,8 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.OPEN_DASHBOARD, function () {
-    components.windows.dashboard.open();
-  });
-
-  dispatcher.on(appActions.OPEN_SETTINGS, function () {
-    components.windows.settings.open();
-  });
+  return function (action) {
+    electron.clipboard.writeText(action.text);
+  };
 
 };

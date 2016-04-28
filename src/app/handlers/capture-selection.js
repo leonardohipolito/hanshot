@@ -12,20 +12,7 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.CAPTURE_DESKTOP, function (action) {
-    if (components.settings.get('close-before-capture')) {
-      components.windows.dashboard.hide();
-    }
-    components.screen.captureDisplay(action.displayId, function (err, dataURL) {
-      if (err) throw err;
-      dispatcher.dispatch(appActions.saveImage('desktop', dataURL));
-      if (components.settings.get('open-after-capture')) {
-        components.windows.dashboard.show();
-      }
-    });
-  });
-
-  dispatcher.on(appActions.CAPTURE_SELECTION, function (action) {
+  return function (action) {
     var display = components.screen.getDisplayById(action.displayId);
     if (!display) {
       display = components.screen.getActiveDisplay();
@@ -52,19 +39,6 @@ module.exports = function (dispatcher, components) {
         }
       });
     });
-  });
-
-  dispatcher.on(appActions.CAPTURE_WINDOW, function (action) {
-    if (components.settings.get('close-before-capture')) {
-      components.windows.dashboard.hide();
-    }
-    components.screen.captureWindow(action.windowId, function (err, dataURL) {
-      if (err) throw err;
-      dispatcher.dispatch(appActions.saveImage('window', dataURL));
-      if (components.settings.get('open-after-capture')) {
-        components.windows.dashboard.show();
-      }
-    });
-  });
+  };
 
 };

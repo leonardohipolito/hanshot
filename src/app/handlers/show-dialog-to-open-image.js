@@ -4,8 +4,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var storeActions = require('../../store/actions');
-var appActions = require('../actions');
+var Image = require('../../image/image');
+var dialogFactory = require('../../factories/dialog');
 
 //------------------------------------------------------------------------------
 // Module
@@ -13,10 +13,10 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.CLOSE_ALERT, function (action) {
-    components.store.dispatch(
-      storeActions.closeAlert( action.alertId )
-    );
-  });
+  return function () {
+    dialogFactory.openImage(function (filePath) {
+      components.gallery.add(new Image(filePath));
+    });
+  };
 
 };

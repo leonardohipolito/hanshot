@@ -10,11 +10,7 @@ var path = require('path');
 var electron = require('electron');
 var mkdirp = require('mkdirp');
 
-var appActions = require('../actions');
 var Image = require('../../image/image');
-var notify = require('../../notification');
-var dialogFactory = require('../../factories/dialog');
-var notificationFactory = require('../../factories/notification');
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -59,13 +55,7 @@ function createExt(imageFormat) {
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.SHOW_DIALOG_TO_OPEN_IMAGE, function () {
-    dialogFactory.openImage(function (filePath) {
-      components.gallery.add(new Image(filePath));
-    });
-  });
-
-  dispatcher.on(appActions.IMPORT_IMAGE_FROM_CLIPBOARD, function () {
+  return function () {
     var nativeImage = electron.clipboard.readImage();
     if (nativeImage.isEmpty()) {
       console.warn('Image is empty');
@@ -108,53 +98,6 @@ module.exports = function (dispatcher, components) {
       });
     });
 
-  });
-
-  dispatcher.on(appActions.SAVE_IMAGE, function (action) {
-
-    var nativeImage = electron.nativeImage.createFromDataURL(action.dataURL);
-
-    var buffer = null;
-    if (components.settings.get('image-format') === 'jpg') {
-      buffer = nativeImage.toJpeg(components.settings.get('jpg-quality'));
-    } else {
-      buffer = nativeImage.toPng();
-    }
-
-    var cacheBaseDir = electron.app.getPath('appData');
-
-    var fileName = [
-      createFileName(action.type),
-      createExt(components.settings.get('image-format'))
-    ].join('.');
-
-    var fileDir = path.join(cacheBaseDir, 'hanshot', 'unsaved');
-
-    if (components.settings.get('save-dir-selected')) {
-      fileDir = components.settings.get('save-dir-path');
-    }
-
-    var filePath = path.join(fileDir, fileName);
-
-    mkdirp(fileDir, function (err) {
-      if (err) throw err;
-
-      fs.writeFile(filePath, buffer, function (err) {
-        if (err) throw err;
-
-        var image = new Image(filePath);
-        image.load(nativeImage);
-        components.gallery.add(image);
-
-        if (components.settings.get('upload-after-capture')) {
-          dispatcher.dispatch(appActions.uploadImage(filePath));
-        } else {
-          notify(notificationFactory.screenshotSaved());
-        }
-
-      });
-    });
-
-  });
+  };
 
 };

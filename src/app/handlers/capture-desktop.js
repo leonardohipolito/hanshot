@@ -4,8 +4,6 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
-
 var appActions = require('../actions');
 
 //------------------------------------------------------------------------------
@@ -14,8 +12,17 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.SHOW_IMAGE_IN_FOLDER, function (action) {
-    electron.shell.showItemInFolder(action.filePath);
-  });
+  return function (action) {
+    if (components.settings.get('close-before-capture')) {
+      components.windows.dashboard.hide();
+    }
+    components.screen.captureDisplay(action.displayId, function (err, dataURL) {
+      if (err) throw err;
+      dispatcher.dispatch(appActions.saveImage('desktop', dataURL));
+      if (components.settings.get('open-after-capture')) {
+        components.windows.dashboard.show();
+      }
+    });
+  };
 
 };

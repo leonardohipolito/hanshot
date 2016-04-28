@@ -6,6 +6,8 @@
 
 var electron = require('electron');
 
+var _ = require('lodash');
+
 var Dispatcher = require('../dispatcher');
 var Screen = require('../screen');
 var Settings = require('../settings');
@@ -22,18 +24,6 @@ var metadata = require('../config/metadata');
 var createStore = require('../store');
 var storeActions = require('../store/actions');
 var appActions = require('./actions');
-var handlers = [
-  require('./handlers/app'),
-  require('./handlers/capture'),
-  require('./handlers/copy'),
-  require('./handlers/file'),
-  require('./handlers/menu'),
-  require('./handlers/settings'),
-  require('./handlers/shell'),
-  require('./handlers/store'),
-  require('./handlers/upload'),
-  require('./handlers/window')
-];
 
 //------------------------------------------------------------------------------
 // Module
@@ -63,8 +53,14 @@ module.exports = function () {
 
   var dispatcher = new Dispatcher();
 
-  handlers.forEach(function (registerHandlers) {
-    registerHandlers(dispatcher, components);
+  Object.keys(appActions).forEach(function (actionName) {
+
+    var handlerFileName = _.kebabCase(actionName);
+    var handlerCreator = require('./handlers/' + handlerFileName);
+
+    var handler = handlerCreator(dispatcher, components);
+
+    dispatcher.on(actionName, handler);
   });
 
   components.windows.dashboard.on('action', dispatcher.dispatch);

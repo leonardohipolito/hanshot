@@ -4,8 +4,6 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
-
 var appActions = require('../actions');
 
 //------------------------------------------------------------------------------
@@ -14,14 +12,17 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.QUIT_APP, function () {
-    components.cache.set('gallery', components.gallery.serialize());
-    // TODO: use promises or callbacks to make async writes
-    // now cache and settings are saved synchronously (is it bad?)
-    components.screen.destroy();
-    components.cache.save();
-    components.settings.save();
-    electron.app.quit();
-  });
+  return function (action) {
+    if (components.settings.get('close-before-capture')) {
+      components.windows.dashboard.hide();
+    }
+    components.screen.captureWindow(action.windowId, function (err, dataURL) {
+      if (err) throw err;
+      dispatcher.dispatch(appActions.saveImage('window', dataURL));
+      if (components.settings.get('open-after-capture')) {
+        components.windows.dashboard.show();
+      }
+    });
+  };
 
 };

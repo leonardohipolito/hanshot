@@ -12,7 +12,6 @@ var uploaders = {
 };
 var notify = require('../../notification');
 var storeActions = require('../../store/actions');
-var appActions = require('../actions');
 var alertFactory = require('../../factories/alert');
 var notificationFactory = require('../../factories/notification');
 
@@ -22,23 +21,7 @@ var notificationFactory = require('../../factories/notification');
 
 module.exports = function (dispatcher, components) {
 
-  dispatcher.on(appActions.AUTHORIZE_UPLOADER, function (action) {
-
-    var Uploader = uploaders[action.uploaderId];
-    if (!Uploader) {
-      return;
-    }
-
-    var uploader = new Uploader(components.cache);
-    if (uploader.isAuthorized()) {
-      return;
-    }
-
-    uploader.authorize();
-
-  });
-
-  dispatcher.on(appActions.UPLOAD_IMAGE, function (action) {
+  return function (action) {
 
     var uploaderId = action.uploaderId;
 
@@ -97,6 +80,6 @@ module.exports = function (dispatcher, components) {
       console.log(link);
     });
 
-  });
+  };
 
 };
