@@ -1,6 +1,6 @@
-var React = electronRequire('react');
-var ReactDOM = electronRequire('react-dom');
-var electron = electronRequire('electron');
+var React = require('react');
+var ReactDOM = require('react-dom');
+var electron = require('electron');
 
 var ImageFormat = require('./components/image-format.jsx');
 var Behavior = require('./components/behavior.jsx');

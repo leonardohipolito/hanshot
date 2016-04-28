@@ -76,15 +76,9 @@
   <script src="../../../../node_modules/bootstrap/dist/js/bootstrap.js"></script>
 
   <script>
-    // https://github.com/atom/electron/issues/1611
-    // Browserify will try to replace all require calls with some inlined code,
-    // so one can't use for example "require('ipc')" there, because it doesn't
-    // know that ipc module natively exists in environment one will be running
-    // the script at (Electron in this case).
-    // It can be worked around by renaming the electron's require:
-    var electronRequire = require;
+    require('babel-register');
+    require('./dashboard.jsx');
   </script>
-  <script type="text/javascript" src="dashboard.built.js"></script>
 
 </body>
 </html>

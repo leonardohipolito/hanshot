@@ -1,4 +1,4 @@
-var React = electronRequire('react');
+var React = require('react');
 
 function ButtonDropdown(props) {
   return (

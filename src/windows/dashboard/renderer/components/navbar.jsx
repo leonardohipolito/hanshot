@@ -4,8 +4,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = electronRequire('react');
-var electron = electronRequire('electron');
+var React = require('react');
+var electron = require('electron');
 
 var SnapDesktop = require('./controls/snap-desktop.jsx');
 var SnapSelection = require('./controls/snap-selection.jsx');

@@ -4,8 +4,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = electronRequire('react');
-var electron = electronRequire('electron');
+var React = require('react');
+var electron = require('electron');
 
 var viewDispatch = require('../view-dispatch');
 var appActions = require('../../../../app/actions');
