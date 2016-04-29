@@ -21,9 +21,7 @@ var notificationFactory = require('../../factories/notification');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-
-    var uploaderId = action.uploaderId;
+  return function (filePath, uploaderId) {
 
     if (!uploaderId) {
       console.log('Using default uploader');
@@ -36,7 +34,7 @@ module.exports = function (dispatcher, components) {
       return;
     }
 
-    var image = components.gallery.findByFilePath(action.filePath);
+    var image = components.gallery.findByFilePath(filePath);
     if (!image) {
       console.log('Image not found');
       return;

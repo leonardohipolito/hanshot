@@ -12,11 +12,11 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
+  return function (windowId) {
     if (components.settings.get('close-before-capture')) {
       components.windows.dashboard.hide();
     }
-    components.screen.captureWindow(action.windowId, function (err, dataURL) {
+    components.screen.captureWindow(windowId, function (err, dataURL) {
       if (err) throw err;
       dispatcher.dispatch(appActions.saveImage('window', dataURL));
       if (components.settings.get('open-after-capture')) {

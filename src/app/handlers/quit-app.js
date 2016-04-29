@@ -12,7 +12,7 @@ var electron = require('electron');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
+  return function () {
     components.cache.set('gallery', components.gallery.serialize());
     // TODO: use promises or callbacks to make async writes
     // now cache and settings are saved synchronously (is it bad?)

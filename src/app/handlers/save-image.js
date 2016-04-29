@@ -58,9 +58,9 @@ function createExt(imageFormat) {
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
+  return function (type, dataURL) {
 
-    var nativeImage = electron.nativeImage.createFromDataURL(action.dataURL);
+    var nativeImage = electron.nativeImage.createFromDataURL(dataURL);
 
     var buffer = null;
     if (components.settings.get('image-format') === 'jpg') {
@@ -72,7 +72,7 @@ module.exports = function (dispatcher, components) {
     var cacheBaseDir = electron.app.getPath('appData');
 
     var fileName = [
-      createFileName(action.type),
+      createFileName(type),
       createExt(components.settings.get('image-format'))
     ].join('.');
 

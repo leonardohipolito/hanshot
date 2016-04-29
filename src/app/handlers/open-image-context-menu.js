@@ -14,8 +14,8 @@ var menuFactory = require('../../factories/menu');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-    var image = components.gallery.findByFilePath(action.filePath);
+  return function (filePath) {
+    var image = components.gallery.findByFilePath(filePath);
     if (!image) {
       console.log('No image for context menu');
       return;

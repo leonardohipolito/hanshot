@@ -12,8 +12,8 @@ var electron = require('electron');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-    electron.shell.showItemInFolder(action.filePath);
+  return function (filePath) {
+    electron.shell.showItemInFolder(filePath);
   };
 
 };

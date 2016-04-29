@@ -12,11 +12,9 @@ var storeActions = require('../../store/actions');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-    components.settings.set(action.key, action.value);
-    components.store.dispatch(
-      storeActions.updateSetting(action.key, action.value)
-    );
+  return function (key, value) {
+    components.settings.set(key, value);
+    components.store.dispatch( storeActions.updateSetting(key, value) );
   };
 
 };

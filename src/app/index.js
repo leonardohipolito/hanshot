@@ -53,14 +53,17 @@ module.exports = function () {
 
   var dispatcher = new Dispatcher();
 
-  Object.keys(appActions).forEach(function (actionName) {
+  Object.keys(appActions).forEach(function (actionMethodName) {
 
-    var handlerFileName = _.kebabCase(actionName);
+    var actionCreator = appActions[actionMethodName];
+    var action = actionCreator();
+
+    var handlerFileName = action.handler;
     var handlerCreator = require('./handlers/' + handlerFileName);
 
     var handler = handlerCreator(dispatcher, components);
 
-    dispatcher.on(actionName, handler);
+    dispatcher.on(action.handler, handler);
   });
 
   components.windows.dashboard.on('action', dispatcher.dispatch);

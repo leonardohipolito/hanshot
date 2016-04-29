@@ -12,8 +12,8 @@ var appActions = require('../actions');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-    var display = components.screen.getDisplayById(action.displayId);
+  return function (displayId) {
+    var display = components.screen.getDisplayById(displayId);
     if (!display) {
       display = components.screen.getActiveDisplay();
     }

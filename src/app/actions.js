@@ -4,125 +4,138 @@
 // Module
 //------------------------------------------------------------------------------
 
-exports.authorizeUploader = function (uploaderId) {
-  return {
-    actionName: 'authorizeUploader',
-    uploaderId: uploaderId
-  };
-};
+// Actions are tightly bound with handlers
+// When app initializes, all actions in this file are iterated over
+// and each action will have a handler bound to it by { handler: '...' } prop
+// { handler: '...' } value must be a file name from "./hanlders" dir
 
-exports.captureDesktop = function (displayId) {
-  return {
-    actionName: 'captureDesktop',
-    displayId: displayId // optional
-  };
-};
+module.exports = {
 
-exports.captureSelection = function (displayId) {
-  return {
-    actionName: 'captureSelection',
-    displayId: displayId // optional
-  };
-};
+  authorizeUploader: function (uploaderId) {
+    return {
+      handler: 'authorize-uploader',
+      args: [uploaderId]
+    };
+  },
 
-exports.captureWindow = function (windowId) {
-  return {
-    actionName: 'captureWindow',
-    windowId: windowId
-  };
-};
+  captureDesktop: function (displayId) {
+    return {
+      handler: 'capture-desktop',
+      args: [
+        displayId // optional
+      ]
+    };
+  },
 
-exports.closeAlert = function (alertId) {
-  return {
-    actionName: 'closeAlert',
-    alertId: alertId
-  };
-};
+  captureSelection: function (displayId) {
+    return {
+      handler: 'capture-selection',
+      args: [
+        displayId // optional
+      ]
+    };
+  },
 
-exports.copyImage = function (filePath) {
-  return {
-    actionName: 'copyImage',
-    filePath: filePath
-  };
-};
+  captureWindow: function (windowId) {
+    return {
+      handler: 'capture-window',
+      args: [windowId]
+    };
+  },
 
-exports.copyText = function (text) {
-  return {
-    actionName: 'copyText',
-    text: text
-  };
-};
+  closeAlert: function (alertId) {
+    return {
+      handler: 'close-alert',
+      args: [alertId]
+    };
+  },
 
-exports.importImageFromClipboard = function () {
-  return {
-    actionName: 'importImageFromClipboard'
-  };
-};
+  copyImage: function (filePath) {
+    return {
+      handler: 'copy-image',
+      args: [filePath]
+    };
+  },
 
-exports.openDashboard = function () {
-  return {
-    actionName: 'openDashboard'
-  };
-};
+  copyText: function (text) {
+    return {
+      handler: 'copy-text',
+      args: [text]
+    }
+  },
 
-exports.openImageContextMenu = function (filePath) {
-  return {
-    actionName: 'openImageContextMenu',
-    filePath: filePath
-  };
-};
+  importImageFromClipboard: function () {
+    return {
+      handler: 'import-image-from-clipboard'
+    };
+  },
 
-exports.openSettings = function () {
-  return {
-    actionName: 'openSettings'
-  };
-};
+  openDashboard: function () {
+    return {
+      handler: 'open-dashboard'
+    };
+  },
 
-exports.quitApp = function () {
-  return {
-    actionName: 'quitApp'
-  };
-};
+  openImageContextMenu: function (filePath) {
+    return {
+      handler: 'open-image-context-menu',
+      args: [filePath]
+    };
+  },
 
-exports.saveImage = function (type, dataURL) {
-  return {
-    actionName: 'saveImage',
-    type: type,
-    dataURL: dataURL
-  };
-};
+  openSettings: function () {
+    return {
+      handler: 'open-settings'
+    };
+  },
 
-exports.showDialogToOpenImage = function () {
-  return {
-    actionName: 'showDialogToOpenImage'
-  };
-};
+  quitApp: function () {
+    return {
+      handler: 'quit-app'
+    };
+  },
 
-exports.showDialogToPickSaveDir = function () {
-  return {
-    actionName: 'showDialogToPickSaveDir'
-  };
-};
+  saveImage: function (type, dataURL) {
+    return {
+      handler: 'save-image',
+      args: [type, dataURL]
+    };
+  },
 
-exports.showImageInFolder = function (filePath) {
-  return {
-    actionName: 'showImageInFolder',
-    filePath: filePath
-  };
-};
+  showDialogToOpenImage: function () {
+    return {
+      handler: 'show-dialog-to-open-image'
+    };
+  },
 
-exports.updateSetting = function (key, value) {
-  return {
-    actionName: 'updateSetting',
-    key: key,
-    value: value
-  };
-};
+  showDialogToPickSaveDir: function () {
+    return {
+      handler: 'show-dialog-to-pick-save-dir'
+    };
+  },
 
-exports.uploadImage = function (filePath, uploaderId) {
-  return {
-    actionName: 'uploadImage',
-    filePath: filePath,
-    uploaderId: uploaderId // optional
-  };
+  showImageInFolder: function (filePath) {
+    return {
+      handler: 'show-image-in-folder',
+      args: [filePath]
+    };
+  },
+
+  updateSetting: function (key, value) {
+    return {
+      handler: 'update-setting',
+      args: [key, value]
+    };
+  },
+
+  uploadImage: function (filePath, uploaderId) {
+    return {
+      handler: 'upload-image',
+      args: [
+        filePath,
+        uploaderId // optional
+      ]
+    };
+  }
+
 };

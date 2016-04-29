@@ -12,8 +12,8 @@ var electron = require('electron');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-    electron.clipboard.writeText(action.text);
+  return function (text) {
+    electron.clipboard.writeText(text);
   };
 
 };

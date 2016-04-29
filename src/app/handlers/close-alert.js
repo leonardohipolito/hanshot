@@ -12,10 +12,8 @@ var storeActions = require('../../store/actions');
 
 module.exports = function (dispatcher, components) {
 
-  return function (action) {
-    components.store.dispatch(
-      storeActions.closeAlert( action.alertId )
-    );
+  return function (alertId) {
+    components.store.dispatch( storeActions.closeAlert(alertId) );
   };
 
 };
