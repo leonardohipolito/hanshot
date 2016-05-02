@@ -4,62 +4,43 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var fs = require('fs');
-
-var _ = require('lodash');
+import _ from 'lodash';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-function Cache(cacheFilePath) {
+export default class Cache {
 
-  // TODO: supress logs in tests (add logger?)
-  console.log('Cache path', cacheFilePath);
-
-  var cache = {};
-
-  var fileContents = '';
-  try {
-    fileContents = fs.readFileSync(cacheFilePath, 'utf8');
-  } catch (err) {
-    // If failed to read cache from file - continue with empty cache
-    console.log('Cache read fail', err);
+  constructor() {
+    this._cache = {};
   }
 
-  try {
-    cache = JSON.parse(fileContents);
-  } catch (err) {
-    // Bad content of cache file, it will be overriden on save then
-  }
-
-  return {
-
-    get: function (key, defaultValue) {
-      return _.get(cache, key, defaultValue);
-    },
-
-    set: function (key, value) {
-      _.set(cache, key, value);
-      return this;
-    },
-
-    remove: function (key) {
-      // Returns true if key actually existed and it was succesfully removed
-      return _.has(cache, key) && _.unset(cache, key);
-    },
-
-    save: function () {
-      var json = JSON.stringify(cache);
-      // TODO: writing sync because cache is saved on app exit, seems like
-      // async operation might be cancelled on exit
-      fs.writeFileSync(cacheFilePath, json);
-      console.log('Cache saved');
-      return this;
+  reset(cache) {
+    if (_.isPlainObject(cache)) {
+      this._cache = cache;
+    } else {
+      this._cache = {};
     }
+    return this;
+  }
 
-  };
+  get(key, defaultValue) {
+    return _.get(this._cache, key, defaultValue);
+  }
+
+  set(key, value) {
+    _.set(this._cache, key, value);
+    return this;
+  }
+
+  remove(key) {
+    // Returns true if key actually existed and it was succesfully removed
+    return _.has(this._cache, key) && _.unset(this._cache, key);
+  }
+
+  toJSON() {
+    return _.merge({}, this._cache);
+  }
 
 }
-
-module.exports = Cache;

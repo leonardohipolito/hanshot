@@ -8,10 +8,12 @@ var electron = require('electron');
 
 var _ = require('lodash');
 
+import Cache from '../cache';
+import * as fsHelper from '../file';
+
 var Dispatcher = require('../dispatcher');
 var Screen = require('../screen');
 var Settings = require('../settings');
-var Cache = require('../cache');
 var Tray = require('../tray');
 var Gallery = require('../image/gallery');
 var windows = {
@@ -39,11 +41,16 @@ module.exports = function () {
     },
     tray: new Tray(),
     settings: new Settings(),
-    cache: new Cache(config.CACHE_PATH),
+    cache: new Cache(),
     screen: new Screen(),
     gallery: new Gallery(),
     store: createStore()
   };
+
+  // Load cache
+
+  var cacheData = fsHelper.readJSONSyncSafe(config.CACHE_PATH);
+  components.cache.reset(cacheData);
 
   // Preload image
 
@@ -146,8 +153,12 @@ module.exports = function () {
 
   components.windows.dashboard.on('close', function () {
     if (components.settings.get('tray-on-close')) {
-      cache.save();
+
+      var cacheData = components.cache.toJSON();
+      fsHelper.writeJSONSyncSafe(config.CACHE_PATH, cacheData);
+
       settings.save();
+
     } else {
       dispatcher.dispatch(appActions.quitApp());
     }

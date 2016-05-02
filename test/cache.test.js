@@ -4,280 +4,163 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var test = require('tape');
-var sinon = require('sinon');
-var proxyquire = require('proxyquire');
+import test from 'tape';
+
+import Cache from '../src/cache';
 
 //------------------------------------------------------------------------------
 // Test
 //------------------------------------------------------------------------------
 
-// Notes:
-// - make sure to stub fs methods appropriately not to hit real fs
+test('cache: empty if not loaded', function (assert) {
+  const cache = new Cache();
 
-test('cache: read from file path from args', function (assert) {
-  var readFileSync = sinon.spy();
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
-
-  var cache = new Cache('/some/path');
-
-  assert.deepEqual(readFileSync.args[0], ['/some/path', 'utf8']);
+  assert.deepEqual(cache.toJSON(), {});
   assert.end();
 });
 
-test('cache: no throw if file read fails', function (assert) {
-  var readFileSync = sinon.stub().throws();
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: the same as reset', function (assert) {
+  const cache = new Cache();
+  const obj = { foo: 42, bar: { baz: true } };
 
-  var initCache = function initCache() {
-    var cache = new Cache('/some/path');
-  };
+  const ref = cache.reset(obj);
 
-  assert.doesNotThrow(initCache);
+  assert.deepEqual(cache.toJSON(), obj);
+  assert.equal(ref, cache);
   assert.end();
 });
 
-test('cache: no throw if file has bad json', function (assert) {
-  var readFileSync = sinon.stub().returns('badjson');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: reset with no value resets cache', function (assert) {
+  const cache = new Cache();
 
-  var initCache = function initCache() {
-    var cache = new Cache('/some/path');
-  };
+  const ref1 = cache.reset({ foo: 42 });
+  const json1 = cache.toJSON();
+  const ref2 = cache.reset();
+  const json2 = cache.toJSON();
 
-  assert.doesNotThrow(initCache);
+  assert.deepEqual(json1, { foo: 42 });
+  assert.deepEqual(ref1, cache);
+  assert.deepEqual(json2, {});
+  assert.deepEqual(ref2, cache);
   assert.end();
 });
 
-test('cache: get existing value', function (assert) {
-  var readFileSync = sinon.stub().returns('{"foo":42}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: set value', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/path');
+  const ref = cache.set('foo', 42);
+
+  assert.deepEqual(cache.toJSON(), { foo: 42 });
+  assert.equal(ref, cache);
+  assert.end();
+});
+
+test('cache: set deep value', function (assert) {
+  const cache = new Cache();
+
+  const ref = cache.set('foo.bar.baz', 42);
+
+  assert.deepEqual(cache.toJSON(), { foo: { bar: { baz: 42 } } });
+  assert.equal(ref, cache);
+  assert.end();
+});
+
+test('cache: update value', function (assert) {
+  const cache = new Cache();
+
+  cache.reset({ foo: 33 });
+  const ref = cache.set('foo', 42);
+
+  assert.deepEqual(cache.toJSON(), { foo: 42 });
+  assert.equal(ref, cache);
+  assert.end();
+});
+
+test('cache: update deep value', function (assert) {
+  const cache = new Cache();
+
+  cache.reset({ foo: { bar: { baz: 33 } } });
+  const ref = cache.set('foo.bar.baz', 42);
+
+  assert.deepEqual(cache.toJSON(), { foo: { bar: { baz: 42 } } });
+  assert.equal(ref, cache);
+  assert.end();
+});
+
+test('cache: get value', function (assert) {
+  const cache = new Cache();
+
+  cache.reset({ foo: 42 });
 
   assert.equal(cache.get('foo'), 42);
-  assert.equal(cache.get('foo', 33), 42, 'with default');
   assert.end();
 });
 
-test('cache: get existing deep value', function (assert) {
-  var readFileSync = sinon.stub().returns('{"foo":{"bar":{"baz":42}}}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: get deep value', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/path');
+  cache.reset({ foo: { bar: { baz: 42 } } });
 
   assert.equal(cache.get('foo.bar.baz'), 42);
-  assert.equal(cache.get('foo.bar.baz', 33), 42, 'with default');
   assert.end();
 });
 
-test('cache: get missing value', function (assert) {
-  var readFileSync = sinon.stub().returns('{}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: get value if present when default passed', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/path');
+  cache.reset({ foo: 42 });
 
-  assert.equal(cache.get('foo'), undefined);
-  assert.equal(cache.get('foo', 33), 33, 'with default');
+  assert.equal(cache.get('foo', 'default value'), 42);
   assert.end();
 });
 
-test('cache: set missing value', function (assert) {
-  var readFileSync = sinon.stub().returns('{}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: get default if value is missing', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/file');
-  var previousValue = cache.get('foo');
-  var result = cache.set('foo', 42);
-  var newValue = cache.get('foo');
-
-  assert.equal(previousValue, undefined, 'previous value');
-  assert.equal(newValue, 42, 'new value');
-  assert.equal(result, cache, 'returns instance');
+  assert.equal(cache.get('foo', 'default value'), 'default value');
   assert.end();
 });
 
-test('cache: override existing value', function (assert) {
-  var readFileSync = sinon.stub().returns('{"foo":42}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: remove value', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/file');
-  var previousValue = cache.get('foo');
-  var result = cache.set('foo', 33);
-  var newValue = cache.get('foo');
+  cache.reset({ foo: 42 });
+  const wasRemoved = cache.remove('foo');
 
-  assert.equal(previousValue, 42, 'previous value');
-  assert.equal(newValue, 33, 'new value');
-  assert.equal(result, cache, 'returns instance');
+  assert.deepEqual(cache.toJSON(), {});
+  assert.equal(wasRemoved, true);
   assert.end();
 });
 
-test('cache: remove existing value', function (assert) {
-  var readFileSync = sinon.stub().returns('{"foo":42}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: remove deep value', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/file');
-  var previousValue = cache.get('foo');
-  var result = cache.remove('foo');
-  var newValue = cache.get('foo');
+  cache.reset({ foo: { bar: { baz: 42 } } });
+  const wasRemoved = cache.remove('foo.bar.baz');
 
-  assert.equal(previousValue, 42, 'previous value');
-  assert.equal(newValue, undefined, 'new value');
-  assert.equal(result, true, 'is removed');
+  assert.deepEqual(cache.toJSON(), { foo: { bar: {} } });
+  assert.deepEqual(wasRemoved, true);
   assert.end();
 });
 
-test('cache: remove existing deep value', function (assert) {
-  var readFileSync = sinon.stub().returns('{"foo":{"bar":{"baz":42}}}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: cant remove missing value', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/path');
-  var previousValue = cache.get('foo.bar.baz');
-  var result = cache.remove('foo.bar.baz');
-  var newValue = cache.get('foo.bar.baz');
+  const wasRemoved = cache.remove('foo');
 
-  assert.equal(previousValue, 42, 'previous value');
-  assert.equal(newValue, undefined, 'new value');
-  assert.equal(result, true, 'is removed');
+  assert.deepEqual(cache.toJSON(), {});
+  assert.deepEqual(wasRemoved, false);
   assert.end();
 });
 
-test('cache: remove missing value', function (assert) {
-  var readFileSync = sinon.stub().returns('{}');
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync
-    }
-  });
+test('cache: cant change values through exported obj', function (assert) {
+  const cache = new Cache();
 
-  var cache = new Cache('/some/path');
-  var result = cache.remove('foo');
+  cache.reset({ foo: 42 });
+  const json = cache.toJSON();
+  json.bar = 33;
 
-  assert.equal(result, false, 'is removed');
+  assert.deepEqual(cache.toJSON(), { foo: 42 });
+  assert.deepEqual(json, { foo: 42, bar: 33 });
   assert.end();
 });
-
-test('cache: save to file path from args', function (assert) {
-  var readFileSync = sinon.spy();
-  var writeFileSync = sinon.spy();
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync,
-      writeFileSync: writeFileSync
-    }
-  });
-
-  var cache = new Cache('/some/path');
-  var result = cache.save();
-
-  assert.deepEqual(writeFileSync.args[0], ['/some/path', '{}']);
-  assert.equal(result, cache, 'returns instance');
-  assert.end();
-});
-
-test('cache: save failed to read file', function (assert) {
-  var readFileSync = sinon.stub().throws();
-  var writeFileSync = sinon.spy();
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync,
-      writeFileSync: writeFileSync
-    },
-  });
-
-  var cache = new Cache('/some/path');
-  var result = cache.save();
-
-  assert.deepEqual(writeFileSync.args[0], ['/some/path', '{}']);
-  assert.equal(result, cache, 'returns instance');
-  assert.end();
-});
-
-test('cache: save file with bad json', function (assert) {
-  var readFileSync = sinon.stub().returns('badjson');
-  var writeFileSync = sinon.spy();
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync,
-      writeFileSync: writeFileSync
-    }
-  });
-
-  var cache = new Cache('/some/path');
-  var result = cache.save();
-
-  assert.deepEqual(writeFileSync.args[0], ['/some/path', '{}']);
-  assert.equal(result, cache, 'returns instance');
-  assert.end();
-});
-
-test('cache: save modified values', function (assert) {
-  var readFileSync = sinon.stub().returns(
-    '{"foo":42,"boo":false,"bar":{"baz":"hi"}}'
-  );
-  var writeFileSync = sinon.spy();
-  var Cache = proxyquire('../src/cache', {
-    fs: {
-      readFileSync: readFileSync,
-      writeFileSync: writeFileSync
-    }
-  });
-
-  var cache = new Cache('/some/path');
-  cache.set('foo', 'cat');
-  cache.remove('boo');
-  cache.set('qux', true);
-  cache.set('bar.duck', 'hi');
-  cache.remove('bar.baz');
-  cache.save();
-
-  // Order of object keys is not guaranteed
-  var saveJSON = writeFileSync.args[0][1];
-  assert.ok(saveJSON.match(/"foo":"cat"/), 'shallow override');
-  assert.notOk(saveJSON.match(/"boo":false/), 'shallow remove');
-  assert.ok(saveJSON.match(/"qux":true/), 'shallow set');
-  assert.ok(saveJSON.match(/"bar":\{"duck":"hi"\}/), 'deep set');
-  assert.notOk(saveJSON.match(/"bar":\{"baz":"hi"\}/), 'deep remove');
-  assert.end();
-});
-

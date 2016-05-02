@@ -47,7 +47,7 @@ var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
 // Kill second process, if one is already running
 if (shouldQuit) {
   electron.app.quit();
-  return;
+  process.exit(0);
 }
 
 // ---
