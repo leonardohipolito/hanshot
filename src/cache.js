@@ -1,5 +1,3 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
@@ -13,34 +11,38 @@ import _ from 'lodash';
 export default class Cache {
 
   constructor() {
-    this._cache = {};
-  }
+    let cache = {};
 
-  reset(cache) {
-    if (_.isPlainObject(cache)) {
-      this._cache = cache;
-    } else {
-      this._cache = {};
-    }
-    return this;
-  }
+    return {
 
-  get(key, defaultValue) {
-    return _.get(this._cache, key, defaultValue);
-  }
+      reset(newCache) {
+        if (_.isPlainObject(cache)) {
+          cache = newCache;
+        } else {
+          cache = {};
+        }
+        return this;
+      },
 
-  set(key, value) {
-    _.set(this._cache, key, value);
-    return this;
-  }
+      get(key, defaultValue) {
+        return _.get(cache, key, defaultValue);
+      },
 
-  remove(key) {
-    // Returns true if key actually existed and it was succesfully removed
-    return _.has(this._cache, key) && _.unset(this._cache, key);
-  }
+      set(key, value) {
+        _.set(cache, key, value);
+        return this;
+      },
 
-  toJSON() {
-    return _.merge({}, this._cache);
+      remove(key) {
+        // Returns true if key actually existed and it was succesfully removed
+        return _.has(cache, key) && _.unset(cache, key);
+      },
+
+      toJSON() {
+        return _.merge({}, cache);
+      },
+
+    };
   }
 
 }

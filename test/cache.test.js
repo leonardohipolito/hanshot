@@ -1,5 +1,3 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
@@ -12,14 +10,14 @@ import Cache from '../src/cache';
 // Test
 //------------------------------------------------------------------------------
 
-test('cache: empty if not loaded', function (assert) {
+test('cache: empty if not loaded', (assert) => {
   const cache = new Cache();
 
   assert.deepEqual(cache.toJSON(), {});
   assert.end();
 });
 
-test('cache: the same as reset', function (assert) {
+test('cache: the same as reset', (assert) => {
   const cache = new Cache();
   const obj = { foo: 42, bar: { baz: true } };
 
@@ -30,7 +28,7 @@ test('cache: the same as reset', function (assert) {
   assert.end();
 });
 
-test('cache: reset with no value resets cache', function (assert) {
+test('cache: reset with no value resets cache', (assert) => {
   const cache = new Cache();
 
   const ref1 = cache.reset({ foo: 42 });
@@ -45,7 +43,7 @@ test('cache: reset with no value resets cache', function (assert) {
   assert.end();
 });
 
-test('cache: set value', function (assert) {
+test('cache: set value', (assert) => {
   const cache = new Cache();
 
   const ref = cache.set('foo', 42);
@@ -55,7 +53,7 @@ test('cache: set value', function (assert) {
   assert.end();
 });
 
-test('cache: set deep value', function (assert) {
+test('cache: set deep value', (assert) => {
   const cache = new Cache();
 
   const ref = cache.set('foo.bar.baz', 42);
@@ -65,7 +63,7 @@ test('cache: set deep value', function (assert) {
   assert.end();
 });
 
-test('cache: update value', function (assert) {
+test('cache: update value', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: 33 });
@@ -76,7 +74,7 @@ test('cache: update value', function (assert) {
   assert.end();
 });
 
-test('cache: update deep value', function (assert) {
+test('cache: update deep value', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: { bar: { baz: 33 } } });
@@ -87,7 +85,7 @@ test('cache: update deep value', function (assert) {
   assert.end();
 });
 
-test('cache: get value', function (assert) {
+test('cache: get value', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: 42 });
@@ -96,7 +94,7 @@ test('cache: get value', function (assert) {
   assert.end();
 });
 
-test('cache: get deep value', function (assert) {
+test('cache: get deep value', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: { bar: { baz: 42 } } });
@@ -105,7 +103,7 @@ test('cache: get deep value', function (assert) {
   assert.end();
 });
 
-test('cache: get value if present when default passed', function (assert) {
+test('cache: get value if present when default passed', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: 42 });
@@ -114,14 +112,14 @@ test('cache: get value if present when default passed', function (assert) {
   assert.end();
 });
 
-test('cache: get default if value is missing', function (assert) {
+test('cache: get default if value is missing', (assert) => {
   const cache = new Cache();
 
   assert.equal(cache.get('foo', 'default value'), 'default value');
   assert.end();
 });
 
-test('cache: remove value', function (assert) {
+test('cache: remove value', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: 42 });
@@ -132,7 +130,7 @@ test('cache: remove value', function (assert) {
   assert.end();
 });
 
-test('cache: remove deep value', function (assert) {
+test('cache: remove deep value', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: { bar: { baz: 42 } } });
@@ -143,7 +141,7 @@ test('cache: remove deep value', function (assert) {
   assert.end();
 });
 
-test('cache: cant remove missing value', function (assert) {
+test('cache: cant remove missing value', (assert) => {
   const cache = new Cache();
 
   const wasRemoved = cache.remove('foo');
@@ -153,7 +151,7 @@ test('cache: cant remove missing value', function (assert) {
   assert.end();
 });
 
-test('cache: cant change values through exported obj', function (assert) {
+test('cache: cant change values through exported obj', (assert) => {
   const cache = new Cache();
 
   cache.reset({ foo: 42 });
