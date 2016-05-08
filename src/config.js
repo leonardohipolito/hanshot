@@ -1,23 +1,20 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var path = require('path');
+import * as path from 'path';
 
-var electron = require('electron');
+import electron from 'electron';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-var dataPath = electron.app.getPath('appData');
+const dataPath = electron.app.getPath('appData');
 
-var config = {
-
-  CACHE_PATH: path.join(dataPath, 'hanshot', 'cache.json')
-
+const config = {
+  CACHE_PATH: path.join(dataPath, 'hanshot', 'cache.json'),
+  SETTINGS_PATH: path.join(dataPath, 'hanshot', 'settings.json'),
 };
 
-module.exports = config;
+export default config;

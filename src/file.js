@@ -1,5 +1,3 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
@@ -11,8 +9,7 @@ import * as fs from 'fs';
 //------------------------------------------------------------------------------
 
 export function readJSONSyncSafe(path) {
-
-  var json = '';
+  let json = '';
   try {
     json = fs.readFileSync(path, 'utf8');
   } catch (err) {
@@ -20,7 +17,7 @@ export function readJSONSyncSafe(path) {
     console.log(err.stack);
   }
 
-  var obj = {};
+  let obj = {};
   try {
     obj = JSON.parse(json);
   } catch (err) {
@@ -32,8 +29,7 @@ export function readJSONSyncSafe(path) {
 }
 
 export function writeJSONSyncSafe(path, obj) {
-
-  var json = '';
+  let json = '';
   try {
     json = JSON.stringify(obj);
   } catch (err) {
@@ -51,4 +47,4 @@ export function writeJSONSyncSafe(path, obj) {
   }
 
   return true;
-};
+}

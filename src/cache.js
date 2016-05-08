@@ -2,7 +2,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import _ from 'lodash';
+import Storage from './storage';
+import { CACHE_PATH } from './config';
+import * as fsHelpers from './file';
 
 //------------------------------------------------------------------------------
 // Module
@@ -10,36 +12,27 @@ import _ from 'lodash';
 
 export default class Cache {
 
-  constructor() {
-    let cache = {};
+  construct() {
+    const cache = new Storage();
 
     return {
 
-      reset(newCache) {
-        if (_.isPlainObject(cache)) {
-          cache = newCache;
-        } else {
-          cache = {};
-        }
-        return this;
+      load() {
+        const data = fsHelpers.readJSONSyncSafe(CACHE_PATH);
+        cache.reset(data);
       },
 
-      get(key, defaultValue) {
-        return _.get(cache, key, defaultValue);
+      save() {
+        const data = cache.toJSON();
+        fsHelpers.writeJSONSyncSafe(CACHE_PATH, data);
       },
 
       set(key, value) {
-        _.set(cache, key, value);
-        return this;
+        cache.set(key, value);
       },
 
-      remove(key) {
-        // Returns true if key actually existed and it was succesfully removed
-        return _.has(cache, key) && _.unset(cache, key);
-      },
-
-      toJSON() {
-        return _.merge({}, cache);
+      get(key, defaultValue) {
+        return cache.get(key, defaultValue);
       },
 
     };
