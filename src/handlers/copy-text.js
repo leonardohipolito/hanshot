@@ -1,19 +1,20 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
+import electron from 'electron';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-module.exports = function (dispatcher, components) {
+export default {
 
-  return function (text) {
-    electron.clipboard.writeText(text);
-  };
+  create() {
+    return function copyTextHandler(text) {
+      electron.clipboard.writeText(text);
+    };
+  },
 
 };
+

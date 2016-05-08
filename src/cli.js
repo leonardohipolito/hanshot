@@ -1,18 +1,15 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var appActions = require('./app/actions');
+const appActions = require('./actions');
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-exports.parseAction = function (args) {
-
-  var action = null;
+export function parseAction(args) {
+  let action = null;
 
   if (args.indexOf('--desktop') > -1) {
     action = appActions.captureDesktop();
@@ -21,4 +18,4 @@ exports.parseAction = function (args) {
   }
 
   return action;
-};
+}

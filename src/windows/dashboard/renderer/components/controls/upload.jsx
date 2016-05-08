@@ -7,7 +7,7 @@
 var React = require('react');
 
 var viewDispatch = require('../../view-dispatch');
-var appActions = require('../../../../../app/actions');
+import appActions from '../../../../../actions';
 
 var ButtonDropdown = require('../common/button-dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');

@@ -1,20 +1,18 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
+import electron from 'electron';
 
-var cli = require('./cli');
-var initApp = require('./app');
-var appActions = require('./app/actions');
+import App from './app';
+import appActions from './actions';
+import * as cli from './cli';
 
 //------------------------------------------------------------------------------
 // Helpers
 //------------------------------------------------------------------------------
 
-var isLinux = (process.platform === 'linux');
+const isLinux = (process.platform === 'linux');
 
 //------------------------------------------------------------------------------
 // Module
@@ -22,13 +20,13 @@ var isLinux = (process.platform === 'linux');
 
 // Initialize variables used inside app.on('ready'),
 // so they won't be garbage collected when handler executes
-var app = null;
+let app = null;
 
 
 // Keep one running instance and prevent second instance from starting
-var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
+const shouldQuit = electron.app.makeSingleInstance((argv) => {
   console.log('There is an already running instance');
-  var args = argv.slice(2);
+  const args = argv.slice(2);
 
   if (!app) {
     console.log('Unable to use already running instance');
@@ -40,8 +38,10 @@ var shouldQuit = electron.app.makeSingleInstance(function (argv, workdir) {
     return;
   }
 
-  var cliAction = cli.parseAction(args);
-  app.dispatch(cliAction);
+  const cliAction = cli.parseAction(args);
+  if (cliAction) {
+    app.dispatch(cliAction);
+  }
 });
 
 // Kill second process, if one is already running
@@ -52,7 +52,7 @@ if (shouldQuit) {
 
 // ---
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', (err) => {
   electron.dialog.showErrorBox(
     'Uncaught exception, app will now quit',
     err.stack
@@ -73,19 +73,20 @@ if (isLinux) {
 
 // ---
 
-electron.app.on('window-all-closed', function () {
-  if (process.platform != 'darwin') {
+electron.app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     electron.app.quit();
   }
 });
 
-electron.app.on('ready', function () {
+electron.app.on('ready', () => {
+  app = new App();
 
-  app = initApp();
-
-  var args = process.argv.slice(2);
-  var cliAction = cli.parseAction(args);
-  app.dispatch(cliAction);
+  const args = process.argv.slice(2);
+  const cliAction = cli.parseAction(args);
+  if (cliAction) {
+    app.dispatch(cliAction);
+  }
 
   // "printscreen" is not supported yet. FUCK
   // https://github.com/atom/electron/issues/4663
@@ -96,5 +97,4 @@ electron.app.on('ready', function () {
   // if (!isNowRegistered) {
   //   console.log('registration failed');
   // }
-
 });

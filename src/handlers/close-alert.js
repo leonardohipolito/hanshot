@@ -1,19 +1,21 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var storeActions = require('../../store/actions');
+import storeActions from '../store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-module.exports = function (dispatcher, components) {
+export default {
 
-  return function (alertId) {
-    components.store.dispatch( storeActions.closeAlert(alertId) );
-  };
+  inject: ['store'],
+
+  create(store) {
+    return function closeAlertHandler(alertId) {
+      store.dispatch(storeActions.closeAlert(alertId));
+    };
+  },
 
 };

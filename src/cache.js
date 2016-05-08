@@ -12,7 +12,7 @@ import * as fsHelpers from './file';
 
 export default class Cache {
 
-  construct() {
+  constructor() {
     const cache = new Storage();
 
     return {

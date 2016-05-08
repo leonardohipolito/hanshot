@@ -1,30 +1,30 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var EventEmitter = require('events').EventEmitter;
-
-var _ = require('lodash');
+import { EventEmitter } from 'events';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-function Dispatcher() {
-  var emitter = new EventEmitter();
+export default class Dispatcher {
 
-  this.dispatch = function (action) {
-    if (!action) return;
-    emitter.emit(action.handler, action);
-  }.bind(this);
+  constructor() {
+    const emitter = new EventEmitter();
 
-  this.on = function (handler, callback) {
-    emitter.on(handler, function (action) {
-      callback(...(action.args || []));
-    });
-  }.bind(this);
+    return {
+
+      dispatch(action) {
+        // Spread action args to handler arguments
+        emitter.emit(action.type, ...(action.args || []));
+      },
+
+      on(type, hanlder) {
+        emitter.on(type, hanlder);
+      },
+
+    };
+  }
+
 }
-
-module.exports = Dispatcher;

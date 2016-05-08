@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 
 var metadata = require('../config/metadata');
-var appActions = require('../app/actions');
+var appActions = require('../actions');
 
 //------------------------------------------------------------------------------
 // Module

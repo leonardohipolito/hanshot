@@ -2,15 +2,25 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as path from 'path';
-
 import electron from 'electron';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-const dataPath = electron.app.getPath('appData');
+export default {
 
-export const CACHE_PATH = path.join(dataPath, 'hanshot', 'cache.json');
-export const SETTINGS_PATH = path.join(dataPath, 'hanshot', 'settings.json');
+  inject: ['gallery'],
+
+  create(gallery) {
+    return function copyImageHandler(filePath) {
+      const image = gallery.findByFilePath(filePath);
+      if (image) {
+        electron.clipboard.writeImage(image.load().getNative());
+      } else {
+        console.log('No image found for copy');
+      }
+    };
+  },
+
+};

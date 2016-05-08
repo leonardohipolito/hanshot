@@ -10,7 +10,7 @@ var util = require('util');
 
 var electron = require('electron');
 
-var appActions = require('./app/actions');
+var appActions = require('./actions');
 
 //------------------------------------------------------------------------------
 // Public Interface
