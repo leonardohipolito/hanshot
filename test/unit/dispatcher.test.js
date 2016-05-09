@@ -5,7 +5,7 @@
 import test from 'tape';
 import { spy } from 'sinon';
 
-import Dispatcher from '../src/dispatcher';
+import Dispatcher from '../../src/dispatcher';
 
 //------------------------------------------------------------------------------
 // Test

@@ -9,6 +9,7 @@ import electron from 'electron';
 import mkdirp from 'mkdirp';
 
 import Image from '../image/image';
+import * as clipboard from 'clipboard';
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -56,18 +57,15 @@ export default {
 
   create(settings, gallery) {
     return function importImageFromClipboardHandler() {
-      const nativeImage = electron.clipboard.readImage();
-      if (nativeImage.isEmpty()) {
-        console.warn('Image is empty');
-        return;
-      }
+      const buffer = clipboard.readImageBuffer();
 
-      let buffer = null;
-      if (settings.get('image-format') === 'jpg') {
-        buffer = nativeImage.toJpeg(settings.get('jpg-quality'));
-      } else {
-        buffer = nativeImage.toPng();
-      }
+      // TODO
+      // let buffer = null;
+      // if (settings.get('image-format') === 'jpg') {
+      //   buffer = nativeImage.toJpeg(settings.get('jpg-quality'));
+      // } else {
+      //   buffer = nativeImage.toPng();
+      // }
 
       const cacheBaseDir = electron.app.getPath('appData');
 

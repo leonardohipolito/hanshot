@@ -4,7 +4,7 @@
 
 import test from 'tape';
 
-import Container from '../src/container';
+import Container from '../../src/container';
 
 //------------------------------------------------------------------------------
 // Test

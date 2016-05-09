@@ -2,7 +2,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import electron from 'electron';
+import * as clipboard from '../clipboard';
 
 //------------------------------------------------------------------------------
 // Module
@@ -16,7 +16,12 @@ export default {
     return function copyImageHandler(filePath) {
       const image = gallery.findByFilePath(filePath);
       if (image) {
-        electron.clipboard.writeImage(image.load().getNative());
+        image.load();
+        if (image.isEmpty()) {
+          console.log('No image loaded');
+        } else {
+          clipboard.writeImageBuffer(image.toPngBuffer());
+        }
       } else {
         console.log('No image found for copy');
       }

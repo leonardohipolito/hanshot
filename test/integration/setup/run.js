@@ -2,19 +2,23 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as clipboard from '../clipboard';
+const spawn = require('child_process').spawn;
+const electronPath = require('electron-prebuilt');
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default {
+const electron = spawn(electronPath, [
+  '-r',
+  'babel-register',
+  `${__dirname}/suite.js`,
+]);
 
-  create() {
-    return function copyTextHandler(text) {
-      clipboard.writeText(text);
-    };
-  },
+electron.stdout.on('data', (data) => {
+  console.log(`${data}`);
+});
 
-};
-
+electron.stderr.on('data', (data) => {
+  console.log(`${data}`);
+});

@@ -4,7 +4,7 @@
 
 import test from 'tape';
 
-import Storage from '../src/storage';
+import Storage from '../../src/storage';
 
 //------------------------------------------------------------------------------
 // Test

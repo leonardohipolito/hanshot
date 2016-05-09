@@ -4,7 +4,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
+import * as clipboard from '../clipboard';
 
 var uploaders = {
   imgur: require('../../uploaders/imgur'),
@@ -67,7 +67,7 @@ module.exports = function (dispatcher, components) {
     uploader.upload(image.getFileName(), buffer, function (err, link) {
       if (err) throw err;
 
-      electron.clipboard.writeText(link);
+      clipboard.writeText(link);
 
       image.addPublicUrl(link);
       components.gallery.update(image.getFilePath(), image);
