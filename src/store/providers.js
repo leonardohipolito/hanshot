@@ -2,16 +2,18 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import displaysProvider from './providers/displays.provider';
+import imageProvider from './providers/image.provider';
+import settingsProvider from './providers/settings.provider';
+import metadataProvider from './providers/metadata.provider';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
-  }
-}
+export default [
+  displaysProvider,
+  imageProvider,
+  settingsProvider,
+  metadataProvider,
+];

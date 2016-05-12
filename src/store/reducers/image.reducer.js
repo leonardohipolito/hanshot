@@ -2,16 +2,17 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import { RECEIVE_IMAGE } from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
+export default function imageReducer(state = null, action) {
+  switch (action.type) {
+    case RECEIVE_IMAGE:
+      return action.image;
+    default:
+      return state;
   }
 }

@@ -2,16 +2,18 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import { receiveMetadata } from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
+export default function metadataProvider(store, metadata) {
+  function fetchMetadata() {
+    return receiveMetadata(metadata);
   }
+
+  return fetchMetadata;
 }
+
+metadataProvider.inject = ['store', 'metadata'];

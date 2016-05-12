@@ -2,16 +2,17 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import { RECEIVE_METADATA } from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
+export default function metadataReducer(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_METADATA:
+      return action.metadata;
+    default:
+      return state;
   }
 }

@@ -2,16 +2,18 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import { receiveSettings } from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
+export default function settingsProvider(store, settings) {
+  function fetchSettings() {
+    return receiveSettings(settings.serialize());
   }
+
+  return fetchSettings;
 }
+
+settingsProvider.inject = ['store', 'settings'];

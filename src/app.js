@@ -10,6 +10,12 @@ import * as handlers from './handlers';
 
 import Cache from './cache';
 import Settings from './settings';
+import Store from './store';
+import storeProviders from './store/providers';
+
+// TODO: maybe rethink metadata
+import metadata from './config/metadata';
+
 
 var Screen = require('./screen');
 var Tray = require('./tray');
@@ -19,9 +25,6 @@ var windows = {
   Dashboard: require('./windows/dashboard'),
   Settings: require('./windows/settings'),
 };
-var metadata = require('./config/metadata');
-var createStore = require('./store');
-var storeActions = require('./store/actions');
 
 //------------------------------------------------------------------------------
 // Module
@@ -41,7 +44,8 @@ export default class App {
       cache: new Cache(),
       screen: new Screen(),
       gallery: new Gallery(),
-      store: createStore(),
+      store: new Store(),
+      metadata,
     };
 
     // Load cache
@@ -59,19 +63,23 @@ export default class App {
 
     const container = new Container();
 
-    container.register({
+    container.registerValues({
       dispatch: dispatcher.dispatch,
 
       cache: components.cache,
       settings: components.settings,
       screen: components.screen,
       gallery: components.gallery,
+      store: components.store,
+      metadata: components.metadata,
 
       dashboardWindow: components.windows.dashboard,
       selectionWindow: components.windows.selection,
     });
 
     // Handle events from app components
+
+    console.log('Registering handlers...');
 
     appActionTypes.forEach((type) => {
       const handlerCreator = handlers[type];
@@ -81,7 +89,7 @@ export default class App {
       }
 
       const dependencyNames = handlerCreator.inject || [];
-      const dependencies = container.get(dependencyNames);
+      const dependencies = container.pick(dependencyNames);
 
       dependencies.forEach((dep, index) => {
         if (dep === undefined) {
@@ -105,62 +113,21 @@ export default class App {
       components.windows.settings.sendState(components.store.getState());
     });
 
-    // Create data providers
+    console.log('Registering providers...');
 
-    var fetchDisplays = function () {
-      return storeActions.receiveDisplays(
-        components.screen.getDisplayList()
-      );
-    };
 
-    var fetchImage = function () {
-      var image = components.gallery.getLast();
-      if (image) {
-        return storeActions.receiveImage(image.load());
-      } else {
-        return storeActions.receiveImage(null);
-      }
-    };
+    storeProviders.forEach((registerStoreProvider) => {
+      const dependencyNames = registerStoreProvider.inject || [];
+      const dependencies = container.pick(dependencyNames);
 
-    var fetchSettings = function () {
-      return storeActions.receiveSettings(
-        components.settings.serialize()
-      );
-    };
+      dependencies.forEach((dep, index) => {
+        if (dep === undefined) {
+          console.log('Dependency not satisfied for "%s"', dependencyNames[index]);
+        }
+      });
 
-    var fetchMetadata = function () {
-      return storeActions.receiveMetadata(metadata);
-    };
-
-    // Fill store with data on start
-
-    components.store.dispatch(fetchDisplays());
-    components.store.dispatch(fetchSettings());
-    components.store.dispatch(fetchImage());
-    components.store.dispatch(fetchMetadata());
-
-    // Screen
-
-    components.screen.on('display-added', function () {
-      components.store.dispatch(fetchDisplays());
-    });
-
-    components.screen.on('display-removed', function () {
-      components.store.dispatch(fetchDisplays());
-    });
-
-    components.screen.on('display-updated', function () {
-      components.store.dispatch(fetchDisplays());
-    });
-
-    // Image loader
-
-    components.gallery.on('added', function () {
-      components.store.dispatch(fetchImage());
-    });
-
-    components.gallery.on('updated', function () {
-      components.store.dispatch(fetchImage());
+      const prefetchProviderAction = registerStoreProvider(...dependencies);
+      components.store.dispatch(prefetchProviderAction());
     });
 
     // Windows - dashboard

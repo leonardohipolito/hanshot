@@ -1,62 +1,65 @@
-'use strict';
-
 //------------------------------------------------------------------------------
-// Public Interface
+// Action types
 //------------------------------------------------------------------------------
 
-exports.receiveDisplays = function (displays) {
-  return {
-    type: 'DISPLAYS_RECEIVED',
-    displays: displays
-  };
-};
+export const SHOW_ALERT = 'SHOW_ALERT';
+export const CLOSE_ALERT = 'CLOSE_ALERT';
+export const RECEIVE_DISPLAYS = 'RECEIVE_DISPLAYS';
+export const RECEIVE_IMAGE = 'RECEIVE_IMAGE';
+export const RECEIVE_METADATA = 'RECEIVE_METADATA';
+export const RECEIVE_SETTINGS = 'RECEIVE_SETTINGS';
+export const UPDATE_SETTING = 'UPDATE_SETTING';
 
-exports.receiveSettings = function (settings) {
-  return {
-    type: 'SETTINGS_RECEIVED',
-    settings: settings
-  };
-};
+//------------------------------------------------------------------------------
+// Action creators
+//------------------------------------------------------------------------------
 
-exports.updateSetting = function (key, value) {
+export function showAlert(alert) {
   return {
-    type: 'UPDATE_SETTING',
-    key: key,
-    value: value
+    type: SHOW_ALERT,
+    alert,
   };
-};
+}
 
-exports.receiveUploaders = function (uploaders) {
+export function closeAlert(alertId) {
   return {
-    type: 'UPLOADERS_RECEIVED',
-    uploaders: uploaders
+    type: CLOSE_ALERT,
+    alertId,
   };
-};
+}
 
-exports.receiveImage = function (image) {
+export function receiveDisplays(displays) {
   return {
-    type: 'IMAGE_RECEIVED',
-    image: image
+    type: RECEIVE_DISPLAYS,
+    displays,
   };
-};
+}
 
-exports.showAlert = function (alert) {
+export function receiveImage(image) {
   return {
-    type: 'SHOW_ALERT',
-    alert: alert
+    type: RECEIVE_IMAGE,
+    image,
   };
-};
+}
 
-exports.closeAlert = function ( alertId ) {
+export function receiveMetadata(metadata) {
   return {
-    type: 'CLOSE_ALERT',
-    alertId: alertId
+    type: RECEIVE_METADATA,
+    metadata,
   };
-};
+}
 
-exports.receiveMetadata = function (metadata) {
+export function receiveSettings(settings) {
   return {
-    type: 'RECEIVE_METADATA',
-    metadata: metadata
+    type: RECEIVE_SETTINGS,
+    settings,
   };
-};
+}
+
+export function updateSetting(key, value) {
+  return {
+    type: UPDATE_SETTING,
+    key,
+    value,
+  };
+}

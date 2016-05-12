@@ -2,16 +2,17 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import { RECEIVE_DISPLAYS } from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
+export default function displaysReducer(state = [], action) {
+  switch (action.type) {
+    case RECEIVE_DISPLAYS:
+      return action.displays;
+    default:
+      return state;
   }
 }
