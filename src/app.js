@@ -16,9 +16,10 @@ import storeProviders from './store/providers';
 // TODO: maybe rethink metadata
 import metadata from './config/metadata';
 
+import createAppTray from './tray';
+
 
 var Screen = require('./screen');
-var Tray = require('./tray');
 var Gallery = require('./image/gallery');
 var Selection = require('./selection');
 var windows = {
@@ -39,7 +40,6 @@ export default class App {
         settings: new windows.Settings(),
       },
       selection: new Selection(),
-      tray: new Tray(),
       settings: new Settings(),
       cache: new Cache(),
       screen: new Screen(),
@@ -104,7 +104,10 @@ export default class App {
 
     components.windows.dashboard.on('action', dispatcher.dispatch);
     components.windows.settings.on('action', dispatcher.dispatch);
-    components.tray.on('action', dispatcher.dispatch);
+
+    // Tray
+
+    components.tray = createAppTray(dispatcher.dispatch);
 
     // Store
 

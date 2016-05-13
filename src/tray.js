@@ -1,76 +1,27 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var path = require('path');
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
-
-var electron = require('electron');
-
-var appActions = require('./actions');
+import createTray from './tray.shim';
+import createTrayMenu from './menu/tray.menu';
+import { TRAY_ICON_PATH } from './config';
 
 //------------------------------------------------------------------------------
-// Public Interface
+// Module
 //------------------------------------------------------------------------------
 
-function Tray() {
-  EventEmitter.call(this);
+export default function createAppTray(dispatch) {
+  const appTray = createTray(TRAY_ICON_PATH);
 
-  var self = this;
+  // TODO: menu might be moved away from tray
+  appTray.setMenu(createTrayMenu(dispatch));
 
-  var iconPath = path.join(__dirname, '..', 'resources', 'tray.png');
-
-  var template = [
-    {
-      label: 'Open',
-      click: function () {
-        self.emit('action', appActions.openDashboard());
-      }
+  return {
+    // TODO: think of a way to prevent GC
+    veryBadPreventGC() {
+      console.log(appTray);
     },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Desktop',
-      click: function () {
-        self.emit('action', appActions.captureDesktop());
-      }
-    },
-    {
-      label: 'Selection',
-      click: function () {
-        self.emit('action', appActions.captureSelection());
-      }
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Settings',
-      click: function () {
-        self.emit('action', appActions.openSettings());
-      }
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Quit',
-      click: function () {
-        self.emit('action', appActions.quitApp());
-      }
-    }
-  ];
-
-  var menu = electron.Menu.buildFromTemplate(template);
-
-  this.tray = new electron.Tray(iconPath);
-  this.tray.setContextMenu(menu);
+  };
 }
 
-util.inherits(Tray, EventEmitter);
-
-module.exports = Tray;
+createAppTray.inject = ['dispatch'];
