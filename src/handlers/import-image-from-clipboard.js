@@ -9,7 +9,7 @@ import electron from 'electron';
 import mkdirp from 'mkdirp';
 
 import Image from '../image/image';
-import * as clipboard from 'clipboard';
+import * as clipboard from '../clipboard';
 
 //------------------------------------------------------------------------------
 // Helpers
