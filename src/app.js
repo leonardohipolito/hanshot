@@ -27,6 +27,8 @@ var windows = {
   Settings: require('./windows/settings'),
 };
 
+import log from './log';
+
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
@@ -79,12 +81,12 @@ export default class App {
 
     // Handle events from app components
 
-    console.log('Registering handlers...');
+    log('Registering handlers...');
 
     appActionTypes.forEach((type) => {
       const handlerCreator = handlers[type];
       if (!handlerCreator) {
-        console.log('No handler found for type "%s"', type);
+        log('No handler found for type "%s"', type);
         return;
       }
 
@@ -93,7 +95,7 @@ export default class App {
 
       dependencies.forEach((dep, index) => {
         if (dep === undefined) {
-          console.log('Dependency not satisfied for "%s"', dependencyNames[index]);
+          log('Dependency not satisfied for "%s"', dependencyNames[index]);
         }
       });
 
@@ -111,12 +113,12 @@ export default class App {
 
     // Store
 
-    components.store.subscribe(function () {
+    components.store.subscribe(() => {
       components.windows.dashboard.sendState(components.store.getState());
       components.windows.settings.sendState(components.store.getState());
     });
 
-    console.log('Registering providers...');
+    log('Registering providers...');
 
 
     storeProviders.forEach((registerStoreProvider) => {
@@ -125,7 +127,7 @@ export default class App {
 
       dependencies.forEach((dep, index) => {
         if (dep === undefined) {
-          console.log('Dependency not satisfied for "%s"', dependencyNames[index]);
+          log('Dependency not satisfied for "%s"', dependencyNames[index]);
         }
       });
 
@@ -140,13 +142,13 @@ export default class App {
       components.windows.dashboard.show();
     }
 
-    components.windows.dashboard.on('ready', function () {
+    components.windows.dashboard.on('ready', () => {
       components.windows.dashboard.sendState(
         components.store.getState()
       );
     });
 
-    components.windows.dashboard.on('close', function () {
+    components.windows.dashboard.on('close', () => {
       if (components.settings.get('tray-on-close')) {
         components.cache.save();
         components.settings.save();
@@ -157,12 +159,12 @@ export default class App {
 
     // Windows - settings
 
-    components.windows.settings.on('ready', function () {
+    components.windows.settings.on('ready', () => {
       components.windows.settings.sendState(
         components.store.getState()
       );
     });
-    components.windows.settings.on('close', function () {
+    components.windows.settings.on('close', () => {
       components.settings.save();
     });
 

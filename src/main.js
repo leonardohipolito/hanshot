@@ -5,40 +5,35 @@
 import electron from 'electron';
 
 import App from './app';
-import appActions from './actions';
 import * as cli from './cli';
+import log from './log';
 
 //------------------------------------------------------------------------------
 // Helpers
 //------------------------------------------------------------------------------
 
 const isLinux = (process.platform === 'linux');
+const isMac = (process.platform === 'darwin');
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-// Initialize variables used inside app.on('ready'),
-// so they won't be garbage collected when handler executes
+// Keep reference to prevent garbage collection
 let app = null;
 
 
 // Keep one running instance and prevent second instance from starting
 const shouldQuit = electron.app.makeSingleInstance((argv) => {
-  console.log('There is an already running instance');
+  log('There is an already running instance');
   const args = argv.slice(2);
 
   if (!app) {
-    console.log('Unable to use already running instance');
+    log('Unable to use already running instance');
     return;
   }
 
-  if (!args.length) {
-    app.dispatch(appActions.openDashboard());
-    return;
-  }
-
-  const cliAction = cli.parseAction(args);
+  const cliAction = cli.parseAction(args, true);
   if (cliAction) {
     app.dispatch(cliAction);
   }
@@ -57,8 +52,8 @@ process.on('uncaughtException', (err) => {
     'Uncaught exception, app will now quit',
     err.stack
   );
-  console.log('Uncaught exception: ', err);
-  console.log(err.stack);
+  log('Uncaught exception: ', err);
+  log(err.stack);
   electron.app.quit();
 });
 
@@ -74,7 +69,7 @@ if (isLinux) {
 // ---
 
 electron.app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (!isMac) {
     electron.app.quit();
   }
 });
