@@ -1,26 +1,28 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var dialog = require('../../factories/dialog');
-var appActions = require('../actions');
+import actions from '../actions';
+import * as dialog from '../dialog';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-module.exports = function (dispatcher, components) {
-
-  return function () {
-    var currentDirPath = components.settings.get('save-dir-path');
-    dialog.saveImagesTo(currentDirPath, function (dirPath) {
-      dispatcher.dispatch(appActions.updateSetting({
-        key: 'save-dir-path',
-        value: dirPath
-      }));
-    });
+export default function showDialogToPickSaveDirHandler(dispatch, settings) {
+  return function showDialogToPickSaveDir() {
+    const currentDirPath = settings.get('save-dir-path');
+    dialog.saveImagesTo(currentDirPath)
+      .then((dirPath) => {
+        dispatch(actions.updateSetting({
+          key: 'save-dir-path',
+          value: dirPath,
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+}
 
-};
+showDialogToPickSaveDirHandler.inject = ['dispatch', 'settings'];

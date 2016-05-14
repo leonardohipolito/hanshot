@@ -97,7 +97,7 @@ export default class App {
         }
       });
 
-      const handler = handlerCreator.create(...dependencies);
+      const handler = handlerCreator(...dependencies);
 
       dispatcher.on(type, handler);
     });
