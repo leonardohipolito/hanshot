@@ -1,15 +1,15 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
+import * as renderer from '../../../renderer.shim';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-module.exports = function (action) {
-  electron.ipcRenderer.send('dashboard-action', action);
-};
+const ipc = renderer.createIpc('dashboard');
+
+export default function viewDispatch(action) {
+  ipc.sendMessage('action', action);
+}

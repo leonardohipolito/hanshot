@@ -1,12 +1,11 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
 var React = require('react');
 var ReactDOM = require('react-dom');
-var electron = require('electron');
+
+import * as renderer from '../../../renderer.shim';
 
 var Navbar = require('./components/navbar.jsx');
 var Image = require('./components/image.jsx');
@@ -16,18 +15,18 @@ var AlertArea = require('./components/alert-area.jsx');
 // Module
 //------------------------------------------------------------------------------
 
+const ipc = renderer.createIpc('dashboard');
+
 var Dashboard = React.createClass({
   getInitialState: function () {
     return {};
   },
   componentWillMount: function () {
-    electron.ipcRenderer.on('dashboard-state-updated', this.onStateUpdated);
-    electron.ipcRenderer.send('dashboard-ready');
+    ipc.onMessage('state-updated', this.onStateUpdated);
+    ipc.sendMessage('ready');
   },
   componentWillUnmount: function () {
-    electron.ipcRenderer.removeListener(
-      'dashboard-state-updated', this.onStateUpdated
-    );
+    ipc.offMessage('state-updated', this.onStateUpdated);
   },
   onStateUpdated: function (event, state) {
     this.setState(state);

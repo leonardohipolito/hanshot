@@ -5,7 +5,7 @@
 import Dispatcher from './dispatcher';
 import Container from './container';
 
-import { default as appActions, types as appActionTypes } from './actions';
+import { types as appActionTypes } from './actions';
 import * as handlers from './handlers';
 
 import Cache from './cache';
@@ -18,12 +18,12 @@ import metadata from './config/metadata';
 
 import createAppTray from './tray';
 
+import createDashboardWindow from './windows/dashboard';
 
 var Screen = require('./screen');
 var Gallery = require('./image/gallery');
 var Selection = require('./selection');
 var windows = {
-  Dashboard: require('./windows/dashboard'),
   Settings: require('./windows/settings'),
 };
 
@@ -38,7 +38,6 @@ export default class App {
   constructor() {
     const components = {
       windows: {
-        dashboard: new windows.Dashboard(),
         settings: new windows.Settings(),
       },
       selection: new Selection(),
@@ -74,10 +73,17 @@ export default class App {
       gallery: components.gallery,
       store: components.store,
       metadata: components.metadata,
-
-      dashboardWindow: components.windows.dashboard,
-      selectionWindow: components.windows.selection,
     });
+
+    // Windows
+
+    components.windows.dashboard = createDashboardWindow(...container.pick(createDashboardWindow.inject));
+
+    container.registerValue('dashboardWindow', components.windows.dashboard);
+
+    // Tray
+
+    components.tray = createAppTray(dispatcher.dispatch);
 
     // Handle events from app components
 
@@ -104,17 +110,13 @@ export default class App {
       dispatcher.on(type, handler);
     });
 
-    components.windows.dashboard.on('action', dispatcher.dispatch);
     components.windows.settings.on('action', dispatcher.dispatch);
 
-    // Tray
 
-    components.tray = createAppTray(dispatcher.dispatch);
 
     // Store
 
     components.store.subscribe(() => {
-      components.windows.dashboard.sendState(components.store.getState());
       components.windows.settings.sendState(components.store.getState());
     });
 
@@ -133,28 +135,6 @@ export default class App {
 
       const prefetchProviderAction = registerStoreProvider(...dependencies);
       components.store.dispatch(prefetchProviderAction());
-    });
-
-    // Windows - dashboard
-
-    if (components.settings.get('show-on-start')) {
-      components.windows.dashboard.open();
-      components.windows.dashboard.show();
-    }
-
-    components.windows.dashboard.on('ready', () => {
-      components.windows.dashboard.sendState(
-        components.store.getState()
-      );
-    });
-
-    components.windows.dashboard.on('close', () => {
-      if (components.settings.get('tray-on-close')) {
-        components.cache.save();
-        components.settings.save();
-      } else {
-        dispatcher.dispatch(appActions.quitApp());
-      }
     });
 
     // Windows - settings

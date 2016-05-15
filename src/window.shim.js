@@ -22,6 +22,10 @@ export default function createWindow(namespace, windowOptions) {
     emitter.emit('load');
   });
 
+  window.on('close', () => {
+    emitter.emit('close');
+  });
+
   return {
     load(url) {
       window.loadURL(url);
@@ -41,6 +45,11 @@ export default function createWindow(namespace, windowOptions) {
       window.setPosition(x, y);
     },
 
+    setMenu(template) {
+      const menu = electron.Menu.buildFromTemplate(template);
+      window.setMenu(menu);
+    },
+
     on(...args) {
       emitter.on(...args);
     },
@@ -53,7 +62,9 @@ export default function createWindow(namespace, windowOptions) {
 
     onMessage(type, callback) {
       // TODO: unsub on destroy
-      electron.ipcMain.on(`window:${namespace}:${type}`, callback);
+      electron.ipcMain.on(`window:${namespace}:${type}`, (event, ...args) => {
+        callback(...args);
+      });
     },
   };
 }

@@ -15,6 +15,10 @@ export function createIpc(namespace) {
       electron.ipcRenderer.on(`window:${namespace}:${type}`, callback);
     },
 
+    offMessage(type, callback) {
+      electron.ipcRenderer.removeListener(`window:${namespace}:${type}`, callback);
+    },
+
     sendMessage(type, body) {
       electron.ipcRenderer.send(`window:${namespace}:${type}`, body);
     },
