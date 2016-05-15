@@ -10,7 +10,7 @@ import createDashboardMenu from '../../menu/dashboard.menu';
 // Module
 //------------------------------------------------------------------------------
 
-export default function createDashboardWindow(dispatch, store, settings) {
+export default function createDashboardWindow(dispatch, store, settings, cache) {
   let window = null;
 
   const open = function open() {
@@ -24,21 +24,22 @@ export default function createDashboardWindow(dispatch, store, settings) {
 
     window.on('close', () => {
       if (settings.get('tray-on-close')) {
-        // TODO: Do things when window closes or implement action for it
-        //       or just remove it from here
-        // cache.save();
-        // settings.save();
+        // TODO: implement action for it or just remove it from here
+        cache.save();
+        settings.save();
       } else {
         dispatch(actions.quitApp());
       }
+      window = null;
     });
 
     const sendState = function sendState() {
       window.sendMessage('state-updated', store.getState());
     };
 
+    // TODO: unsubscribe
     window.onMessage('ready', sendState);
-    store.subscribe(() => sendState);
+    store.subscribe(sendState);
 
     window.onMessage('action', (action) => {
       dispatch(action);
@@ -54,4 +55,4 @@ export default function createDashboardWindow(dispatch, store, settings) {
   };
 }
 
-createDashboardWindow.inject = ['dispatch', 'store', 'settings'];
+createDashboardWindow.inject = ['dispatch', 'store', 'settings', 'cache'];

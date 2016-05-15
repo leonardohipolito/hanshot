@@ -1,11 +1,22 @@
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
 var React = require('react');
 var ReactDOM = require('react-dom');
-var electron = require('electron');
+
+import * as renderer from '../../../renderer.shim';
 
 var ImageFormat = require('./components/image-format.jsx');
 var Behavior = require('./components/behavior.jsx');
 var Save = require('./components/save.jsx');
 var Upload = require('./components/upload.jsx');
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
+
+const ipc = renderer.createIpc('settings');
 
 var Settings = React.createClass({
   getInitialState: function () {
@@ -15,11 +26,11 @@ var Settings = React.createClass({
     };
   },
   componentWillMount: function () {
-    electron.ipcRenderer.on('settings-state-updated', this.onStateUpdated);
-    electron.ipcRenderer.send('settings-ready');
+    ipc.onMessage('state-updated', this.onStateUpdated);
+    ipc.sendMessage('ready');
   },
   componentWillUnmount: function () {
-    electron.ipcRenderer.removeListener('settings-state-updated', this.onStateUpdated);
+    ipc.offMessage('state-updated', this.onStateUpdated);
   },
   onStateUpdated: function (event, state) {
     this.setState(state);

@@ -1,13 +1,11 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-module.exports = function (dispatcher, components) {
-
-  return function () {
-    components.windows.settings.open();
+export default function openSettingsHandler(settingsWindow) {
+  return function openSettings() {
+    settingsWindow.open();
   };
+}
 
-};
+openSettingsHandler.inject = ['settingsWindow'];

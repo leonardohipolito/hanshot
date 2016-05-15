@@ -8,7 +8,7 @@ import actions from '../actions';
 // Module
 //------------------------------------------------------------------------------
 
-export default function dashboardMenu(dispatch) {
+export default function createDashboardMenu(dispatch) {
   return [
     {
       label: 'File',

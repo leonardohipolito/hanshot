@@ -19,13 +19,11 @@ import metadata from './config/metadata';
 import createAppTray from './tray';
 
 import createDashboardWindow from './windows/dashboard';
+import createSettingsWindow from './windows/settings';
 
 var Screen = require('./screen');
 var Gallery = require('./image/gallery');
 var Selection = require('./selection');
-var windows = {
-  Settings: require('./windows/settings'),
-};
 
 import log from './log';
 
@@ -37,9 +35,7 @@ export default class App {
 
   constructor() {
     const components = {
-      windows: {
-        settings: new windows.Settings(),
-      },
+      windows: {},
       selection: new Selection(),
       settings: new Settings(),
       cache: new Cache(),
@@ -77,9 +73,15 @@ export default class App {
 
     // Windows
 
-    components.windows.dashboard = createDashboardWindow(...container.pick(createDashboardWindow.inject));
-
+    components.windows.dashboard = createDashboardWindow(
+      ...container.pick(createDashboardWindow.inject)
+    );
     container.registerValue('dashboardWindow', components.windows.dashboard);
+
+    components.windows.settings = createSettingsWindow(
+      ...container.pick(createSettingsWindow.inject)
+    );
+    container.registerValue('settingsWindow', components.windows.settings);
 
     // Tray
 
@@ -110,15 +112,7 @@ export default class App {
       dispatcher.on(type, handler);
     });
 
-    components.windows.settings.on('action', dispatcher.dispatch);
-
-
-
     // Store
-
-    components.store.subscribe(() => {
-      components.windows.settings.sendState(components.store.getState());
-    });
 
     log('Registering providers...');
 
@@ -135,17 +129,6 @@ export default class App {
 
       const prefetchProviderAction = registerStoreProvider(...dependencies);
       components.store.dispatch(prefetchProviderAction());
-    });
-
-    // Windows - settings
-
-    components.windows.settings.on('ready', () => {
-      components.windows.settings.sendState(
-        components.store.getState()
-      );
-    });
-    components.windows.settings.on('close', () => {
-      components.settings.save();
     });
 
     // App public methods

@@ -8,7 +8,7 @@ import actions from '../actions';
 // Module
 //------------------------------------------------------------------------------
 
-export default function trayMenu(dispatch) {
+export default function createTrayMenu(dispatch) {
   return [
     {
       label: 'Open',

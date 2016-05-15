@@ -45,7 +45,7 @@ export default class Settings {
       },
 
       serialize() {
-        return _.merge({}, defaultSettings, userSettings);
+        return _.merge({}, defaultSettings.toJSON(), userSettings.toJSON());
       },
 
     };
