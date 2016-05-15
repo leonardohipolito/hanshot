@@ -2,20 +2,14 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as renderer from '../../renderer.shim';
+import electron from 'electron';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-const ipc = renderer.createIpc('notification');
-
-const container = document.querySelector('#container');
-
-ipc.onMessage('text-updated', (event, text) => {
-  container.innerHTML = text;
-});
-
-document.addEventListener('mouseover', () => {
-  ipc.sendMessage('hover');
-}, true);
+export function getActiveDisplay() {
+  const cursorPoint = electron.screen.getCursorScreenPoint();
+  const activeDisplay = electron.screen.getDisplayNearestPoint(cursorPoint);
+  return activeDisplay;
+}

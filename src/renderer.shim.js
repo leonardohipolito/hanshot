@@ -2,20 +2,22 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as renderer from '../../renderer.shim';
+import electron from 'electron';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-const ipc = renderer.createIpc('notification');
+export function createIpc(namespace) {
+  return {
 
-const container = document.querySelector('#container');
+    onMessage(type, callback) {
+      electron.ipcRenderer.on(`window:${namespace}:${type}`, callback);
+    },
 
-ipc.onMessage('text-updated', (event, text) => {
-  container.innerHTML = text;
-});
+    sendMessage(type, body) {
+      electron.ipcRenderer.send(`window:${namespace}:${type}`, body);
+    },
 
-document.addEventListener('mouseover', () => {
-  ipc.sendMessage('hover');
-}, true);
+  };
+}

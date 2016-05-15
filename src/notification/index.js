@@ -1,94 +1,67 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
-
-var _ = require('lodash');
+import createWindow from '../window.shim';
+import * as screen from '../screen.shim';
 
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
 
-module.exports = function notificationFactory(text, options) {
-  text = text || 'undefined';
-  options = _.defaults(options, {
-    delay: 5000
-  });
+export default function createNotification(text = 'undefined', options = {
+  delay: 5000,
+}) {
+  const width = 300;
+  const height = 100;
+  const offset = 20;
 
+  const activeDisplay = screen.getActiveDisplay();
+  const bounds = activeDisplay.workArea;
 
-  var width = 300;
-  var height = 100;
-  var offset = 20;
+  const LOCATION_TOP = 'top';
+  const LOCATION_BOTTOM = 'bottom';
 
-  var cursorPoint = electron.screen.getCursorScreenPoint();
-  var activeDisplay = electron.screen.getDisplayNearestPoint(cursorPoint);
+  let location = LOCATION_TOP;
 
-  var bounds = activeDisplay.workArea;
-
-  var location = 'top';
-  var locations = {
-    top: {
+  const locations = {
+    [LOCATION_TOP]: {
       x: bounds.width - width - offset,
-      y: bounds.y + offset
+      y: bounds.y + offset,
     },
-    bottom: {
+    [LOCATION_BOTTOM]: {
       x: bounds.width - width - offset,
-      y: bounds.height - height - offset
-    }
+      y: bounds.height - height - offset,
+    },
   };
 
-
-  var window = new electron.BrowserWindow({
-    width: width,
-    height: height,
+  const window = createWindow('notification', {
+    width,
+    height,
     x: locations[location].x,
     y: locations[location].y,
     transparent: true,
     frame: false,
     skipTaskbar: true,
     alwaysOnTop: true,
-    show: false
+    show: false,
   });
 
-  var toggleLocation = function () {
-    location = location === 'top' ? 'bottom' : 'top';
+  window.on('load', () => {
+    window.sendMessage('text-updated', text);
+    window.show({ focus: false });
+  });
+
+  window.onMessage('hover', () => {
+    location = location === LOCATION_TOP ? LOCATION_BOTTOM : LOCATION_TOP;
     window.setPosition(locations[location].x, locations[location].y);
-  };
-
-  var setText = function (newText) {
-    window.webContents.send('notification-text-updated', newText);
-  };
-
-  var close = function () {
-    window.destroy();
-  };
-
-
-  window.webContents.once('did-finish-load', function () {
-    setText(text);
-    window.showInactive();
   });
 
-  electron.ipcMain.on('notification-hover', function () {
-    toggleLocation();
-  });
-
-  window.loadURL('file://' + __dirname + '/renderer/notification.html');
+  window.load(`file://${__dirname}/renderer/notification.html`);
 
   if (options.delay) {
-
-    setTimeout(function () {
-      close();
+    setTimeout(() => {
+      window.destroy();
     }, options.delay);
-
   }
-
-  return {
-    setText: setText,
-    close: close
-  };
-
-};
+}
