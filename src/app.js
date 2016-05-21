@@ -2,14 +2,14 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import Dispatcher from './dispatcher';
-import Container from './container';
+import createDispatcher from './dispatcher';
+import createContainer from './container';
 
 import { types as appActionTypes } from './actions';
 import * as handlers from './handlers';
 
-import Cache from './cache';
-import Settings from './settings';
+import createCache from './cache';
+import createSettings from './settings';
 import Store from './store';
 import storeProviders from './store/providers';
 
@@ -26,6 +26,8 @@ var Gallery = require('./image/gallery');
 var Selection = require('./selection');
 
 import log from './log';
+import { CACHE_PATH, SETTINGS_PATH } from './config';
+import createJSON from './json';
 
 //------------------------------------------------------------------------------
 // Module
@@ -34,11 +36,17 @@ import log from './log';
 export default class App {
 
   constructor() {
+    const cache = createCache(createJSON(CACHE_PATH));
+    const settings = createSettings(
+      createJSON(`${__dirname}/config/default-settings.json`),
+      createJSON(SETTINGS_PATH)
+    );
+
     const components = {
       windows: {},
       selection: new Selection(),
-      settings: new Settings(),
-      cache: new Cache(),
+      settings,
+      cache,
       screen: new Screen(),
       gallery: new Gallery(),
       store: new Store(),
@@ -56,9 +64,9 @@ export default class App {
 
     // Create dependency container
 
-    const dispatcher = new Dispatcher();
+    const dispatcher = createDispatcher();
 
-    const container = new Container();
+    const container = createContainer();
 
     container.registerValues({
       dispatch: dispatcher.dispatch,

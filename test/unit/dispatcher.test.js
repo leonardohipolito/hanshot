@@ -5,14 +5,14 @@
 import test from 'tape';
 import { spy } from 'sinon';
 
-import Dispatcher from '../../src/dispatcher';
+import createDispatcher from '../../src/dispatcher';
 
 //------------------------------------------------------------------------------
 // Test
 //------------------------------------------------------------------------------
 
 test('dispatcher: no args', (assert) => {
-  const dispatcher = new Dispatcher();
+  const dispatcher = createDispatcher();
   const handler = spy();
   const action = { type: 'type1' };
 
@@ -25,7 +25,7 @@ test('dispatcher: no args', (assert) => {
 });
 
 test('dispatcher: single type, single handler', (assert) => {
-  const dispatcher = new Dispatcher();
+  const dispatcher = createDispatcher();
   const handler = spy();
   const action1 = { type: 'type1', args: ['foo', 42] };
   const action2 = { type: 'type1', args: ['bar', true] };
@@ -41,7 +41,7 @@ test('dispatcher: single type, single handler', (assert) => {
 });
 
 test('dispatcher: single type, multiple handlers', (assert) => {
-  const dispatcher = new Dispatcher();
+  const dispatcher = createDispatcher();
   const handler1 = spy();
   const handler2 = spy();
   const action1 = { type: 'type1', args: ['foo', 42] };
@@ -62,7 +62,7 @@ test('dispatcher: single type, multiple handlers', (assert) => {
 });
 
 test('dispatcher: multiple types, one handler', (assert) => {
-  const dispatcher = new Dispatcher();
+  const dispatcher = createDispatcher();
   const handler = spy();
   const action1 = { type: 'type1', args: ['foo', 42] };
   const action2 = { type: 'type2', args: ['bar', true] };

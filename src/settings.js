@@ -1,54 +1,45 @@
 //------------------------------------------------------------------------------
-// Requirements
-//------------------------------------------------------------------------------
-
-import _ from 'lodash';
-
-import Storage from './storage';
-import * as fsHelpers from './file';
-import { SETTINGS_PATH } from './config';
-import defaults from './config/default-settings';
-
-//------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Settings {
+export default function createSettings(defaultSource, userSource) {
+  let defaultStorage = {};
+  let userStorage = {};
 
-  constructor() {
-    const defaultSettings = new Storage();
-    const userSettings = new Storage();
-
-    return {
-
-      load() {
-        defaultSettings.reset(defaults);
-
-        const data = fsHelpers.readJSONSyncSafe(SETTINGS_PATH);
-        userSettings.reset(data);
-      },
-
-      save() {
-        const data = userSettings.toJSON();
-        fsHelpers.writeJSONSyncSafe(SETTINGS_PATH, data);
-      },
-
-      set(key, value) {
-        userSettings.set(key, value);
-      },
-
-      get(key, defaultValue) {
-        if (userSettings.has(key)) {
-          return userSettings.get(key);
-        }
-        return defaultSettings.get(key, defaultValue);
-      },
-
-      serialize() {
-        return _.merge({}, defaultSettings.toJSON(), userSettings.toJSON());
-      },
-
-    };
+  function set(key, value) {
+    userStorage[key] = value;
   }
 
+  function get(key, defaultValue) {
+    if (typeof userStorage[key] !== 'undefined') {
+      return userStorage[key];
+    }
+    if (typeof defaultStorage[key] !== 'undefined') {
+      return defaultStorage[key];
+    }
+    return defaultValue;
+  }
+
+  function load() {
+    defaultStorage = defaultSource.read();
+    if (userSource) {
+      userStorage = userSource.read();
+    }
+  }
+
+  function save() {
+    userSource.write(userStorage);
+  }
+
+  function serialize() {
+    return Object.assign({}, defaultStorage, userStorage);
+  }
+
+  return {
+    set,
+    get,
+    load,
+    save,
+    serialize,
+  };
 }

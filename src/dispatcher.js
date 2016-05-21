@@ -8,23 +8,20 @@ import { EventEmitter } from 'events';
 // Module
 //------------------------------------------------------------------------------
 
-export default class Dispatcher {
+export default function createDispatcher() {
+  const emitter = new EventEmitter();
 
-  constructor() {
-    const emitter = new EventEmitter();
-
-    return {
-
-      dispatch(action) {
-        // Spread action args to handler arguments
-        emitter.emit(action.type, ...(action.args || []));
-      },
-
-      on(type, hanlder) {
-        emitter.on(type, hanlder);
-      },
-
-    };
+  function dispatch(action) {
+    // Spread action arguments to handler parameters
+    emitter.emit(action.type, ...(action.args || []));
   }
 
+  function on(type, hanlder) {
+    emitter.on(type, hanlder);
+  }
+
+  return {
+    dispatch,
+    on,
+  };
 }

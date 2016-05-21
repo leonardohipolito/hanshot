@@ -4,14 +4,14 @@
 
 import test from 'tape';
 
-import Container from '../../src/container';
+import createContainer from '../../src/container';
 
 //------------------------------------------------------------------------------
 // Test
 //------------------------------------------------------------------------------
 
 test('container: register and get value', (assert) => {
-  const container = new Container();
+  const container = createContainer();
 
   container.registerValue('foo', 42);
 
@@ -20,7 +20,7 @@ test('container: register and get value', (assert) => {
 });
 
 test('container: register multiple values', (assert) => {
-  const container = new Container();
+  const container = createContainer();
 
   container.registerValues({
     foo: 42,
@@ -33,14 +33,14 @@ test('container: register multiple values', (assert) => {
 });
 
 test('container: get undefined value', (assert) => {
-  const container = new Container();
+  const container = createContainer();
 
   assert.equal(container.get('foo'), undefined);
   assert.end();
 });
 
 test('container: override value', (assert) => {
-  const container = new Container();
+  const container = createContainer();
 
   container.registerValue('foo', 42);
   container.registerValue('foo', 33);
@@ -49,22 +49,8 @@ test('container: override value', (assert) => {
   assert.end();
 });
 
-test('container: override value when registering multiple', (assert) => {
-  const container = new Container();
-
-  container.registerValues({
-    foo: 42,
-    bar: true,
-    foo: 33,
-  });
-
-  assert.equal(container.get('foo'), 33);
-  assert.equal(container.get('bar'), true);
-  assert.end();
-});
-
 test('container: register class and get instance', (assert) => {
-  const container = new Container();
+  const container = createContainer();
   const Foo = function Foo() { this.bar = 42; };
 
   container.registerClass('foo', Foo);
@@ -76,7 +62,7 @@ test('container: register class and get instance', (assert) => {
 });
 
 test('container: register multiple classes', (assert) => {
-  const container = new Container();
+  const container = createContainer();
   const Foo = function Foo() { this.bar = 42; };
   const Baz = function Baz() { this.qux = 33; };
 
@@ -95,7 +81,7 @@ test('container: register multiple classes', (assert) => {
 });
 
 test('container: register factory and get instance', (assert) => {
-  const container = new Container();
+  const container = createContainer();
   const foo = function foo() { return 42; };
 
   container.registerFactory('foo', foo);
@@ -105,7 +91,7 @@ test('container: register factory and get instance', (assert) => {
 });
 
 test('container: register multiple factories', (assert) => {
-  const container = new Container();
+  const container = createContainer();
   const foo = function foo() { return 42; };
   const bar = function bar() { return 33; };
 
@@ -120,7 +106,7 @@ test('container: register multiple factories', (assert) => {
 });
 
 test('container: get multiple values', (assert) => {
-  const container = new Container();
+  const container = createContainer();
   const Baz = function Baz() { this.baz = 42; };
   const bar = function bar() { return 22; };
 
