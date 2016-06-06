@@ -8,25 +8,21 @@ import * as fs from 'fs';
 // Module
 //------------------------------------------------------------------------------
 
-export default function createJSON(filePath) {
-  function read() {
-    let obj = {};
-    try {
-      // eslint-disable-next-line global-require
-      obj = require(filePath);
-    } catch (err) {
-      // Failed to read file or not JSON content
-    }
+export default class JSONSource {
+
+  constructor(filePath) {
+    this.filePath = filePath;
+  }
+
+  read() {
+    const json = fs.readFileSync(this.filePath, 'utf8');
+    const obj = JSON.parse(json);
     return obj;
   }
 
-  function write(obj) {
+  write(obj) {
     const json = JSON.stringify(obj);
-    fs.writeFileSync(filePath, json);
+    fs.writeFileSync(this.filePath, json);
   }
 
-  return {
-    read,
-    write,
-  };
 }

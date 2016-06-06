@@ -2,25 +2,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { EventEmitter } from 'events';
+import * as Redux from 'redux';
+
+import appReducer from './store/reducers/app.reducer';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Dispatcher {
-
-  constructor() {
-    this.emitter = new EventEmitter();
-  }
-
-  dispatch(action) {
-    // Spread action arguments to handler parameters
-    this.emitter.emit(action.type, ...(action.args || []));
-  }
-
-  on(type, hanlder) {
-    this.emitter.on(type, hanlder);
-  }
-
+export default function storeFactory() {
+  const store = Redux.createStore(appReducer);
+  return store;
 }

@@ -4,7 +4,7 @@
 
 import electron from 'electron';
 
-import App from './app';
+import createApp from './app';
 import * as cli from './cli';
 import log from './log';
 
@@ -75,7 +75,7 @@ electron.app.on('window-all-closed', () => {
 });
 
 electron.app.on('ready', () => {
-  app = new App();
+  app = createApp();
 
   const args = process.argv.slice(2);
   const cliAction = cli.parseAction(args);

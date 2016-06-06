@@ -2,31 +2,25 @@
 // Module
 //------------------------------------------------------------------------------
 
-export default function createContainer() {
-  const providers = {};
+const TYPE_VALUE = 'value';
+const TYPE_FACTORY = 'factory';
+const TYPE_CLASS = 'class';
 
-  const TYPE_VALUE = 'value';
-  const TYPE_FACTORY = 'factory';
-  const TYPE_CLASS = 'class';
+export default class Container {
 
-  function registerValue(name, value) {
-    providers[name] = {
+  constructor() {
+    this.providers = {};
+  }
+
+  registerValue(name, value) {
+    this.providers[name] = {
       type: TYPE_VALUE,
       value,
     };
   }
 
-  function registerFactory(name, factory) {
-    providers[name] = {
-      type: TYPE_FACTORY,
-      instance: null,
-      instantiated: false,
-      factory,
-    };
-  }
-
-  function registerClass(name, constructor) {
-    providers[name] = {
+  registerClass(name, constructor) {
+    this.providers[name] = {
       type: TYPE_CLASS,
       instance: null,
       instantiated: false,
@@ -34,20 +28,29 @@ export default function createContainer() {
     };
   }
 
-  function registerValues(map) {
-    Object.keys(map).forEach(name => registerValue(name, map[name]));
+  registerFactory(name, factory) {
+    this.providers[name] = {
+      type: TYPE_FACTORY,
+      instance: null,
+      instantiated: false,
+      factory,
+    };
   }
 
-  function registerClasses(map) {
-    Object.keys(map).forEach(name => registerClass(name, map[name]));
+  registerValues(map) {
+    Object.keys(map).forEach(name => this.registerValue(name, map[name]));
   }
 
-  function registerFactories(map) {
-    Object.keys(map).forEach(name => registerFactory(name, map[name]));
+  registerClasses(map) {
+    Object.keys(map).forEach(name => this.registerClass(name, map[name]));
   }
 
-  function get(name) {
-    const provider = providers[name];
+  registerFactories(map) {
+    Object.keys(map).forEach(name => this.registerFactory(name, map[name]));
+  }
+
+  get(name) {
+    const provider = this.providers[name];
     if (!provider) {
       return undefined;
     }
@@ -61,9 +64,27 @@ export default function createContainer() {
     }
 
     if (provider.type === TYPE_FACTORY) {
-      provider.instance = provider.factory();
+      let depNames = [];
+      if (provider.factory.hasOwnProperty('inject')) {
+        depNames = provider.factory.inject;
+      }
+      depNames.forEach((depName) => {
+        if (Object.keys(this.providers).indexOf(depName) === -1) {
+          throw new Error(`Dependency not registered "${depName}"`);
+        }
+      });
+      provider.instance = provider.factory(...this.pick(depNames));
     } else if (provider.type === TYPE_CLASS) {
-      provider.instance = new provider.constructor();
+      let depNames = [];
+      if (provider.constructor.hasOwnProperty('inject')) {
+        depNames = provider.constructor.inject;
+      }
+      depNames.forEach((depName) => {
+        if (Object.keys(this.providers).indexOf(depName) === -1) {
+          throw new Error(`Dependency not registered "${depName}"`);
+        }
+      });
+      provider.instance = new provider.constructor(...this.pick(depNames));
     }
 
     provider.instantiated = true;
@@ -71,18 +92,12 @@ export default function createContainer() {
     return provider.instance;
   }
 
-  function pick(names) {
+  pick(names) {
     return names.map(name => this.get(name));
   }
 
-  return {
-    registerValue,
-    registerFactory,
-    registerClass,
-    registerValues,
-    registerFactories,
-    registerClasses,
-    get,
-    pick,
-  };
+  instantiate() {
+    this.pick(Object.keys(this.providers));
+  }
+
 }

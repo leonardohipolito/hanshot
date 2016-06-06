@@ -10,61 +10,75 @@ import electron from 'electron';
 // Module
 //------------------------------------------------------------------------------
 
-export default function createWindow(namespace, windowOptions) {
-  const window = new electron.BrowserWindow(windowOptions);
-  const emitter = new EventEmitter();
+export default class Window {
 
-  const whenLoad = new Promise((resolve) => {
-    window.webContents.once('did-finish-load', resolve);
-  });
+  constructor(namespace, url, windowOptions) {
+    this.namespace = namespace;
+    this.url = url;
+    this.windowOptions = windowOptions;
 
-  whenLoad.then(() => {
-    emitter.emit('load');
-  });
+    this.emitter = new EventEmitter();
 
-  window.on('close', () => {
-    emitter.emit('close');
-  });
+    this.window = null;
+  }
 
-  return {
-    load(url) {
-      window.loadURL(url);
-    },
-    show(options = { focus: true }) {
-      if (options.focus) {
-        window.show();
-      } else {
-        window.showInactive();
-      }
-    },
-    destroy() {
-      window.destroy();
-    },
+  open() {
+    if (this.window) return;
 
-    setPosition(x, y) {
-      window.setPosition(x, y);
-    },
+    this.window = new electron.BrowserWindow(this.windowOptions);
 
-    setMenu(template) {
-      const menu = electron.Menu.buildFromTemplate(template);
-      window.setMenu(menu);
-    },
+    this.whenLoad = new Promise((resolve) => {
+      this.window.webContents.once('did-finish-load', resolve);
+    });
 
-    on(...args) {
-      emitter.on(...args);
-    },
+    this.whenLoad.then(() => {
+      this.emitter.emit('load');
+    });
 
-    sendMessage(type, body) {
-      whenLoad.then(() => {
-        window.webContents.send(`window:${namespace}:${type}`, body);
-      });
-    },
+    this.window.on('close', () => {
+      this.emitter.emit('close');
+    });
 
-    onMessage(type, callback) {
-      // TODO: unsub on destroy
-      electron.ipcMain.on(`window:${namespace}:${type}`, (event, ...args) => {
-        callback(...args);
-      });
-    },
-  };
+    this.window.loadURL(this.url);
+  }
+
+  show(options = { focus: true }) {
+    if (options.focus) {
+      this.window.show();
+    } else {
+      this.window.showInactive();
+    }
+  }
+
+  destroy() {
+    this.window.destroy();
+    this.window = null;
+  }
+
+  setPosition(x, y) {
+    this.window.setPosition(x, y);
+  }
+
+  setMenu(template) {
+    const menu = electron.Menu.buildFromTemplate(template);
+    this.window.setMenu(menu);
+  }
+
+  on(...args) {
+    this.emitter.on(...args);
+  }
+
+  sendMessage(type, body) {
+    this.whenLoad.then(() => {
+      this.window.webContents.send(`window:${this.namespace}:${type}`, body);
+    });
+  }
+
+  onMessage(type, callback) {
+    // TODO: unsub on destroy
+    electron.ipcMain.on(`window:${this.namespace}:${type}`, (event, ...args) => {
+      callback(...args);
+    });
+  }
+
 }

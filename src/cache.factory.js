@@ -2,25 +2,16 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { EventEmitter } from 'events';
+import Cache from './cache';
+import JSONSource from './json.source';
+import { CACHE_PATH } from './config';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Dispatcher {
-
-  constructor() {
-    this.emitter = new EventEmitter();
-  }
-
-  dispatch(action) {
-    // Spread action arguments to handler parameters
-    this.emitter.emit(action.type, ...(action.args || []));
-  }
-
-  on(type, hanlder) {
-    this.emitter.on(type, hanlder);
-  }
-
+export default function cacheFactory() {
+  const source = new JSONSource(CACHE_PATH);
+  const cache = new Cache(source);
+  return cache;
 }

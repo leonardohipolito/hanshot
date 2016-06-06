@@ -2,147 +2,164 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import createDispatcher from './dispatcher';
-import createContainer from './container';
+import log from './log';
 
-import { types as appActionTypes } from './actions';
-import * as handlers from './handlers';
-
-import createCache from './cache';
-import createSettings from './settings';
-import Store from './store';
-import storeProviders from './store/providers';
+import Container from './container';
+import Dispatcher from './dispatcher';
+import cacheFactory from './cache.factory';
+import settingsFactory from './settings.factory';
+import storeFactory from './store.factory';
+import galleryFactory from './gallery.factory';
+import dashboardWindowFactory from './dashboard-window.factory';
 
 // TODO: maybe rethink metadata
 import metadata from './config/metadata';
 
-import createAppTray from './tray';
 
-import createDashboardWindow from './windows/dashboard';
-import createSettingsWindow from './windows/settings';
+// import { types as appActionTypes } from './actions';
+// import * as handlers from './handlers';
 
-var Screen = require('./screen');
-var Gallery = require('./image/gallery');
-var Selection = require('./selection');
+// import Store from './store';
+// import storeProviders from './store/providers';
 
-import log from './log';
-import { CACHE_PATH, SETTINGS_PATH } from './config';
-import createJSON from './json';
+// import createAppTray from './tray';
+
+// import createDashboardWindow from './windows/dashboard';
+// import createSettingsWindow from './windows/settings';
+
+// var Screen = require('./screen');
+// var Selection = require('./selection');
+
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class App {
+export default function createApp() {
+  const container = new Container();
 
-  constructor() {
-    const cache = createCache(createJSON(CACHE_PATH));
-    const settings = createSettings(
-      createJSON(`${__dirname}/config/default-settings.json`),
-      createJSON(SETTINGS_PATH)
-    );
+  const dispatcher = new Dispatcher();
+  const dispatch = dispatcher.dispatch.bind(dispatcher);
 
-    const components = {
-      windows: {},
-      selection: new Selection(),
-      settings,
-      cache,
-      screen: new Screen(),
-      gallery: new Gallery(),
-      store: new Store(),
-      metadata,
-    };
+  container.registerValues({
+    dispatch,
+    metadata,
+  });
 
-    // Load cache
+  // Order matters
+  container.registerFactories({
+    cache: cacheFactory,
+    settings: settingsFactory,
+    gallery: galleryFactory,
+    store: storeFactory,
+    dashboardWindow: dashboardWindowFactory,
+  });
 
-    components.cache.load();
-    components.settings.load();
+  // Instantiate all registered modules
+  container.instantiate();
 
-    // Preload image
+  log('started i guess');
 
-    components.gallery.reset(components.cache.get('gallery', []));
+    // const components = {
+    //   windows: {},
+    //   selection: new Selection(),
+    //   settings,
+    //   cache,
+    //   screen: new Screen(),
+    //   gallery: new Gallery(),
+    //   store: new Store(),
+    //   metadata,
+    // };
 
-    // Create dependency container
+    // // Load cache
 
-    const dispatcher = createDispatcher();
+    // components.cache.load();
+    // components.settings.load();
 
-    const container = createContainer();
+    // // Preload image
 
-    container.registerValues({
-      dispatch: dispatcher.dispatch,
+    // components.gallery.reset(components.cache.get('gallery', []));
 
-      cache: components.cache,
-      settings: components.settings,
-      screen: components.screen,
-      gallery: components.gallery,
-      store: components.store,
-      metadata: components.metadata,
-    });
+    // // Create dependency container
 
-    // Windows
+    // const dispatcher = createDispatcher();
 
-    components.windows.dashboard = createDashboardWindow(
-      ...container.pick(createDashboardWindow.inject)
-    );
-    container.registerValue('dashboardWindow', components.windows.dashboard);
+    // const container = createContainer();
 
-    components.windows.settings = createSettingsWindow(
-      ...container.pick(createSettingsWindow.inject)
-    );
-    container.registerValue('settingsWindow', components.windows.settings);
+    // container.registerValues({
+    //   dispatch: dispatcher.dispatch,
 
-    // Tray
+    //   cache: components.cache,
+    //   settings: components.settings,
+    //   screen: components.screen,
+    //   gallery: components.gallery,
+    //   store: components.store,
+    //   metadata: components.metadata,
+    // });
 
-    components.tray = createAppTray(dispatcher.dispatch);
+    // // Windows
 
-    // Handle events from app components
+    // components.windows.dashboard = createDashboardWindow(
+    //   ...container.pick(createDashboardWindow.inject)
+    // );
+    // container.registerValue('dashboardWindow', components.windows.dashboard);
 
-    log('Registering handlers...');
+    // components.windows.settings = createSettingsWindow(
+    //   ...container.pick(createSettingsWindow.inject)
+    // );
+    // container.registerValue('settingsWindow', components.windows.settings);
 
-    appActionTypes.forEach((type) => {
-      const handlerCreator = handlers[type];
-      if (!handlerCreator) {
-        log('No handler found for type "%s"', type);
-        return;
-      }
+    // // Tray
 
-      const dependencyNames = handlerCreator.inject || [];
-      const dependencies = container.pick(dependencyNames);
+    // components.tray = createAppTray(dispatcher.dispatch);
 
-      dependencies.forEach((dep, index) => {
-        if (dep === undefined) {
-          log('Dependency not satisfied for "%s"', dependencyNames[index]);
-        }
-      });
+    // // Handle events from app components
 
-      const handler = handlerCreator(...dependencies);
+    // log('Registering handlers...');
 
-      dispatcher.on(type, handler);
-    });
+    // appActionTypes.forEach((type) => {
+    //   const handlerCreator = handlers[type];
+    //   if (!handlerCreator) {
+    //     log('No handler found for type "%s"', type);
+    //     return;
+    //   }
 
-    // Store
+    //   const dependencyNames = handlerCreator.inject || [];
+    //   const dependencies = container.pick(dependencyNames);
 
-    log('Registering providers...');
+    //   dependencies.forEach((dep, index) => {
+    //     if (dep === undefined) {
+    //       log('Dependency not satisfied for "%s"', dependencyNames[index]);
+    //     }
+    //   });
+
+    //   const handler = handlerCreator(...dependencies);
+
+    //   dispatcher.on(type, handler);
+    // });
+
+    // // Store
+
+    // log('Registering providers...');
 
 
-    storeProviders.forEach((registerStoreProvider) => {
-      const dependencyNames = registerStoreProvider.inject || [];
-      const dependencies = container.pick(dependencyNames);
+    // storeProviders.forEach((registerStoreProvider) => {
+    //   const dependencyNames = registerStoreProvider.inject || [];
+    //   const dependencies = container.pick(dependencyNames);
 
-      dependencies.forEach((dep, index) => {
-        if (dep === undefined) {
-          log('Dependency not satisfied for "%s"', dependencyNames[index]);
-        }
-      });
+    //   dependencies.forEach((dep, index) => {
+    //     if (dep === undefined) {
+    //       log('Dependency not satisfied for "%s"', dependencyNames[index]);
+    //     }
+    //   });
 
-      const prefetchProviderAction = registerStoreProvider(...dependencies);
-      components.store.dispatch(prefetchProviderAction());
-    });
+    //   const prefetchProviderAction = registerStoreProvider(...dependencies);
+    //   components.store.dispatch(prefetchProviderAction());
+    // });
 
     // App public methods
 
-    return {
-      dispatch: dispatcher.dispatch,
-    };
-  }
+  return {
+    dispatch,
+  };
 }

@@ -2,16 +2,19 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as Redux from 'redux';
-
-import rootReducer from './reducers/root.reducer';
+import Collection from './collection';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Store {
-  constructor() {
-    return Redux.createStore(rootReducer);
-  }
+export default function createGallery(cache) {
+  const gallery = new Collection();
+  const items = cache.get('gallery', []);
+  items.forEach((item) => {
+    gallery.add(item);
+  });
+  return gallery;
 }
+
+createGallery.inject = ['cache'];

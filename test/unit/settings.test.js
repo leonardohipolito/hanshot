@@ -3,16 +3,16 @@
 //------------------------------------------------------------------------------
 
 import test from 'tape';
-import { spy, stub  } from 'sinon';
+import { spy, stub } from 'sinon';
 
-import createSettings from '../../src/settings';
+import Settings from '../../src/settings';
 
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
 test('settings: set and get value', (assert) => {
-  const settings = createSettings();
+  const settings = new Settings();
 
   settings.set('foo', 42);
 
@@ -21,7 +21,7 @@ test('settings: set and get value', (assert) => {
 });
 
 test('settings: get default value', (assert) => {
-  const settings = createSettings();
+  const settings = new Settings();
 
   assert.equal(settings.get('foo'), undefined);
   assert.equal(settings.get('foo', 42), 42);
@@ -32,7 +32,7 @@ test('settings: load from default source', (assert) => {
   const defaultReader = {
     read: stub().returns({ foo: 42 }),
   };
-  const settings = createSettings(defaultReader);
+  const settings = new Settings(defaultReader);
 
   const valueBeforeLoad = settings.get('foo');
   settings.load();
@@ -50,7 +50,7 @@ test('settings: override default by user source', (assert) => {
   const userReader = {
     read: stub().returns({ foo: 33 }),
   };
-  const settings = createSettings(defaultReader, userReader);
+  const settings = new Settings(defaultReader, userReader);
 
   const valueBeforeLoad = settings.get('foo');
   settings.load();
@@ -68,7 +68,7 @@ test('settings: save to user source not touching default', (assert) => {
   const userWriter = {
     write: spy(),
   };
-  const settings = createSettings(defaultWriter, userWriter);
+  const settings = new Settings(defaultWriter, userWriter);
 
   settings.set('foo', 42);
   settings.save();
@@ -87,7 +87,7 @@ test('settings: not carry defaults to user source', (assert) => {
   const userWriter = {
     write: spy(),
   };
-  const settings = createSettings(defaultSource, userWriter);
+  const settings = new Settings(defaultSource, userWriter);
 
   settings.set('bar', 33);
   settings.save();
@@ -105,10 +105,64 @@ test('settings: serialize by combining default and user', (assert) => {
   const userReader = {
     read: stub().returns({ foo: 33, bar: 10 }),
   };
-  const settings = createSettings(defaultReader, userReader);
+  const settings = new Settings(defaultReader, userReader);
 
   settings.load();
 
   assert.deepEqual(settings.serialize(), { foo: 33, bar: 10 });
+  assert.end();
+});
+
+test('settings: proceed with bad defailt source', (assert) => {
+  const defaultReader = {
+    read: stub().throws(),
+  };
+  const settings = new Settings(defaultReader);
+
+  const fn = function fn() {
+    settings.load();
+  };
+
+  assert.doesNotThrow(fn);
+  assert.equal(settings.get('foo'), undefined);
+  assert.deepEqual(settings.serialize(), {});
+  assert.end();
+});
+
+test('settings: proceed with bad user source', (assert) => {
+  const defaultReader = {
+    read: stub().returns({ foo: 42 }),
+  };
+  const userReader = {
+    read: stub().throws(),
+  };
+  const settings = new Settings(defaultReader, userReader);
+  const fn = function fn() {
+    settings.load();
+  };
+
+  assert.doesNotThrow(fn);
+  assert.equal(settings.get('foo'), 42);
+  assert.deepEqual(settings.serialize(), { foo: 42 });
+  assert.end();
+});
+
+test('settings: proceed with write failure for user source', (assert) => {
+  const defaultSource = {
+    read: stub().returns({ foo: 42 }),
+  };
+  const userWriter = {
+    write: stub().throws(),
+  };
+  const settings = new Settings(defaultSource, userWriter);
+  const fn = function fn() {
+    settings.save();
+  };
+
+  settings.load();
+
+  assert.doesNotThrow(fn);
+  assert.equal(settings.get('foo'), 42);
+  assert.deepEqual(settings.serialize(), { foo: 42 });
   assert.end();
 });

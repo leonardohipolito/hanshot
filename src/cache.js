@@ -1,30 +1,48 @@
 //------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+import log from './log';
+
+//------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function createCache(source) {
-  let storage = {};
+export default class Cache {
 
-  function set(key, value) {
-    storage[key] = value;
+  constructor(source) {
+    this.storage = {};
+    this.source = source;
   }
 
-  function get(key, defaultValue) {
-    return typeof storage[key] !== 'undefined' ? storage[key] : defaultValue;
+  set(key, value) {
+    this.storage[key] = value;
   }
 
-  function load() {
-    storage = source.read();
+  get(key, defaultValue) {
+    return typeof this.storage[key] !== 'undefined' ?
+      this.storage[key] :
+      defaultValue;
   }
 
-  function save() {
-    source.write(storage);
+  load() {
+    try {
+      this.storage = this.source.read();
+    } catch (err) {
+      // Swallow all read errors and fallback to empty object
+      log('Cache: read error');
+      log(err);
+    }
   }
 
-  return {
-    set,
-    get,
-    load,
-    save,
-  };
+  save() {
+    try {
+      this.source.write(this.storage);
+    } catch (err) {
+      // Swallow all write errors
+      log('Cache: write error');
+      log(err);
+    }
+  }
+
 }
