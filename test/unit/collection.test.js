@@ -76,3 +76,15 @@ test('collection: find by prop', (assert) => {
   assert.equal(found3, undefined);
   assert.end();
 });
+
+test('collection: get items', (assert) => {
+  const collection = new Collection();
+  const item1 = { id: 42, foo: 'bar' };
+  const item2 = { id: 33, baz: 'qux' };
+
+  collection.add(item1);
+  collection.add(item2);
+
+  assert.deepEqual(collection.all(), [item1, item2]);
+  assert.end();
+});

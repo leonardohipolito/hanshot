@@ -2,13 +2,13 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import actions from '../actions';
+import * as actions from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function createTrayMenu(dispatch) {
+export default function trayMenuFactory(dispatch) {
   return [
     {
       label: 'Open',
@@ -51,3 +51,5 @@ export default function createTrayMenu(dispatch) {
     },
   ];
 }
+
+trayMenuFactory.inject = ['dispatch'];

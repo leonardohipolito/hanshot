@@ -14,18 +14,10 @@ export default class Window {
 
   constructor(namespace, url, windowOptions) {
     this.namespace = namespace;
-    this.url = url;
-    this.windowOptions = windowOptions;
 
     this.emitter = new EventEmitter();
 
-    this.window = null;
-  }
-
-  open() {
-    if (this.window) return;
-
-    this.window = new electron.BrowserWindow(this.windowOptions);
+    this.window = new electron.BrowserWindow(windowOptions);
 
     this.whenLoad = new Promise((resolve) => {
       this.window.webContents.once('did-finish-load', resolve);
@@ -39,7 +31,7 @@ export default class Window {
       this.emitter.emit('close');
     });
 
-    this.window.loadURL(this.url);
+    this.window.loadURL(url);
   }
 
   show(options = { focus: true }) {
@@ -52,7 +44,7 @@ export default class Window {
 
   destroy() {
     this.window.destroy();
-    this.window = null;
+    this.emitter.emit('destroy');
   }
 
   setPosition(x, y) {

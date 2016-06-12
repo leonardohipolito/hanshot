@@ -34,6 +34,10 @@ export default class Collection {
     return this.items[this.size() - 1];
   }
 
+  all() {
+    return this.items;
+  }
+
   on(name, listener) {
     this.emitter.on(name, listener);
   }

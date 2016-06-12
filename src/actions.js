@@ -1,37 +1,58 @@
 //------------------------------------------------------------------------------
-// Module
+// Action types
 //------------------------------------------------------------------------------
 
-const types = [
-  'authorizeUploader',
-  'captureDesktop',
-  'captureSelection',
-  'captureWindow',
-  'closeAlert',
-  'copyImage',
-  'copyText',
-  'importImageFromClipboard',
-  'openDashboard',
-  'openImageContextMenu',
-  'openSettings',
-  'quitApp',
-  'saveImage',
-  'showDialogToOpenImage',
-  'showDialogToPickSaveDir',
-  'showImageInFolder',
-  'updateSetting',
-  'uploadImage',
-];
+export const OPEN_DASHBOARD = 'OPEN_DASHBOARD';
+export const QUIT_APP = 'QUIT_APP';
 
-const creators = {};
+//------------------------------------------------------------------------------
+// Action creators
+//------------------------------------------------------------------------------
 
-types.forEach((type) => {
-  creators[type] = function actionCreator(...args) {
-    // Forward arguments to dispatcher as array,
-    // dispatcher will then spread these arguments before calling a handler
-    return { type, args };
+export function openDashboard() {
+  return {
+    type: OPEN_DASHBOARD,
+    args: [],
   };
-});
+}
 
-export default creators;
-export { types as types };
+export function quitApp() {
+  return {
+    type: QUIT_APP,
+    args: [],
+  };
+}
+
+// const types = [
+//   'authorizeUploader',
+//   'captureDesktop',
+//   'captureSelection',
+//   'captureWindow',
+//   'closeAlert',
+//   'copyImage',
+//   'copyText',
+//   'importImageFromClipboard',
+//   'openDashboard',
+//   'openImageContextMenu',
+//   'openSettings',
+//   'quitApp',
+//   'saveImage',
+//   'showDialogToOpenImage',
+//   'showDialogToPickSaveDir',
+//   'showImageInFolder',
+//   'updateSetting',
+//   'uploadImage',
+// ];
+
+// const creators = {};
+
+// types.forEach((type) => {
+//   creators[type] = function actionCreator(...args) {
+//     // Forward arguments to dispatcher as array,
+//     // dispatcher will then spread these arguments before calling a handler
+//     return { type, args };
+//   };
+// });
+
+// export default creators;
+// export { types as types };

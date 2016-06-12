@@ -2,18 +2,17 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { receiveMetadata } from '../actions';
+import Tray from './tray.shim';
+import { TRAY_ICON_PATH } from './config';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function metadataProvider(store, metadata) {
-  function provideMetadata() {
-    store.dispatch(receiveMetadata(metadata));
-  }
-
-  return provideMetadata;
+export default function trayFactory(trayMenu) {
+  const tray = new Tray(TRAY_ICON_PATH);
+  tray.setMenu(trayMenu);
+  return tray;
 }
 
-metadataProvider.inject = ['store', 'metadata'];
+trayFactory.inject = ['trayMenu'];

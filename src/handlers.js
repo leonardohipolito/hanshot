@@ -12,5 +12,6 @@
 // export { default as importImageFromClipboard } from './handlers/import-image-from-clipboard';
 
 export { default as quitApp } from './handlers/quit-app';
+export { default as openDashboard } from './handlers/open-dashboard';
 export { default as openSettings } from './handlers/open-settings';
 export { default as showDialogToOpenImage } from './handlers/show-dialog-to-open-image';

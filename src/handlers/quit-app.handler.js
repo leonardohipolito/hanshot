@@ -8,16 +8,23 @@ import electron from 'electron';
 // Module
 //------------------------------------------------------------------------------
 
-export default function quitAppHandler(cache, screen, settings, gallery) {
+export default function quitAppHandler(cache, /* screen,*/ settings, gallery) {
   return function quitApp() {
-    cache.set('gallery', gallery.serialize());
+    // Save info about images to cache
+    const items = gallery.all();
+    const cacheItems = items.map((item) => ({
+      filePath: item.filePath,
+      publicUrls: item.publicUrls,
+    }));
+    cache.set('gallery', cacheItems);
+
+    // screen.destroy();
     // TODO: use promises or callbacks to make async writes
     // now cache and settings are saved synchronously (is it bad?)
-    screen.destroy();
     settings.save();
     cache.save();
     electron.app.quit();
   };
 }
 
-quitAppHandler.inject = ['cache', 'screen', 'settings', 'gallery'];
+quitAppHandler.inject = ['cache', /* 'screen',*/ 'settings', 'gallery'];

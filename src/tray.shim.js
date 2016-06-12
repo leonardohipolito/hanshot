@@ -8,15 +8,15 @@ import electron from 'electron';
 // Module
 //------------------------------------------------------------------------------
 
-export default function createTray(iconPath) {
-  const tray = new electron.Tray(iconPath);
+export default class Tray {
 
-  return {
+  constructor(iconPath) {
+    this.tray = new electron.Tray(iconPath);
+  }
 
-    setMenu(template) {
-      const menu = electron.Menu.buildFromTemplate(template);
-      tray.setContextMenu(menu);
-    },
+  setMenu(template) {
+    const menu = electron.Menu.buildFromTemplate(template);
+    this.tray.setContextMenu(menu);
+  }
 
-  };
 }
