@@ -3,32 +3,35 @@
 //------------------------------------------------------------------------------
 
 import log from './log';
+import * as config from './config';
 
 import Container from './container';
 import Dispatcher from './dispatcher';
 
+import storeFactory from './store.factory';
 import cacheFactory from './cache.factory';
 import settingsFactory from './settings.factory';
-import storeFactory from './store.factory';
-import galleryFactory from './gallery.factory';
-import dashboardWindowFactory from './dashboard-window.factory';
-import trayFactory from './tray.factory';
 
-// var Screen = require('./screen');
+import Screen from './screen';
 // var Selection = require('./selection');
+// var Screen = require('./screen');
 
 import trayMenuFactory from './menu/tray.menu';
 import dashboardMenuFactory from './menu/dashboard.menu';
 
-// TODO: maybe rethink metadata
-import metadata from './config/metadata';
+import metadataFactory from './metadata.factory';
+import galleryFactory from './gallery.factory';
+import trayFactory from './tray.factory';
+import dashboardWindowFactory from './dashboard-window.factory';
+import savePathFactoryProvider from './save-path-factory.provider';
 
 import * as types from './actions';
 
+import captureDesktopHandler from './handlers/capture-desktop.handler';
 import openDashboardHandler from './handlers/open-dashboard.handler';
 import quitAppHandler from './handlers/quit-app.handler';
-
-import metadataProvider from './store/providers/metadata.provider';
+import saveImageHandler from './handlers/save-image.handler';
+import importImageFromClipbobard from './handlers/import-image-from-clipboard.handler.js';
 
 //------------------------------------------------------------------------------
 // Module
@@ -44,17 +47,22 @@ export default class App {
 
     this.register();
     this.registerHandlers();
-    this.registerProviders();
   }
 
   register() {
     // Order matters
+    // TODO: move things to different containers to be safe from bad injections
 
     this.container.registerValue('dispatch', this.dispatch);
+    this.container.registerValue('config', config);
 
-    this.container.registerValues({
-      metadata,
+    this.container.registerFactories({
+      store: storeFactory,
+      cache: cacheFactory,
+      settings: settingsFactory,
     });
+
+    this.container.registerClass('screen', Screen);
 
     this.container.registerFactories({
       trayMenu: trayMenuFactory,
@@ -62,19 +70,21 @@ export default class App {
     });
 
     this.container.registerFactories({
-      cache: cacheFactory,
-      settings: settingsFactory,
+      metadata: metadataFactory,
       gallery: galleryFactory,
-      store: storeFactory,
       dashboardWindow: dashboardWindowFactory,
       tray: trayFactory,
+      savePathFactory: savePathFactoryProvider,
     });
   }
 
   registerHandlers() {
     const handlers = {
+      [types.CAPTURE_DESKTOP]: captureDesktopHandler,
       [types.OPEN_DASHBOARD]: openDashboardHandler,
       [types.QUIT_APP]: quitAppHandler,
+      [types.SAVE_IMAGE]: saveImageHandler,
+      [types.IMPORT_IMAGE_FROM_CLIPBOARD]: importImageFromClipbobard,
     };
 
     Object.keys(handlers).forEach((type) => {
@@ -84,22 +94,6 @@ export default class App {
       this.container.registerFactory(registerName, handlerFactory);
 
       this.dispatcher.on(type, this.container.get(registerName));
-    });
-  }
-
-  registerProviders() {
-    const providers = {
-      metadata: metadataProvider,
-    };
-
-    Object.keys(providers).forEach((name) => {
-      const registerName = `provider:${name}`;
-      const providerFactory = providers[name];
-
-      this.container.registerFactory(registerName, providerFactory);
-
-      const provide = this.container.get(registerName);
-      provide();
     });
   }
 

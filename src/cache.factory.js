@@ -13,5 +13,8 @@ import { CACHE_PATH } from './config';
 export default function cacheFactory() {
   const source = new JSONSource(CACHE_PATH);
   const cache = new Cache(source);
+
+  cache.load();
+
   return cache;
 }

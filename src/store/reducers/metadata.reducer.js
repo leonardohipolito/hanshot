@@ -11,7 +11,7 @@ import { RECEIVE_METADATA } from '../actions';
 export default function metadataReducer(state = {}, action) {
   switch (action.type) {
     case RECEIVE_METADATA:
-      return action.metadata;
+      return Object.assign({}, action.metadata);
     default:
       return state;
   }

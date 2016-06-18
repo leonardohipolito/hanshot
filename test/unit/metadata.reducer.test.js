@@ -19,26 +19,30 @@ test('metadata.reducer: initial state', (assert) => {
 });
 
 test('metadata.reducer: RECEIVE_METADATA when empty', (assert) => {
+  const metadata = { foo: 'bar' };
   const action = {
     type: RECEIVE_METADATA,
-    metadata: { foo: 'bar' },
+    metadata,
   };
 
   const newState = metadataReducer({}, action);
 
   assert.deepEqual(newState, { foo: 'bar' });
+  assert.notEqual(newState, metadata);
   assert.end();
 });
 
 test('metadata.reducer: RECEIVE_METADATA when filled', (assert) => {
+  const metadata = { foo: 'bar' };
   const action = {
     type: RECEIVE_METADATA,
-    metadata: { foo: 'bar' },
+    metadata,
   };
   const prevState = { baz: 'qux' };
 
   const newState = metadataReducer(prevState, action);
 
   assert.deepEqual(newState, { foo: 'bar' });
+  assert.notEqual(newState, metadata);
   assert.end();
 });

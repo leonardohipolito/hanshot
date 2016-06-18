@@ -18,5 +18,7 @@ export default function settingsFactory() {
 
   const settings = new Settings(defaultSource, userSource);
 
+  settings.load();
+
   return settings;
 }

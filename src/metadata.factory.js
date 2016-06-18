@@ -2,18 +2,23 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { receiveMetadata } from '../actions';
+import metadata from './config/metadata';
+import { receiveMetadata } from './store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function metadataProvider(store, metadata) {
-  function provideMetadata() {
+// TODO: rethink metadata, mb make it injectable?
+export default function metadataFactory(store) {
+  function fetchMetadata() {
     store.dispatch(receiveMetadata(metadata));
   }
 
-  return provideMetadata;
+  // Update store with metadata when app starts
+  fetchMetadata();
+
+  return metadata;
 }
 
-metadataProvider.inject = ['store', 'metadata'];
+metadataFactory.inject = ['store'];

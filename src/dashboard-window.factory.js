@@ -20,11 +20,11 @@ export default function dashboardWindowFactory(
     dashboardWindow = new DashboardWindow();
     dashboardWindow.setMenu(dashboardMenu);
 
-    dashboardWindow.on('ready', () => {
+    dashboardWindow.onMessage('ready', () => {
       dashboardWindow.sendState(store.getState());
     });
 
-    dashboardWindow.on('action', (action) => {
+    dashboardWindow.onMessage('action', (action) => {
       dispatch(action);
     });
 
@@ -49,12 +49,28 @@ export default function dashboardWindowFactory(
     return dashboardWindow;
   }
 
+  function show() {
+    if (dashboardWindow === null) {
+      open();
+    } else {
+      dashboardWindow.show();
+    }
+  }
+
+  function hide() {
+    if (dashboardWindow !== null) {
+      dashboardWindow.hide();
+    }
+  }
+
   if (settings.get('show-on-start')) {
     open();
   }
 
   return {
     open,
+    show,
+    hide,
   };
 }
 

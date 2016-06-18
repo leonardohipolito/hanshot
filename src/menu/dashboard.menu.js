@@ -2,7 +2,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import actions from '../actions';
+import * as actions from '../actions';
 
 //------------------------------------------------------------------------------
 // Module
@@ -90,3 +90,5 @@ export default function createDashboardMenu(dispatch) {
     },
   ];
 }
+
+createDashboardMenu.inject = ['dispatch'];

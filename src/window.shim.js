@@ -42,6 +42,10 @@ export default class Window {
     }
   }
 
+  hide() {
+    this.window.hide();
+  }
+
   destroy() {
     this.window.destroy();
     this.emitter.emit('destroy');

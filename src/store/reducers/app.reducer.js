@@ -17,7 +17,7 @@ import settingsReducer from './settings.reducer';
 export default Redux.combineReducers({
   // alerts: alertsReducer,
   // displays: displaysReducer,
-  // image: imageReducer,
+  image: imageReducer,
   metadata: metadataReducer,
   // settings: settingsReducer,
 });
