@@ -2,10 +2,10 @@
 // Module
 //------------------------------------------------------------------------------
 
-export default function handlerFactory(dashboardWindow) {
+export default function openDashboardHandler(dashboardWindow) {
   return function openDashboard() {
     dashboardWindow.open();
   };
 }
 
-handlerFactory.inject = ['dashboardWindow'];
+openDashboardHandler.inject = ['dashboardWindow'];

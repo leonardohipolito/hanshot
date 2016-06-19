@@ -4,6 +4,7 @@
 
 export const CAPTURE_DESKTOP = 'CAPTURE_DESKTOP';
 export const OPEN_DASHBOARD = 'OPEN_DASHBOARD';
+export const OPEN_SETTINGS = 'OPEN_SETTINGS';
 export const QUIT_APP = 'QUIT_APP';
 export const SAVE_IMAGE = 'SAVE_IMAGE';
 export const IMPORT_IMAGE_FROM_CLIPBOARD = 'IMPORT_IMAGE_FROM_CLIPBOARD';
@@ -22,6 +23,13 @@ export function captureDesktop(displayId) {
 export function openDashboard() {
   return {
     type: OPEN_DASHBOARD,
+    args: [],
+  };
+}
+
+export function openSettings() {
+  return {
+    type: OPEN_SETTINGS,
     args: [],
   };
 }

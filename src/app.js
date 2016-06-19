@@ -3,32 +3,36 @@
 //------------------------------------------------------------------------------
 
 import log from './log';
+
 import * as config from './config';
 
 import Container from './container';
 import Dispatcher from './dispatcher';
 
-import storeFactory from './store.factory';
-import cacheFactory from './cache.factory';
-import settingsFactory from './settings.factory';
+import storeProvider from './store/store.provider';
+import cacheProvider from './cache/cache.provider';
+import settingsProvider from './settings/settings.provider';
 
 import Screen from './screen';
 // var Selection = require('./selection');
 // var Screen = require('./screen');
 
-import trayMenuFactory from './menu/tray.menu';
-import dashboardMenuFactory from './menu/dashboard.menu';
+import trayMenu from './tray/tray.menu';
+import dashboardWindowMenu from './dashboard-window/dashboard-window.menu';
+import settingsWindowMenu from './settings-window/settings-window.menu';
 
 import metadataFactory from './metadata.factory';
 import galleryFactory from './gallery.factory';
-import trayFactory from './tray.factory';
-import dashboardWindowFactory from './dashboard-window.factory';
 import savePathFactoryProvider from './save-path-factory.provider';
+import trayProvider from './tray/tray.provider';
+import dashboardWindowProvider from './dashboard-window/dashboard-window.provider';
+import settingsWindowProvider from './settings-window/settings-window.provider';
 
 import * as types from './actions';
 
 import captureDesktopHandler from './handlers/capture-desktop.handler';
 import openDashboardHandler from './handlers/open-dashboard.handler';
+import openSettingsHandler from './handlers/open-settings.handler';
 import quitAppHandler from './handlers/quit-app.handler';
 import saveImageHandler from './handlers/save-image.handler';
 import importImageFromClipbobard from './handlers/import-image-from-clipboard.handler.js';
@@ -57,24 +61,26 @@ export default class App {
     this.container.registerValue('config', config);
 
     this.container.registerFactories({
-      store: storeFactory,
-      cache: cacheFactory,
-      settings: settingsFactory,
+      store: storeProvider,
+      cache: cacheProvider,
+      settings: settingsProvider,
     });
 
     this.container.registerClass('screen', Screen);
 
     this.container.registerFactories({
-      trayMenu: trayMenuFactory,
-      dashboardMenu: dashboardMenuFactory,
+      trayMenu,
+      dashboardWindowMenu,
+      settingsWindowMenu,
     });
 
     this.container.registerFactories({
       metadata: metadataFactory,
       gallery: galleryFactory,
-      dashboardWindow: dashboardWindowFactory,
-      tray: trayFactory,
       savePathFactory: savePathFactoryProvider,
+      tray: trayProvider,
+      dashboardWindow: dashboardWindowProvider,
+      settingsWindow: settingsWindowProvider,
     });
   }
 
@@ -82,6 +88,7 @@ export default class App {
     const handlers = {
       [types.CAPTURE_DESKTOP]: captureDesktopHandler,
       [types.OPEN_DASHBOARD]: openDashboardHandler,
+      [types.OPEN_SETTINGS]: openSettingsHandler,
       [types.QUIT_APP]: quitAppHandler,
       [types.SAVE_IMAGE]: saveImageHandler,
       [types.IMPORT_IMAGE_FROM_CLIPBOARD]: importImageFromClipbobard,
