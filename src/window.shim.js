@@ -18,9 +18,10 @@ export default class Window {
     this.emitter = new EventEmitter();
 
     this.window = new electron.BrowserWindow(windowOptions);
+    this.webContents = this.window.webContents;
 
     this.whenLoad = new Promise((resolve) => {
-      this.window.webContents.once('did-finish-load', resolve);
+      this.webContents.once('did-finish-load', resolve);
     });
 
     this.whenLoad.then(() => {
@@ -29,6 +30,10 @@ export default class Window {
 
     this.window.on('close', () => {
       this.emitter.emit('close');
+    });
+
+    this.webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
+      this.emitter.emit('redirect', oldUrl, newUrl);
     });
 
     this.window.loadURL(url);
@@ -66,7 +71,7 @@ export default class Window {
 
   sendMessage(type, body) {
     this.whenLoad.then(() => {
-      this.window.webContents.send(`window:${this.namespace}:${type}`, body);
+      this.webContents.send(`window:${this.namespace}:${type}`, body);
     });
   }
 

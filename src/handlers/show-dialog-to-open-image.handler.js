@@ -2,8 +2,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import Image from '../image/image';
-import * as dialog from '../dialog';
+import * as dialog from '../dialog/dialog';
+import log from '../log';
 
 //------------------------------------------------------------------------------
 // Module
@@ -11,12 +11,15 @@ import * as dialog from '../dialog';
 
 export default function showDialogToOpenImageHandler(gallery) {
   return function showDialogToOpenImage() {
-    dialog.openImage()
+    dialog
+      .openImage()
       .then((filePath) => {
-        gallery.add(new Image(filePath));
+        gallery.add({
+          filePath,
+        });
       })
       .catch((err) => {
-        console.log(err);
+        log(err);
       });
   };
 }

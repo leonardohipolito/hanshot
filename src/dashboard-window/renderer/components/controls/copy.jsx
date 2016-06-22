@@ -1,25 +1,25 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
-var viewDispatch = require('../../view-dispatch');
-import appActions from '../../../../actions';
+import viewDispatch from '../../view-dispatch';
+import { copyImage } from '../../../../actions';
 
-var Button = require('../common/button.jsx');
+import Button from '../common/button.jsx';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-function Copy(props) {
+export default function Copy(props) {
   return (
-    <Button onClick={function () {
-      viewDispatch(appActions.copyImage(props.image.filePath));
-    }}>
+    <Button
+      onClick={() => {
+        viewDispatch(copyImage(props.image.filePath));
+      }}
+    >
       Copy
     </Button>
   );
@@ -27,8 +27,6 @@ function Copy(props) {
 
 Copy.propTypes = {
   image: React.PropTypes.shape({
-    filePath: React.PropTypes.string.isRequired
-  }).isRequired
+    filePath: React.PropTypes.string.isRequired,
+  }).isRequired,
 };
-
-module.exports = Copy;

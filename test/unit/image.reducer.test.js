@@ -14,7 +14,7 @@ import imageReducer from '../../src/store/reducers/image.reducer';
 test('image.reducer: initial state', (assert) => {
   const newState = imageReducer(undefined, {});
 
-  assert.deepEqual(newState, {});
+  assert.deepEqual(newState, null);
   assert.end();
 });
 

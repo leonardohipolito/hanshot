@@ -3,8 +3,9 @@
 //------------------------------------------------------------------------------
 
 import * as dialog from './dialog.shim';
-import metadata from './config/metadata';
-import { USER_HOME_PATH } from './config';
+// TODO: move config to deps
+import metadata from '../config/metadata';
+import { USER_HOME_PATH } from '../config';
 
 //------------------------------------------------------------------------------
 // Helpers

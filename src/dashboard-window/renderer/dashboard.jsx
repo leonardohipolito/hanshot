@@ -32,6 +32,7 @@ var Dashboard = React.createClass({
     this.setState(state);
   },
   render: function () {
+    console.log(this.state);
     return (
       <div className="dashboard-container">
         <Navbar

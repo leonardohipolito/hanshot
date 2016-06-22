@@ -2,19 +2,16 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as clipboard from '../clipboard';
+import * as storeActions from '../store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default {
+export default function closeAlertHandler(store) {
+  return function closeAlert(alertId) {
+    store.dispatch(storeActions.closeAlert(alertId));
+  };
+}
 
-  create() {
-    return function copyTextHandler(text) {
-      clipboard.writeText(text);
-    };
-  },
-
-};
-
+closeAlertHandler.inject = ['store'];

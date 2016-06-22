@@ -1,32 +1,30 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var appActions = require('../actions');
+import { authorizeUploader } from './actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-exports.uploaderAuth = function (id, title) {
+export function uploaderAuth(id, title) {
   return {
-    id: 'ALERT_UPLOADER_AUTH_' + id.toUpperCase(),
+    id: `ALERT_UPLOADER_AUTH_${id.toUpperCase()}`,
     type: 'danger',
-    message: title + ' requires authorization.',
+    message: `${title} requires authorization.`,
     buttons: [
       {
         title: 'Authorize',
         type: 'danger',
         role: 'appAction',
-        appAction: appActions.authorizeUploader(id)
+        appAction: authorizeUploader(id),
       },
       {
         title: 'Cancel',
         type: 'default',
-        role: 'close'
-      }
-    ]
+        role: 'close',
+      },
+    ],
   };
-};
+}

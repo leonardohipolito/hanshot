@@ -10,7 +10,7 @@ var electron = require('electron');
 var SnapDesktop = require('./controls/snap-desktop.jsx');
 var SnapSelection = require('./controls/snap-selection.jsx');
 var Upload = require('./controls/upload.jsx');
-var Copy = require('./controls/copy.jsx');
+import Copy from './controls/copy.jsx';
 var Urls = require('./controls/urls.jsx');
 
 //------------------------------------------------------------------------------

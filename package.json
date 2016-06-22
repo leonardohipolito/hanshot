@@ -33,7 +33,7 @@
     "start": "electron -r babel-register .",
     "lint": "eslint src/cache.js test",
     "test": "npm run test:unit && npm run test:int && npm run test:int:node",
-    "test:unit": "HANSHOT_TEST=true tape -r babel-register './test/unit/**/*.test.js'",
+    "test:unit": "HANSHOT_TEST=true tape -r babel-register -r ./test/unit/helpers/fake-electron.js './test/unit/**/*.test.js'",
     "test:int": "HANSHOT_TEST=true node ./test/integration/setup/run.js",
     "test:int:node": "HANSHOT_TEST=true tape -r babel-register './test/int-node/**/*.test.js'"
   }

@@ -6,7 +6,7 @@ import test from 'tape';
 import { useFakeTimers } from 'sinon';
 
 import * as constants from '../../src/constants';
-import Settings from '../../src/settings';
+import Settings from '../../src/settings/settings';
 import savePathFactoryProvider from '../../src/save-path-factory.provider';
 
 //------------------------------------------------------------------------------

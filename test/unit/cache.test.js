@@ -5,7 +5,7 @@
 import test from 'tape';
 import { spy, stub } from 'sinon';
 
-import Cache from '../../src/cache';
+import Cache from '../../src/cache/cache';
 
 //------------------------------------------------------------------------------
 // Test

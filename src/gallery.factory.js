@@ -49,6 +49,7 @@ export default function galleryFactory(cache, store) {
           dataURL: buffer.toDataURL(imageBuffer),
           width,
           height,
+          publicUrls: imageData.publicUrls || []
         };
 
         store.dispatch(receiveImage(image));
@@ -59,13 +60,8 @@ export default function galleryFactory(cache, store) {
       });
   }
 
-  gallery.on('add', () => {
-    fetchImage();
-  });
-
-  // gallery.on('update', () => {
-  //   store.dispatch(fetchImage);
-  // });
+  gallery.on('add', fetchImage);
+  gallery.on('update', fetchImage);
 
   // Update store with the latest image when app starts
   fetchImage();

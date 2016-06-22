@@ -24,18 +24,26 @@ import settingsWindowMenu from './settings-window/settings-window.menu';
 import metadataFactory from './metadata.factory';
 import galleryFactory from './gallery.factory';
 import savePathFactoryProvider from './save-path-factory.provider';
+import uploaderFactoryProvider from './uploader-factory.provider';
 import trayProvider from './tray/tray.provider';
 import dashboardWindowProvider from './dashboard-window/dashboard-window.provider';
 import settingsWindowProvider from './settings-window/settings-window.provider';
 
 import * as types from './actions';
 
+import authorizeUploaderHandler from './handlers/authorize-uploader.handler';
 import captureDesktopHandler from './handlers/capture-desktop.handler';
+import closeAlertHandler from './handlers/close-alert.handler';
+import copyImageHandler from './handlers/copy-image.handler';
+import copyTextHandler from './handlers/copy-text.handler';
+import importImageFromClipbobard from './handlers/import-image-from-clipboard.handler.js';
 import openDashboardHandler from './handlers/open-dashboard.handler';
 import openSettingsHandler from './handlers/open-settings.handler';
 import quitAppHandler from './handlers/quit-app.handler';
 import saveImageHandler from './handlers/save-image.handler';
-import importImageFromClipbobard from './handlers/import-image-from-clipboard.handler.js';
+import showAlertHandler from './handlers/show-alert.handler';
+import showDialogToOpenImageHandler from './handlers/show-dialog-to-open-image.handler';
+import uploadImageHandler from './handlers/upload-image.handler.js';
 
 //------------------------------------------------------------------------------
 // Module
@@ -78,6 +86,7 @@ export default class App {
       metadata: metadataFactory,
       gallery: galleryFactory,
       savePathFactory: savePathFactoryProvider,
+      uploaderFactory: uploaderFactoryProvider,
       tray: trayProvider,
       dashboardWindow: dashboardWindowProvider,
       settingsWindow: settingsWindowProvider,
@@ -86,12 +95,19 @@ export default class App {
 
   registerHandlers() {
     const handlers = {
+      [types.AUTHORIZE_UPLOADER]: authorizeUploaderHandler,
       [types.CAPTURE_DESKTOP]: captureDesktopHandler,
+      [types.CLOSE_ALERT]: closeAlertHandler,
+      [types.COPY_IMAGE]: copyImageHandler,
+      [types.COPY_TEXT]: copyTextHandler,
+      [types.IMPORT_IMAGE_FROM_CLIPBOARD]: importImageFromClipbobard,
       [types.OPEN_DASHBOARD]: openDashboardHandler,
       [types.OPEN_SETTINGS]: openSettingsHandler,
       [types.QUIT_APP]: quitAppHandler,
       [types.SAVE_IMAGE]: saveImageHandler,
-      [types.IMPORT_IMAGE_FROM_CLIPBOARD]: importImageFromClipbobard,
+      [types.SHOW_ALERT]: showAlertHandler,
+      [types.SHOW_DIALOG_TO_OPEN_IMAGE]: showDialogToOpenImageHandler,
+      [types.UPLOAD_IMAGE]: uploadImageHandler,
     };
 
     Object.keys(handlers).forEach((type) => {

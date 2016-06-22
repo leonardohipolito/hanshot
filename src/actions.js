@@ -2,21 +2,63 @@
 // Action types
 //------------------------------------------------------------------------------
 
+export const AUTHORIZE_UPLOADER = 'AUTHORIZE_UPLOADER';
 export const CAPTURE_DESKTOP = 'CAPTURE_DESKTOP';
+export const CLOSE_ALERT = 'CLOSE_ALERT';
+export const COPY_IMAGE = 'COPY_IMAGE';
+export const COPY_TEXT = 'COPY_TEXT';
+export const IMPORT_IMAGE_FROM_CLIPBOARD = 'IMPORT_IMAGE_FROM_CLIPBOARD';
 export const OPEN_DASHBOARD = 'OPEN_DASHBOARD';
 export const OPEN_SETTINGS = 'OPEN_SETTINGS';
 export const QUIT_APP = 'QUIT_APP';
 export const SAVE_IMAGE = 'SAVE_IMAGE';
-export const IMPORT_IMAGE_FROM_CLIPBOARD = 'IMPORT_IMAGE_FROM_CLIPBOARD';
+export const SHOW_ALERT = 'SHOW_ALERT';
+export const SHOW_DIALOG_TO_OPEN_IMAGE = 'SHOW_DIALOG_TO_OPEN_IMAGE';
+export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
 
 //------------------------------------------------------------------------------
 // Action creators
 //------------------------------------------------------------------------------
 
-export function captureDesktop(displayId) {
+export function authorizeUploader(uploaderId) {
+  return {
+    type: AUTHORIZE_UPLOADER,
+    args: [uploaderId],
+  };
+}
+
+export function captureDesktop(optDisplayId) {
   return {
     type: CAPTURE_DESKTOP,
-    args: [displayId],
+    args: [optDisplayId],
+  };
+}
+
+export function closeAlert(alertId) {
+  return {
+    type: CLOSE_ALERT,
+    args: [alertId],
+  };
+}
+
+export function copyImage(filePath) {
+  return {
+    type: COPY_IMAGE,
+    args: [filePath],
+  };
+}
+
+export function copyText(text) {
+  return {
+    type: COPY_TEXT,
+    args: [text],
+  };
+}
+
+export function importImageFromClipboard() {
+  return {
+    type: IMPORT_IMAGE_FROM_CLIPBOARD,
+    args: [],
   };
 }
 
@@ -41,19 +83,34 @@ export function quitApp() {
   };
 }
 
-export function saveImage(type, dataURL) {
+export function saveImage(filePath, dataURL) {
   return {
     type: SAVE_IMAGE,
-    args: [type, dataURL],
+    args: [filePath, dataURL],
   };
 }
 
-export function importImageFromClipboard() {
+export function showAlert(alert) {
   return {
-    type: IMPORT_IMAGE_FROM_CLIPBOARD,
+    type: SHOW_ALERT,
+    args: [alert],
+  };
+}
+
+export function showDialogToOpenImage() {
+  return {
+    type: SHOW_DIALOG_TO_OPEN_IMAGE,
     args: [],
   };
 }
+
+export function uploadImage(filePath, optUploaderId) {
+  return {
+    type: UPLOAD_IMAGE,
+    args: [filePath, optUploaderId],
+  };
+}
+
 
 // const types = [
 //   'authorizeUploader',

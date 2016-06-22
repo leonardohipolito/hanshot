@@ -6,8 +6,8 @@
 
 var React = require('react');
 
-var viewDispatch = require('../view-dispatch');
-import appActions from '../../../actions';
+import viewDispatch from '../view-dispatch';
+import * as appActions from '../../../actions';
 
 var Alert = require('./alert.jsx');
 
@@ -30,7 +30,7 @@ var AlertArea = React.createClass({
               key={alert.id}
               type={alert.type}
               onClose={function () {
-                actions.closeAlert(alert.id)
+                viewDispatch(appActions.closeAlert(alert.id))
               }}
             >
               <p>

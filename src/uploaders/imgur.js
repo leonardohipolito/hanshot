@@ -1,93 +1,94 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var url = require('url');
-var https = require('https');
-var querystring = require('querystring');
+import * as url from 'url';
+import * as https from 'https';
+import * as querystring from 'querystring';
+
+import log from '../log';
 
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
 
-var IMGUR_CLIENT_ID = 'ec218ef2f89d0d0';
+const IMGUR_CLIENT_ID = 'ec218ef2f89d0d0';
 
-var IMGUR_UPLOAD_ENDPOINT = 'https://api.imgur.com/3/image';
+const IMGUR_UPLOAD_ENDPOINT = 'https://api.imgur.com/3/image';
 
 // Has daily limit for uploads https://api.imgur.com/#limits
-var IMGUR_CLIENT_LIMIT = 1250;
-var IMGUR_USER_LIMIT = 500;
+// const IMGUR_CLIENT_LIMIT = 1250;
+// const IMGUR_USER_LIMIT = 500;
 
-  // Has size limit 10MB https://api.imgur.com/endpoints/image#image-upload
-var IMGUR_SIZE_LIMIT = 10;
+// Has size limit 10MB https://api.imgur.com/endpoints/image#image-upload
+// const IMGUR_SIZE_LIMIT = 10;
 
 //------------------------------------------------------------------------------
-// Public Interface
+// Module
 //------------------------------------------------------------------------------
 
-function ImgurUploader(cache) {
-  this.id = 'imgur';
-  this.name = 'Imgur';
+export default class ImgurUploader {
 
-  this.cache = cache;
+  constructor(cache) {
+    this.id = 'imgur';
+    this.name = 'Imgur';
+
+    this.cache = cache;
+  }
+
+  isAuthorized() {
+    return true;
+  }
+
+  // https://api.imgur.com/endpoints/image#image-upload
+  upload(fileName, buffer) {
+    const urlObj = url.parse(IMGUR_UPLOAD_ENDPOINT);
+
+    const requestData = querystring.stringify({
+      image: buffer.toString('base64'),
+      type: 'base64',
+    });
+
+    const requestOptions = {
+      host: urlObj.host,
+      path: urlObj.path,
+      method: 'POST',
+      headers: {
+        Authorization: `Client-ID ${IMGUR_CLIENT_ID}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(requestData),
+      },
+    };
+
+    return new Promise((resolve, reject) => {
+      const req = https.request(requestOptions, (res) => {
+        let body = '';
+
+        res.on('data', (chunk) => {
+          body += chunk;
+        });
+
+        res.on('end', () => {
+          const json = JSON.parse(body);
+
+          if (json.success) {
+            resolve(json.data.link);
+          } else {
+            log('imgur error');
+            log(json);
+            reject(json);
+          }
+        });
+      });
+
+      req.on('error', (err) => {
+        log('request error');
+        log(err);
+        reject(err);
+      });
+
+      req.write(requestData);
+      req.end();
+    });
+  }
 }
-
-ImgurUploader.prototype.isAuthorized = function () {
-  return true;
-};
-
-// https://api.imgur.com/endpoints/image#image-upload
-ImgurUploader.prototype.upload = function (fileName, buffer, callback) {
-  callback = callback || function () {};
-
-  var urlObj = url.parse(IMGUR_UPLOAD_ENDPOINT);
-
-  var requestData = querystring.stringify({
-    image: buffer.toString('base64'),
-    type: 'base64'
-  });
-
-  var requestOptions = {
-    host: urlObj.host,
-    path: urlObj.path,
-    method: 'POST',
-    headers: {
-      'Authorization': 'Client-ID ' + IMGUR_CLIENT_ID,
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': Buffer.byteLength(requestData)
-    }
-  };
-
-  var req = https.request(requestOptions, function (res) {
-    var body = '';
-
-    res.on('data', function (chunk) {
-      body += chunk;
-    });
-    res.on('end', function () {
-      var json = JSON.parse(body);
-
-      if (json.success) {
-
-        callback(null, json.data.link);
-
-      } else {
-        console.log('imgur error');
-        console.log(json);
-      }
-
-    });
-  });
-
-  req.on('error', function (err) {
-    console.log('request error');
-    console.log(err);
-  });
-
-  req.write(requestData);
-  req.end();
-};
-
-module.exports = ImgurUploader;

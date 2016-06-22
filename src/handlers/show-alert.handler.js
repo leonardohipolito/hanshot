@@ -2,20 +2,16 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import storeActions from '../store/actions';
+import * as storeActions from '../store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default {
+export default function showAlertHandler(store) {
+  return function showAlert(alert) {
+    store.dispatch(storeActions.showAlert(alert));
+  };
+}
 
-  inject: ['store'],
-
-  create(store) {
-    return function closeAlertHandler(alertId) {
-      store.dispatch(storeActions.closeAlert(alertId));
-    };
-  },
-
-};
+showAlertHandler.inject = ['store'];

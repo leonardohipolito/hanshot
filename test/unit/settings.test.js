@@ -5,7 +5,7 @@
 import test from 'tape';
 import { spy, stub } from 'sinon';
 
-import Settings from '../../src/settings';
+import Settings from '../../src/settings/settings';
 
 //------------------------------------------------------------------------------
 // Requirements

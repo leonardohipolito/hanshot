@@ -2,20 +2,14 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { RECEIVE_IMAGE } from '../actions';
+import * as clipboard from '../clipboard';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function imageReducer(state = null, action) {
-  switch (action.type) {
-    case RECEIVE_IMAGE:
-      if (action.image === null) {
-        return null;
-      }
-      return Object.assign({}, action.image);
-    default:
-      return state;
-  }
+export default function copyTextHandler() {
+  return function copyText(text) {
+    clipboard.writeText(text);
+  };
 }

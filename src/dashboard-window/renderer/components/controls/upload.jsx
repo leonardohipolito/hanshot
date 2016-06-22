@@ -6,8 +6,8 @@
 
 var React = require('react');
 
-var viewDispatch = require('../../view-dispatch');
-import appActions from '../../../../actions';
+import viewDispatch from '../../view-dispatch';
+import { uploadImage } from '../../../../actions';
 
 var ButtonDropdown = require('../common/button-dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');
@@ -42,7 +42,7 @@ var Upload = React.createClass({
         buttonTitle="Upload"
         alignMenuRight
         onButtonClick={function () {
-          viewDispatch(appActions.uploadImage(image.filePath));
+          viewDispatch(uploadImage(image.filePath));
         }}
       >
         {hosts.map(function (host) {
@@ -50,7 +50,7 @@ var Upload = React.createClass({
               <DropdownItem
                 key={host.id}
                 onClick={function () {
-                  viewDispatch(appActions.uploadImage(image.filePath, host.id));
+                  viewDispatch(uploadImage(image.filePath, host.id));
                 }}
               >
                 {host.name}
