@@ -1,19 +1,15 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var electron = require('electron');
+import electron from 'electron';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-module.exports = function (dispatcher, components) {
-
-  return function (filePath) {
+export default function showImageInFolderHandler() {
+  return function showImageInFolder(filePath) {
     electron.shell.showItemInFolder(filePath);
   };
-
-};
+}

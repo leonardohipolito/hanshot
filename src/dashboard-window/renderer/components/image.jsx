@@ -7,8 +7,8 @@
 var React = require('react');
 var electron = require('electron');
 
-var viewDispatch = require('../view-dispatch');
-import appActions from '../../../actions';
+import viewDispatch from '../view-dispatch';
+import * as appActions from '../../../actions';
 
 //------------------------------------------------------------------------------
 // Module
@@ -39,7 +39,7 @@ var Image = React.createClass({
           <div
             className="image"
             onContextMenu={function () {
-              viewDispatch(appActions.OPEN_IMAGE_CONTEXT_MENU, image.filePath);
+              viewDispatch(appActions.openImageContextMenu(image.filePath));
             }}
             style={{
               backgroundImage: 'url(' + image.dataURL + ')',

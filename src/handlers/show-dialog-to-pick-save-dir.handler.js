@@ -2,8 +2,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import actions from '../actions';
-import * as dialog from '../dialog';
+import { updateSetting } from '../actions';
+import * as dialog from '../dialog/dialog';
+import log from '../log';
 
 //------------------------------------------------------------------------------
 // Module
@@ -14,13 +15,11 @@ export default function showDialogToPickSaveDirHandler(dispatch, settings) {
     const currentDirPath = settings.get('save-dir-path');
     dialog.saveImagesTo(currentDirPath)
       .then((dirPath) => {
-        dispatch(actions.updateSetting({
-          key: 'save-dir-path',
-          value: dirPath,
-        }));
+        dispatch(updateSetting('save-dir-path', dirPath));
       })
       .catch((err) => {
-        console.log(err);
+        log('pick save dir err');
+        log(err);
       });
   };
 }

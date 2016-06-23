@@ -20,6 +20,7 @@ import Screen from './screen';
 import trayMenu from './tray/tray.menu';
 import dashboardWindowMenu from './dashboard-window/dashboard-window.menu';
 import settingsWindowMenu from './settings-window/settings-window.menu';
+import contextMenuProvider from './context.menu.provider';
 
 import metadataFactory from './metadata.factory';
 import galleryFactory from './gallery.factory';
@@ -38,11 +39,14 @@ import copyImageHandler from './handlers/copy-image.handler';
 import copyTextHandler from './handlers/copy-text.handler';
 import importImageFromClipbobard from './handlers/import-image-from-clipboard.handler.js';
 import openDashboardHandler from './handlers/open-dashboard.handler';
+import openImageContextMenuHandler from './handlers/open-image-context-menu.handler';
 import openSettingsHandler from './handlers/open-settings.handler';
 import quitAppHandler from './handlers/quit-app.handler';
 import saveImageHandler from './handlers/save-image.handler';
 import showAlertHandler from './handlers/show-alert.handler';
 import showDialogToOpenImageHandler from './handlers/show-dialog-to-open-image.handler';
+import showDialogToPickSaveDirHandler from './handlers/show-dialog-to-pick-save-dir.handler';
+import showImageInFolderHandler from './handlers/show-image-in-folder.handler';
 import updateSettingHandler from './handlers/update-setting.handler';
 import uploadImageHandler from './handlers/upload-image.handler.js';
 
@@ -81,6 +85,7 @@ export default class App {
       trayMenu,
       dashboardWindowMenu,
       settingsWindowMenu,
+      contextMenu: contextMenuProvider,
     });
 
     this.container.registerFactories({
@@ -103,11 +108,14 @@ export default class App {
       [types.COPY_TEXT]: copyTextHandler,
       [types.IMPORT_IMAGE_FROM_CLIPBOARD]: importImageFromClipbobard,
       [types.OPEN_DASHBOARD]: openDashboardHandler,
+      [types.OPEN_IMAGE_CONTEXT_MENU]: openImageContextMenuHandler,
       [types.OPEN_SETTINGS]: openSettingsHandler,
       [types.QUIT_APP]: quitAppHandler,
       [types.SAVE_IMAGE]: saveImageHandler,
       [types.SHOW_ALERT]: showAlertHandler,
       [types.SHOW_DIALOG_TO_OPEN_IMAGE]: showDialogToOpenImageHandler,
+      [types.SHOW_DIALOG_TO_PICK_SAVE_DIR]: showDialogToPickSaveDirHandler,
+      [types.SHOW_IMAGE_IN_FOLDER]: showImageInFolderHandler,
       [types.UPDATE_SETTING]: updateSettingHandler,
       [types.UPLOAD_IMAGE]: uploadImageHandler,
     };

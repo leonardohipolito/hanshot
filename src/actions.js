@@ -9,11 +9,14 @@ export const COPY_IMAGE = 'COPY_IMAGE';
 export const COPY_TEXT = 'COPY_TEXT';
 export const IMPORT_IMAGE_FROM_CLIPBOARD = 'IMPORT_IMAGE_FROM_CLIPBOARD';
 export const OPEN_DASHBOARD = 'OPEN_DASHBOARD';
+export const OPEN_IMAGE_CONTEXT_MENU = 'OPEN_IMAGE_CONTEXT_MENU';
 export const OPEN_SETTINGS = 'OPEN_SETTINGS';
 export const QUIT_APP = 'QUIT_APP';
 export const SAVE_IMAGE = 'SAVE_IMAGE';
 export const SHOW_ALERT = 'SHOW_ALERT';
 export const SHOW_DIALOG_TO_OPEN_IMAGE = 'SHOW_DIALOG_TO_OPEN_IMAGE';
+export const SHOW_DIALOG_TO_PICK_SAVE_DIR = 'SHOW_DIALOG_TO_PICK_SAVE_DIR';
+export const SHOW_IMAGE_IN_FOLDER = 'SHOW_IMAGE_IN_FOLDER';
 export const UPDATE_SETTING = 'UPDATE_SETTING';
 export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
 
@@ -70,6 +73,13 @@ export function openDashboard() {
   };
 }
 
+export function openImageContextMenu(filePath, publicUrls) {
+  return {
+    type: OPEN_IMAGE_CONTEXT_MENU,
+    args: [filePath, publicUrls],
+  };
+}
+
 export function openSettings() {
   return {
     type: OPEN_SETTINGS,
@@ -102,6 +112,20 @@ export function showDialogToOpenImage() {
   return {
     type: SHOW_DIALOG_TO_OPEN_IMAGE,
     args: [],
+  };
+}
+
+export function showDialogToPickSaveDir() {
+  return {
+    type: SHOW_DIALOG_TO_PICK_SAVE_DIR,
+    args: [],
+  };
+}
+
+export function showImageInFolder(filePath) {
+  return {
+    type: SHOW_IMAGE_IN_FOLDER,
+    args: [filePath],
   };
 }
 
