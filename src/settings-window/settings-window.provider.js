@@ -32,6 +32,8 @@ export default function settingsWindowProvider(
     settingsWindow.on('close', () => {
       // TODO: implement action for it or just remove it from here
       settings.save();
+      // TODO: close vs destroy
+      settingsWindow = null;
     });
 
     settingsWindow.on('destroy', () => {
@@ -39,14 +41,23 @@ export default function settingsWindowProvider(
     });
 
     store.subscribe(() => {
-      settingsWindow.sendStae(store.getState());
+      settingsWindow.sendState(store.getState());
     });
 
     return settingsWindow;
   }
 
+  function show() {
+    if (settingsWindow === null) {
+      open();
+    } else {
+      settingsWindow.show();
+    }
+  }
+
   return {
     open,
+    show,
   };
 }
 

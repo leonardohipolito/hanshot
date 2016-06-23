@@ -19,5 +19,5 @@ export default Redux.combineReducers({
   // displays: displaysReducer,
   image: imageReducer,
   metadata: metadataReducer,
-  // settings: settingsReducer,
+  settings: settingsReducer,
 });

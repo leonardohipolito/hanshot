@@ -4,7 +4,7 @@
 
 export default function openPreferencesHandler(preferencesWindow) {
   return function openPreferences() {
-    preferencesWindow.open();
+    preferencesWindow.show();
   };
 }
 

@@ -4,12 +4,13 @@
 
 import Settings from './settings';
 import JSONSource from '../json.source';
+import { receiveSettings } from '../store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function settingsProvider(config) {
+export default function settingsProvider(config, store) {
   const defaultSettingsPath = `${__dirname}/default.json`;
 
   const defaultSource = new JSONSource(defaultSettingsPath);
@@ -19,7 +20,13 @@ export default function settingsProvider(config) {
 
   settings.load();
 
+  function fetchSettings() {
+    store.dispatch(receiveSettings(settings.serialize()));
+  }
+
+  fetchSettings();
+
   return settings;
 }
 
-settingsProvider.inject = ['config'];
+settingsProvider.inject = ['config', 'store'];

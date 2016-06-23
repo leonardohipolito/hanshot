@@ -6,8 +6,8 @@
 
 var React = require('react');
 
-var viewDispatch = require('../view-dispatch');
-import appActions from '../../../actions';
+import viewDispatch from '../view-dispatch';
+import * as appActions from '../../../actions';
 
 var Range = require('./common/range.jsx');
 var Select = require('./common/select.jsx');

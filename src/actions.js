@@ -14,6 +14,7 @@ export const QUIT_APP = 'QUIT_APP';
 export const SAVE_IMAGE = 'SAVE_IMAGE';
 export const SHOW_ALERT = 'SHOW_ALERT';
 export const SHOW_DIALOG_TO_OPEN_IMAGE = 'SHOW_DIALOG_TO_OPEN_IMAGE';
+export const UPDATE_SETTING = 'UPDATE_SETTING';
 export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
 
 //------------------------------------------------------------------------------
@@ -101,6 +102,13 @@ export function showDialogToOpenImage() {
   return {
     type: SHOW_DIALOG_TO_OPEN_IMAGE,
     args: [],
+  };
+}
+
+export function updateSetting(key, value) {
+  return {
+    type: UPDATE_SETTING,
+    args: [key, value],
   };
 }
 

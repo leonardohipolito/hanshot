@@ -43,6 +43,7 @@ import quitAppHandler from './handlers/quit-app.handler';
 import saveImageHandler from './handlers/save-image.handler';
 import showAlertHandler from './handlers/show-alert.handler';
 import showDialogToOpenImageHandler from './handlers/show-dialog-to-open-image.handler';
+import updateSettingHandler from './handlers/update-setting.handler';
 import uploadImageHandler from './handlers/upload-image.handler.js';
 
 //------------------------------------------------------------------------------
@@ -107,6 +108,7 @@ export default class App {
       [types.SAVE_IMAGE]: saveImageHandler,
       [types.SHOW_ALERT]: showAlertHandler,
       [types.SHOW_DIALOG_TO_OPEN_IMAGE]: showDialogToOpenImageHandler,
+      [types.UPDATE_SETTING]: updateSettingHandler,
       [types.UPLOAD_IMAGE]: uploadImageHandler,
     };
 

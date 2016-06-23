@@ -76,9 +76,13 @@ export default class Window {
   }
 
   onMessage(type, callback) {
-    // TODO: unsub on destroy
-    electron.ipcMain.on(`window:${this.namespace}:${type}`, (event, ...args) => {
+    const eventName = `window:${this.namespace}:${type}`;
+    const listener = function listener(event, ...args) {
       callback(...args);
+    };
+    electron.ipcMain.on(eventName, listener);
+    this.on('close', () => {
+      electron.ipcMain.removeListener(eventName, listener);
     });
   }
 
