@@ -5,7 +5,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-import * as renderer from '../../renderer.shim';
+import RendererIpc from '../../renderer-ipc.shim';
 
 var Navbar = require('./components/navbar.jsx');
 var Image = require('./components/image.jsx');
@@ -15,7 +15,7 @@ var AlertArea = require('./components/alert-area.jsx');
 // Module
 //------------------------------------------------------------------------------
 
-const ipc = renderer.createIpc('dashboard');
+const ipc = new RendererIpc('dashboard');
 
 var Dashboard = React.createClass({
   getInitialState: function () {
@@ -28,7 +28,7 @@ var Dashboard = React.createClass({
   componentWillUnmount: function () {
     ipc.offMessage('state-updated', this.onStateUpdated);
   },
-  onStateUpdated: function (event, state) {
+  onStateUpdated: function (state) {
     this.setState(state);
   },
   render: function () {

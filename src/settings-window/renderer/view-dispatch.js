@@ -2,13 +2,13 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as renderer from '../../renderer.shim';
+import RendererIpc from '../../renderer-ipc.shim';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-const ipc = renderer.createIpc('settings');
+const ipc = new RendererIpc('settings');
 
 export default function viewDispatch(action) {
   ipc.sendMessage('action', action);

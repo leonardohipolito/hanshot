@@ -4,6 +4,7 @@
 
 export const AUTHORIZE_UPLOADER = 'AUTHORIZE_UPLOADER';
 export const CAPTURE_DESKTOP = 'CAPTURE_DESKTOP';
+export const CAPTURE_SELECTION = 'CAPTURE_SELECTION';
 export const CLOSE_ALERT = 'CLOSE_ALERT';
 export const COPY_IMAGE = 'COPY_IMAGE';
 export const COPY_TEXT = 'COPY_TEXT';
@@ -34,6 +35,13 @@ export function authorizeUploader(uploaderId) {
 export function captureDesktop(optDisplayId) {
   return {
     type: CAPTURE_DESKTOP,
+    args: [optDisplayId],
+  };
+}
+
+export function captureSelection(optDisplayId) {
+  return {
+    type: CAPTURE_SELECTION,
     args: [optDisplayId],
   };
 }
@@ -142,38 +150,3 @@ export function uploadImage(filePath, optUploaderId) {
     args: [filePath, optUploaderId],
   };
 }
-
-
-// const types = [
-//   'authorizeUploader',
-//   'captureDesktop',
-//   'captureSelection',
-//   'captureWindow',
-//   'closeAlert',
-//   'copyImage',
-//   'copyText',
-//   'importImageFromClipboard',
-//   'openDashboard',
-//   'openImageContextMenu',
-//   'openSettings',
-//   'quitApp',
-//   'saveImage',
-//   'showDialogToOpenImage',
-//   'showDialogToPickSaveDir',
-//   'showImageInFolder',
-//   'updateSetting',
-//   'uploadImage',
-// ];
-
-// const creators = {};
-
-// types.forEach((type) => {
-//   creators[type] = function actionCreator(...args) {
-//     // Forward arguments to dispatcher as array,
-//     // dispatcher will then spread these arguments before calling a handler
-//     return { type, args };
-//   };
-// });
-
-// export default creators;
-// export { types as types };

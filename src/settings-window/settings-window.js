@@ -10,8 +10,8 @@ import Window from '../window.shim';
 
 export default class SettingsWindow extends Window {
 
-  constructor() {
-    super('settings', `file://${__dirname}/renderer/settings.html`);
+  constructor(options) {
+    super('settings', `file://${__dirname}/renderer/settings.html`, options);
   }
 
   sendState(state) {

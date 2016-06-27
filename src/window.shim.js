@@ -51,6 +51,10 @@ export default class Window {
     this.window.hide();
   }
 
+  close() {
+    this.window.close();
+  }
+
   destroy() {
     this.window.destroy();
     this.emitter.emit('destroy');
@@ -63,6 +67,10 @@ export default class Window {
   setMenu(template) {
     const menu = electron.Menu.buildFromTemplate(template);
     this.window.setMenu(menu);
+  }
+
+  fullscreen() {
+    this.window.setFullScreen(true);
   }
 
   on(...args) {
@@ -81,6 +89,17 @@ export default class Window {
       callback(...args);
     };
     electron.ipcMain.on(eventName, listener);
+    this.on('close', () => {
+      electron.ipcMain.removeListener(eventName, listener);
+    });
+  }
+
+  onceMessage(type, callback) {
+    const eventName = `window:${this.namespace}:${type}`;
+    const listener = function listener(event, ...args) {
+      callback(...args);
+    };
+    electron.ipcMain.once(eventName, listener);
     this.on('close', () => {
       electron.ipcMain.removeListener(eventName, listener);
     });

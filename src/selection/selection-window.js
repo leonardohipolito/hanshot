@@ -2,20 +2,16 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import RendererIpc from '../../renderer-ipc.shim';
+import Window from '../window.shim';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-const ipc = new RendererIpc('notification');
+export default class SelectionWindow extends Window {
 
-const container = document.querySelector('#container');
+  constructor() {
+    super('selection', `file://${__dirname}/renderer/selection.html`);
+  }
 
-ipc.onMessage('text-updated', (text) => {
-  container.innerHTML = text;
-});
-
-document.addEventListener('mouseover', () => {
-  ipc.sendMessage('hover');
-}, true);
+}

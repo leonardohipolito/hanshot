@@ -12,12 +12,12 @@ import { IMAGE_SOURCE_DESKTOP } from '../constants';
 export default function captureDesktopHandler(
   dispatch, settings, screen, dashboardWindow, savePathFactory
 ) {
-  return function captureDesktop(displayId) {
+  return function captureDesktop(optDisplayId) {
     if (settings.get('close-before-capture')) {
       dashboardWindow.hide();
     }
 
-    screen.captureDisplay(displayId, (err, dataURL) => {
+    screen.captureDisplay(optDisplayId, (err, dataURL) => {
       if (err) throw err;
 
       const savePath = savePathFactory(IMAGE_SOURCE_DESKTOP);

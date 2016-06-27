@@ -5,7 +5,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-import * as renderer from '../../renderer.shim';
+import RendererIpc from '../../renderer-ipc.shim';
 
 var ImageFormat = require('./components/image-format.jsx');
 var Behavior = require('./components/behavior.jsx');
@@ -16,7 +16,7 @@ var Upload = require('./components/upload.jsx');
 // Module
 //------------------------------------------------------------------------------
 
-const ipc = renderer.createIpc('settings');
+const ipc = new RendererIpc('settings');
 
 var Settings = React.createClass({
   getInitialState: function () {
@@ -32,7 +32,7 @@ var Settings = React.createClass({
   componentWillUnmount: function () {
     ipc.offMessage('state-updated', this.onStateUpdated);
   },
-  onStateUpdated: function (event, state) {
+  onStateUpdated: function (state) {
     this.setState(state);
   },
   render: function () {

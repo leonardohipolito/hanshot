@@ -1,29 +1,35 @@
-'use strict';
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
 
-var electron = require('electron');
+import Cropper from 'cropperjs';
 
-var Cropper = require('cropperjs');
+import RendererIpc from '../../renderer-ipc.shim';
 
-var KEY_ESC = 27;
-var KEY_ENTER = 13;
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
-var image = document.querySelector('img');
-var container = document.getElementById('container');
+const ipc = new RendererIpc('selection');
 
-electron.ipcRenderer.on('selection-image', function (event, options) {
+const KEY_ESC = 27;
+const KEY_ENTER = 13;
 
-  container.style.width = options.displayBounds.width + 'px';
-  container.style.height = options.displayBounds.height + 'px';
+const image = document.querySelector('img');
+const container = document.getElementById('container');
 
-  image.addEventListener('load', function () {
+ipc.onMessage('image', (options) => {
+  container.style.width = `${options.displayBounds.width}px`;
+  container.style.height = `${options.displayBounds.height}px`;
 
-    var cropper = new Cropper(image, {
+  image.addEventListener('load', () => {
+    const cropper = new Cropper(image, {
       highlight: false,
       movable: false,
       rotatable: false,
       scalable: false,
       zoomable: false,
-      zoomOnWheel: false
+      zoomOnWheel: false,
     });
 
     function onEnter(event) {
@@ -31,29 +37,29 @@ electron.ipcRenderer.on('selection-image', function (event, options) {
         return true;
       }
 
-      var croppedCanvas = cropper.getCroppedCanvas();
-      var dataURL = croppedCanvas.toDataURL('image/png');
+      const croppedCanvas = cropper.getCroppedCanvas();
+      const dataURL = croppedCanvas.toDataURL('image/png');
 
-      electron.ipcRenderer.send('selection-complete', null, dataURL);
+      ipc.sendMessage('complete', null, dataURL);
 
       cropper.destroy();
 
       document.removeEventListener('keyup', onEnter);
+
+      return true;
     }
 
     document.addEventListener('keyup', onEnter, true);
 
-    electron.ipcRenderer.send('selection-ready');
-
+    ipc.sendMessage('ready');
   });
 
   image.src = options.dataURL;
-
 });
 
-document.addEventListener('keyup', function (event) {
+document.addEventListener('keyup', (event) => {
   if (event.keyCode === KEY_ESC) {
-    electron.ipcRenderer.send('selection-complete', new Error('cancel'));
+    ipc.sendMessage('complete', new Error('cancel'));
     return;
   }
 }, true);
