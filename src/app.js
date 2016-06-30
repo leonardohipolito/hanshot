@@ -14,8 +14,6 @@ import cacheProvider from './cache/cache.provider';
 import settingsProvider from './settings/settings.provider';
 
 import Screen from './screen';
-// var Selection = require('./selection');
-// var Screen = require('./screen');
 
 import trayMenu from './tray/tray.menu';
 import dashboardWindowMenu from './dashboard-window/dashboard-window.menu';

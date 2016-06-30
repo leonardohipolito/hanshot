@@ -3,6 +3,8 @@
 //------------------------------------------------------------------------------
 
 import Cropper from 'cropperjs';
+import CropperCss from 'cropperjs/dist/cropper.css';
+import SelectionCss from './selection.css';
 
 import RendererIpc from '../../renderer-ipc.shim';
 

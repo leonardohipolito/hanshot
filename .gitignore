@@ -1,2 +1,7 @@
+// Webpack generated bundles
+*.dist.js
+
 node_modules/
+
+// Just for development, remove it later
 tmp/

@@ -5,6 +5,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+import DashboardCss from './dashboard.css';
 import RendererIpc from '../../renderer-ipc.shim';
 
 var Navbar = require('./components/navbar.jsx');

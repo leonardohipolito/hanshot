@@ -11,7 +11,7 @@ import { receiveSettings } from '../store/actions';
 //------------------------------------------------------------------------------
 
 export default function settingsProvider(config, store) {
-  const defaultSettingsPath = `${__dirname}/default.json`;
+  const defaultSettingsPath = `${__dirname}/settings/default.json`;
 
   const defaultSource = new JSONSource(defaultSettingsPath);
   const userSource = new JSONSource(config.SETTINGS_PATH);

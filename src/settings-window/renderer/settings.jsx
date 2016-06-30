@@ -5,6 +5,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+import SettingsCss from './settings.css';
 import RendererIpc from '../../renderer-ipc.shim';
 
 var ImageFormat = require('./components/image-format.jsx');

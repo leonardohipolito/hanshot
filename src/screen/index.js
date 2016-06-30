@@ -22,7 +22,7 @@ function Screen() {
     show: false
   });
 
-  this.window.loadURL('file://' + __dirname + '/renderer/screen.html');
+  this.window.loadURL('file://' + __dirname + '/screen/renderer/screen.html');
   this.window.webContents.openDevTools();
 
   electron.screen.on('display-added', function () {

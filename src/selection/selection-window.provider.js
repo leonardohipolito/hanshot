@@ -27,16 +27,16 @@ export default function selectionWindowProvider() {
     // two modes are considered conflicting.
     // https://github.com/electron/electron/issues/3228
     selectionWindow = new SelectionWindow({
-      show: false,
-      frame: false,
+      // show: false,
+      // frame: false,
       // Setting zero width and height to not to have weird flickers
       // when window tries to transition to a fullscreen mode. Otherwise, it
       // will show original window for a second, and then fullscreened one.
-      width: 0,
-      height: 0,
+      // width: 0,
+      // height: 0,
       // Transparency allows to hide white flickering background
       // when transitioning to fullscreen
-      transparent: true,
+      // transparent: true,
     });
 
     // Send image when window is ready

@@ -11,7 +11,10 @@ import Window from '../window.shim';
 export default class DashboardWindow extends Window {
 
   constructor() {
-    super('dashboard', `file://${__dirname}/renderer/dashboard.html`);
+    super(
+      'dashboard',
+      `file://${__dirname}/dashboard-window/renderer/dashboard.html`
+    );
   }
 
   sendState(state) {
