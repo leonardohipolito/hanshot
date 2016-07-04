@@ -32,12 +32,13 @@
     "style-loader": "^0.13.1",
     "tape": "^4.5.1",
     "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "webpack-node-externals": "^1.2.0"
   },
   "scripts": {
+    "dev": "webpack-dev-server --config=webpack.config.development.js --port=4000 --hot --inline",
+    "build": "webpack --config webpack.config.electron.js",
     "start": "electron .",
-    "dev": "webpack-dev-server --port=4000 --hot --inline",
-    "build": "webpack",
     "package": "npn run build && node package.js",
     "lint": "eslint src/cache.js test",
     "test": "npm run test:unit && npm run test:int && npm run test:int:node",
