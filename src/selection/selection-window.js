@@ -11,7 +11,7 @@ import Window from '../window.shim';
 export default class SelectionWindow extends Window {
 
   constructor() {
-    super('selection', `file://${__dirname}/selection/renderer/selection.html`);
+    super('selection', `file://${__dirname}/../src/selection/renderer/selection.html`);
   }
 
 }

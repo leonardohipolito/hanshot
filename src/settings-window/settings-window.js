@@ -13,7 +13,7 @@ export default class SettingsWindow extends Window {
   constructor(options) {
     super(
       'settings',
-      `file://${__dirname}/settings-window/renderer/settings.html`,
+      `file://${__dirname}/../src/settings-window/renderer/settings.html`,
       options
     );
   }

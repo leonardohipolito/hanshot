@@ -1,5 +1,5 @@
 // Webpack generated bundles
-*.dist.js
+dist/
 
 node_modules/
 

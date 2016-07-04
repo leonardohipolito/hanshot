@@ -1,22 +1,31 @@
+const path = require('path');
+
 module.exports = {
 
   entry: {
 
-    main: './src/main.js',
+    main: [
+      './src/main.js'
+    ],
 
-    'dashboard-window/renderer/dashboard':
+    'dashboard-window': [
       './src/dashboard-window/renderer/dashboard.jsx',
+    ],
 
-    'settings-window/renderer/settings':
+    'settings-window': [
       './src/settings-window/renderer/settings.jsx',
+    ],
 
-    'selection/renderer/selection':
+    'selection': [
       './src/selection/renderer/selection.js',
+    ],
+
   },
 
   output: {
-    path: './src/',
-    filename: '[name].dist.js',
+    path: path.join(__dirname, 'dist'),
+    publicPath: 'http://localhost:4000/dist/',
+    filename: '[name].js',
   },
 
   module: {
@@ -44,7 +53,7 @@ module.exports = {
       // in /node_modules/es6-promise/dist
       // @ ./~/es6-promise/dist/es6-promise.js 131:20-30
 
-      // /node_modules\/es6-promise\/dist\/es6-promise\.js/,
+      /node_modules\/es6-promise\/dist\/es6-promise\.js/,
 
       // https://github.com/webpack/webpack/issues/138
       /node_modules\/json-schema\/lib\/validate\.js/,

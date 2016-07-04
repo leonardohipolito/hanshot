@@ -13,7 +13,7 @@ export default class DashboardWindow extends Window {
   constructor() {
     super(
       'dashboard',
-      `file://${__dirname}/dashboard-window/renderer/dashboard.html`
+      `file://${__dirname}/../src/dashboard-window/renderer/dashboard.html`
     );
   }
 
