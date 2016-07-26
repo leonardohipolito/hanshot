@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 
 import Window from '../window.shim';
+import { SOURCE_PATH } from '../config';
 
 //------------------------------------------------------------------------------
 // Module
@@ -13,7 +14,7 @@ export default class DashboardWindow extends Window {
   constructor() {
     super(
       'dashboard',
-      `file://${__dirname}/../src/dashboard-window/renderer/dashboard.html`
+      `file://${SOURCE_PATH}/dashboard-window/renderer/dashboard.html`
     );
   }
 

@@ -9,6 +9,8 @@ var util = require('util');
 
 var electron = require('electron');
 
+import { SOURCE_PATH } from '../config';
+
 //------------------------------------------------------------------------------
 // Public Interface
 //------------------------------------------------------------------------------
@@ -22,7 +24,7 @@ function Screen() {
     show: false
   });
 
-  this.window.loadURL('file://' + __dirname + '/../src/screen/renderer/screen.html');
+  this.window.loadURL(`file://${SOURCE_PATH}/screen/renderer/screen.html`);
   this.window.webContents.openDevTools();
 
   electron.screen.on('display-added', function () {

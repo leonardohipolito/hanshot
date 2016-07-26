@@ -16,6 +16,7 @@ const options = {
   dir: __dirname,
   platform: 'linux',
   ignore: ignoreDirs.concat(ignoreDeps),
+  overwrite: true,
 };
 
 packager(options, (err, appPaths) => {

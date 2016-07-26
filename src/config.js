@@ -10,9 +10,14 @@ import electron from 'electron';
 // Module
 //------------------------------------------------------------------------------
 
-const appDataPath = electron.app.getPath('appData');
-const resourcesPath = path.resolve(__dirname, '..', 'resources');
+const rootPath = path.resolve(__dirname, '..');
+const sourcePath = path.join(rootPath, 'src');
+const resourcesPath = path.join(rootPath, 'resources');
 
+const appDataPath = electron.app.getPath('appData');
+
+
+export const SOURCE_PATH = sourcePath;
 export const CACHE_PATH = path.join(appDataPath, 'hanshot', 'cache.json');
 export const SETTINGS_PATH = path.join(appDataPath, 'hanshot', 'settings.json');
 export const UNSAVED_PATH = path.join(appDataPath, 'hanshot', 'unsaved');

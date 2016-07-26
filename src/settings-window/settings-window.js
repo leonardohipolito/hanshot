@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 
 import Window from '../window.shim';
+import { SOURCE_PATH } from '../config';
 
 //------------------------------------------------------------------------------
 // Module
@@ -13,7 +14,7 @@ export default class SettingsWindow extends Window {
   constructor(options) {
     super(
       'settings',
-      `file://${__dirname}/../src/settings-window/renderer/settings.html`,
+      `file://${SOURCE_PATH}/settings-window/renderer/settings.html`,
       options
     );
   }

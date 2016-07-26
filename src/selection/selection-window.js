@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 
 import Window from '../window.shim';
+import { SOURCE_PATH } from '../config';
 
 //------------------------------------------------------------------------------
 // Module
@@ -11,7 +12,10 @@ import Window from '../window.shim';
 export default class SelectionWindow extends Window {
 
   constructor() {
-    super('selection', `file://${__dirname}/../src/selection/renderer/selection.html`);
+    super(
+      'selection',
+      `file://${SOURCE_PATH}/selection/renderer/selection.html`
+    );
   }
 
 }
