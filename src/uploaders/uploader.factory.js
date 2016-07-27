@@ -2,13 +2,13 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import ImgurUploader from './uploaders/imgur';
-import DropboxUploader from './uploaders/dropbox';
+import ImgurUploader from './imgur';
+import DropboxUploader from './dropbox';
 
 import {
   UPLOADER_IMGUR,
   UPLOADER_DROPBOX,
-} from './constants';
+} from '../constants';
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -23,8 +23,8 @@ const uploaders = {
 // Module
 //------------------------------------------------------------------------------
 
-export default function uploaderFactoryProvider(settings, cache) {
-  return function uploaderFactory(optUploaderId) {
+export default function uploaderFactory(settings, cache) {
+  return function createUploader(optUploaderId) {
     let uploaderId = optUploaderId;
 
     if (!(uploaderId in uploaders)) {
@@ -43,4 +43,4 @@ export default function uploaderFactoryProvider(settings, cache) {
   };
 }
 
-uploaderFactoryProvider.inject = ['settings', 'cache'];
+uploaderFactory.inject = ['settings', 'cache'];

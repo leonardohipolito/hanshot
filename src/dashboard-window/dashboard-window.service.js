@@ -9,8 +9,8 @@ import * as actions from '../actions';
 // Module
 //------------------------------------------------------------------------------
 
-export default function dashboardWindowFactory(
-  dashboardWindowMenu, dispatch, store, settings, cache
+export default function dashboardWindowService(
+  dashboardWindowMenuFactory, dispatch, store, settings, cache
 ) {
   let dashboardWindow = null;
 
@@ -18,7 +18,7 @@ export default function dashboardWindowFactory(
     if (dashboardWindow !== null) return dashboardWindow;
 
     dashboardWindow = new DashboardWindow();
-    dashboardWindow.setMenu(dashboardWindowMenu);
+    dashboardWindow.setMenu(dashboardWindowMenuFactory());
 
     dashboardWindow.onMessage('ready', () => {
       dashboardWindow.sendState(store.getState());
@@ -76,6 +76,6 @@ export default function dashboardWindowFactory(
   };
 }
 
-dashboardWindowFactory.inject = [
-  'dashboardWindowMenu', 'dispatch', 'store', 'settings', 'cache',
+dashboardWindowService.inject = [
+  'dashboardWindowMenuFactory', 'dispatch', 'store', 'settings', 'cache',
 ];

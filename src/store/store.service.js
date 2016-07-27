@@ -2,18 +2,15 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import Cache from './cache';
-import JSONSource from '../json.source';
+import * as Redux from 'redux';
+
+import appReducer from './reducers/app.reducer';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function cacheProvider(config) {
-  const source = new JSONSource(config.CACHE_PATH);
-  const cache = new Cache(source);
-
-  return cache;
+export default function storeService() {
+  const store = Redux.createStore(appReducer);
+  return store;
 }
-
-cacheProvider.inject = ['config'];

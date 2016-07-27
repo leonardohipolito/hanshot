@@ -52,8 +52,8 @@ function getSourcePart(source) {
 // Module
 //------------------------------------------------------------------------------
 
-export default function savePathFactoryProvider(config, settings) {
-  return function savePathFactory(source) {
+export default function savePathFactory(config, settings) {
+  return function createSavePath(source) {
     // TODO: removed hard reference to config
     let dirPath = config.UNSAVED_PATH;
     if (settings.get('save-dir-selected')) {
@@ -74,4 +74,4 @@ export default function savePathFactoryProvider(config, settings) {
   };
 }
 
-savePathFactoryProvider.inject = ['config', 'settings'];
+savePathFactory.inject = ['config', 'settings'];

@@ -4,28 +4,17 @@
 
 import * as path from 'path';
 
-import Collection from './collection';
-import { receiveImage } from './store/actions';
-import * as fs from './fs-extra';
-import * as buffer from './buffer';
-import log from './log';
+import { receiveImage } from '../store/actions';
+import * as fs from '../fs-extra';
+import * as buffer from '../buffer';
+import log from '../log';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function galleryFactory(cache, store) {
-  const gallery = new Collection();
-
-  cache.on('load', () => {
-    // Fill up gallery with cached images
-    const items = cache.get('gallery', []);
-    items.forEach((item) => {
-      gallery.add(item);
-    });
-  });
-
-  function fetchImage() {
+export default function imageProvider(store, gallery) {
+  function provideImage() {
     const imageData = gallery.last();
     if (!imageData) {
       store.dispatch(receiveImage(null));
@@ -51,24 +40,25 @@ export default function galleryFactory(cache, store) {
           dataURL: buffer.toDataURL(imageBuffer),
           width,
           height,
-          publicUrls: imageData.publicUrls || []
+          publicUrls: imageData.publicUrls || [],
         };
 
         store.dispatch(receiveImage(image));
       })
       .catch((err) => {
-        log('ERROR: fetchImage');
+        log('ERROR: provideImage');
         log(err);
       });
   }
 
-  gallery.on('add', fetchImage);
-  gallery.on('update', fetchImage);
+  // TODO: move listeners out of here
+  gallery.on('add', provideImage);
+  gallery.on('update', provideImage);
 
-  // Update store with the latest image when app starts
-  fetchImage();
+  // TODO: move call out of here
+  provideImage();
 
-  return gallery;
+  return provideImage;
 }
 
-galleryFactory.inject = ['cache', 'store'];
+imageProvider.inject = ['store', 'gallery'];

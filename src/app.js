@@ -5,29 +5,33 @@
 import log from './log';
 
 import * as config from './config';
+import * as metadata from './metadata/metadata';
 
 import Container from './container';
 import Dispatcher from './dispatcher';
 
-import storeProvider from './store/store.provider';
-import cacheProvider from './cache/cache.provider';
-import settingsProvider from './settings/settings.provider';
+import storeService from './store/store.service';
+import cacheService from './cache/cache.service';
+import settingsService from './settings/settings.service';
 
 import Screen from './screen';
 
-import trayMenu from './tray/tray.menu';
-import dashboardWindowMenu from './dashboard-window/dashboard-window.menu';
-import settingsWindowMenu from './settings-window/settings-window.menu';
-import contextMenuProvider from './context.menu.provider';
+import trayMenuFactory from './tray/tray-menu.factory';
+import dashboardWindowMenuFactory from './dashboard-window/dashboard-window-menu.factory';
+import settingsWindowMenuFactory from './settings-window/settings-window-menu.factory';
+import contextMenuFactory from './context-menu.factory';
 
-import metadataFactory from './metadata.factory';
-import galleryFactory from './gallery.factory';
-import savePathFactoryProvider from './save-path-factory.provider';
-import uploaderFactoryProvider from './uploader-factory.provider';
-import trayProvider from './tray/tray.provider';
-import dashboardWindowProvider from './dashboard-window/dashboard-window.provider';
-import settingsWindowProvider from './settings-window/settings-window.provider';
-import selectionWindowProvider from './selection/selection-window.provider';
+import galleryService from './gallery/gallery.service';
+import savePathFactoryProvider from './save-path.factory';
+import uploaderFactoryProvider from './uploaders/uploader.factory';
+import trayService from './tray/tray.service';
+import dashboardWindowService from './dashboard-window/dashboard-window.service';
+import settingsWindowService from './settings-window/settings-window.service';
+import selectionWindowService from './selection/selection-window.service';
+
+import settingsProvider from './settings/settings.provider';
+import imageProvider from './gallery/image.provider';
+import metadataProvider from './metadata/metadata.provider';
 
 import * as types from './actions';
 
@@ -63,6 +67,7 @@ export default class App {
     this.dispatch = this.dispatcher.dispatch.bind(this.dispatcher);
 
     this.register();
+    this.registerProviders();
     this.registerHandlers();
   }
 
@@ -72,34 +77,49 @@ export default class App {
 
     this.container.registerValue('dispatch', this.dispatch);
     this.container.registerValue('config', config);
+    this.container.registerValue('metadata', metadata);
 
     log('CACHE PATH: %s', config.CACHE_PATH);
     log('SETTINGS PATH: %s', config.SETTINGS_PATH);
 
     this.container.registerFactories({
-      store: storeProvider,
-      cache: cacheProvider,
-      settings: settingsProvider,
+      store: storeService,
+      cache: cacheService,
+      settings: settingsService,
     });
 
     this.container.registerClass('screen', Screen);
 
     this.container.registerFactories({
-      trayMenu,
-      dashboardWindowMenu,
-      settingsWindowMenu,
-      contextMenu: contextMenuProvider,
+      trayMenuFactory,
+      dashboardWindowMenuFactory,
+      settingsWindowMenuFactory,
+      contextMenuFactory,
     });
 
     this.container.registerFactories({
-      metadata: metadataFactory,
-      gallery: galleryFactory,
+      gallery: galleryService,
       savePathFactory: savePathFactoryProvider,
       uploaderFactory: uploaderFactoryProvider,
-      tray: trayProvider,
-      dashboardWindow: dashboardWindowProvider,
-      settingsWindow: settingsWindowProvider,
-      selectionWindow: selectionWindowProvider,
+      tray: trayService,
+      dashboardWindow: dashboardWindowService,
+      settingsWindow: settingsWindowService,
+      selectionWindow: selectionWindowService,
+    });
+  }
+
+  registerProviders() {
+    const providers = {
+      settings: settingsProvider,
+      image: imageProvider,
+      metadata: metadataProvider,
+    };
+
+    Object.keys(providers).forEach((type) => {
+      const registerName = `provider:${type}`;
+      const providerFactory = providers[type];
+
+      this.container.registerFactory(registerName, providerFactory);
     });
   }
 

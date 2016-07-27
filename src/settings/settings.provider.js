@@ -2,28 +2,21 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import Settings from './settings';
-import JSONSource from '../json.source';
 import { receiveSettings } from '../store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function settingsProvider(config, store) {
-  const defaultSource = new JSONSource(config.DEFAULT_SETTINGS_PATH);
-  const userSource = new JSONSource(config.SETTINGS_PATH);
-
-  const settings = new Settings(defaultSource, userSource);
-
-  function fetchSettings() {
+export default function settingsProvider(store, settings) {
+  function provideSettings() {
     store.dispatch(receiveSettings(settings.serialize()));
   }
 
-  settings.on('load', fetchSettings);
-  fetchSettings();
+  // TODO: move listener out of here
+  settings.on('load', provideSettings);
 
-  return settings;
+  return provideSettings;
 }
 
-settingsProvider.inject = ['config', 'store'];
+settingsProvider.inject = ['store', 'settings'];

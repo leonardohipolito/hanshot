@@ -8,7 +8,7 @@ import SelectionWindow from './selection-window';
 // Module
 //------------------------------------------------------------------------------
 
-export default function selectionWindowProvider() {
+export default function selectionWindowService() {
   let selectionWindow = null;
 
   function close() {

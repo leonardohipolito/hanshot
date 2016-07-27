@@ -2,16 +2,18 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import Tray from './tray.shim';
+import Cache from './cache';
+import JSONSource from '../json.source';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function trayProvider(config, trayMenu) {
-  const tray = new Tray(config.TRAY_ICON_PATH);
-  tray.setMenu(trayMenu);
-  return tray;
+export default function cacheService(config) {
+  const source = new JSONSource(config.CACHE_PATH);
+  const cache = new Cache(source);
+
+  return cache;
 }
 
-trayProvider.inject = ['config', 'trayMenu'];
+cacheService.inject = ['config'];

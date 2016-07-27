@@ -8,8 +8,8 @@ import SettingsWindow from './settings-window.js';
 // Module
 //------------------------------------------------------------------------------
 
-export default function settingsWindowProvider(
-  settingsWindowMenu, dispatch, store, settings
+export default function settingsWindowService(
+  settingsWindowMenuFactory, dispatch, store, settings
 ) {
   let settingsWindow = null;
 
@@ -19,7 +19,7 @@ export default function settingsWindowProvider(
     }
 
     settingsWindow = new SettingsWindow();
-    settingsWindow.setMenu(settingsWindowMenu);
+    settingsWindow.setMenu(settingsWindowMenuFactory());
 
     settingsWindow.onMessage('ready', () => {
       settingsWindow.sendState(store.getState());
@@ -61,6 +61,6 @@ export default function settingsWindowProvider(
   };
 }
 
-settingsWindowProvider.inject = [
-  'settingsWindowMenu', 'dispatch', 'store', 'settings',
+settingsWindowService.inject = [
+  'settingsWindowMenuFactory', 'dispatch', 'store', 'settings',
 ];

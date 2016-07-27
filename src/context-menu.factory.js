@@ -13,8 +13,8 @@ import {
 // Module
 //------------------------------------------------------------------------------
 
-export default function contextMenuProvider(dispatch, metadata) {
-  return function contextMenu(filePath, publicUrls = []) {
+export default function contextMenuFactory(dispatch, metadata) {
+  return function createContextMenu(filePath, publicUrls = []) {
     const uploadersSubMenu = metadata.uploadHosts.map((host) => ({
       label: host.name,
       click: () => dispatch(uploadImage(filePath, host.id)),
@@ -60,4 +60,4 @@ export default function contextMenuProvider(dispatch, metadata) {
   };
 }
 
-contextMenuProvider.inject = ['dispatch', 'metadata'];
+contextMenuFactory.inject = ['dispatch', 'metadata'];
