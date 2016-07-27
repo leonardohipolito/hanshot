@@ -73,6 +73,9 @@ export default class App {
     this.container.registerValue('dispatch', this.dispatch);
     this.container.registerValue('config', config);
 
+    log('CACHE PATH: %s', config.CACHE_PATH);
+    log('SETTINGS PATH: %s', config.SETTINGS_PATH);
+
     this.container.registerFactories({
       store: storeProvider,
       cache: cacheProvider,
@@ -133,9 +136,23 @@ export default class App {
   }
 
   start() {
-    // Instantiate all registered modules
-    this.container.instantiate();
-    log('started i guess');
+    this.beforeStart()
+      .then(() => {
+        // Instantiate all registered modules, which were not instantiated yet
+        this.container.instantiate();
+        log('started i guess');
+      })
+      .catch((err) => {
+        log('failed to start');
+        log(err);
+      });
+  }
+
+  beforeStart() {
+    return Promise.all([
+      this.container.get('cache').load(),
+      this.container.get('settings').load(),
+    ]);
   }
 
 }

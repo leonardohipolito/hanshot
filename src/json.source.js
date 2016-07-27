@@ -2,7 +2,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as fs from 'fs';
+import { readJSON, writeJSON } from './fs-extra';
 
 //------------------------------------------------------------------------------
 // Module
@@ -15,14 +15,11 @@ export default class JSONSource {
   }
 
   read() {
-    const json = fs.readFileSync(this.filePath, 'utf8');
-    const obj = JSON.parse(json);
-    return obj;
+    return readJSON(this.filePath);
   }
 
   write(obj) {
-    const json = JSON.stringify(obj);
-    fs.writeFileSync(this.filePath, json);
+    return writeJSON(this.filePath, obj);
   }
 
 }

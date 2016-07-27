@@ -10,9 +10,10 @@
 // var alertFactory = require('../../factories/alert');
 // var notificationFactory = require('../../factories/notification');
 
-import log from '../log';
-import * as fs from '../fs';
 import * as path from 'path';
+
+import log from '../log';
+import * as fs from '../fs-extra';
 import * as clipboard from '../clipboard';
 import { showAlert, openDashboard } from '../actions';
 import * as alerts from '../alerts';

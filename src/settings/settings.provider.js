@@ -11,19 +11,16 @@ import { receiveSettings } from '../store/actions';
 //------------------------------------------------------------------------------
 
 export default function settingsProvider(config, store) {
-  const defaultSettingsPath = `${__dirname}/../src/settings/default.json`;
-
-  const defaultSource = new JSONSource(defaultSettingsPath);
+  const defaultSource = new JSONSource(config.DEFAULT_SETTINGS_PATH);
   const userSource = new JSONSource(config.SETTINGS_PATH);
 
   const settings = new Settings(defaultSource, userSource);
-
-  settings.load();
 
   function fetchSettings() {
     store.dispatch(receiveSettings(settings.serialize()));
   }
 
+  settings.on('load', fetchSettings);
   fetchSettings();
 
   return settings;

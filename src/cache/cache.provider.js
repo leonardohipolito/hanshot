@@ -13,8 +13,6 @@ export default function cacheProvider(config) {
   const source = new JSONSource(config.CACHE_PATH);
   const cache = new Cache(source);
 
-  cache.load();
-
   return cache;
 }
 

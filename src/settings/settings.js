@@ -2,6 +2,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
+import EventEmitter from 'events';
+
 import log from '../log';
 
 //------------------------------------------------------------------------------
@@ -15,6 +17,7 @@ export default class Settings {
     this.userStorage = {};
     this.defaultSource = defaultSource;
     this.userSource = userSource;
+    this.emitter = new EventEmitter();
   }
 
   set(key, value) {
@@ -32,32 +35,54 @@ export default class Settings {
   }
 
   load() {
-    try {
-      this.defaultStorage = this.defaultSource.read();
-    } catch (err) {
-      // Swallow all read errors and fallback to empty object
-      log('Settings: default read error');
-      log(err);
-    }
-    if (this.userSource) {
-      try {
-        this.userStorage = this.userSource.read();
-      } catch (err) {
-        // Swallow all read errors and fallback to empty object
+    return Promise
+      .all([
+        this.loadDefaultSource(),
+        this.loadUserSource(),
+      ])
+      .then(() => {
+        this.emitter.emit('load');
+      });
+  }
+
+  on(name, listener) {
+    this.emitter.on(name, listener);
+  }
+
+  loadDefaultSource() {
+    return this.defaultSource
+      .read()
+      .then((data) => {
+        this.defaultStorage = data;
+      })
+      .catch((err) => {
+        // Do not rethrow read error, because app can still work
+        log('Settings: default read error');
+        log(err);
+      });
+  }
+
+  loadUserSource() {
+    return this.userSource
+      .read()
+      .then((data) => {
+        this.userStorage = data;
+      })
+      .catch((err) => {
+        // Do not rethrow read error, because app can still work
         log('Settings: user read error');
         log(err);
-      }
-    }
+      });
   }
 
   save() {
-    try {
-      this.userSource.write(this.userStorage);
-    } catch (err) {
-      // Swallow all write errors
-      log('Settings: user write error');
-      log(err);
-    }
+    return this.userSource
+      .write(this.userStorage)
+      .catch((err) => {
+        // Do not rethrow write error, because app can still work
+        log('Settings: user write error');
+        log(err);
+      });
   }
 
   serialize() {

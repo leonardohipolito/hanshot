@@ -4,11 +4,13 @@
 
 import electron from 'electron';
 
+import log from '../log';
+
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function quitAppHandler(cache, /* screen,*/ settings, gallery) {
+export default function quitAppHandler(cache, screen, settings, gallery) {
   return function quitApp() {
     // Save info about images to cache
     const items = gallery.all();
@@ -18,13 +20,22 @@ export default function quitAppHandler(cache, /* screen,*/ settings, gallery) {
     }));
     cache.set('gallery', cacheItems);
 
-    // screen.destroy();
-    // TODO: use promises or callbacks to make async writes
-    // now cache and settings are saved synchronously (is it bad?)
-    settings.save();
-    cache.save();
-    electron.app.quit();
+    // Delayed promise execution
+    // https://github.com/electron/electron/issues/6123
+    Promise.all([
+      cache.save(),
+      settings.save(),
+    ])
+    .then(() => {
+      log('quited i guess');
+      screen.destroy();
+      electron.app.quit();
+    })
+    .catch((err) => {
+      log('failed to quit');
+      log(err);
+    });
   };
 }
 
-quitAppHandler.inject = ['cache', /* 'screen',*/ 'settings', 'gallery'];
+quitAppHandler.inject = ['cache', 'screen', 'settings', 'gallery'];

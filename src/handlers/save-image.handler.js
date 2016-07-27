@@ -3,9 +3,10 @@
 //------------------------------------------------------------------------------
 
 import * as path from 'path';
-import * as fs from '../fs';
-import log from '../log';
+
+import * as fs from '../fs-extra';
 import * as buffer from '../buffer';
+import log from '../log';
 
 //------------------------------------------------------------------------------
 // Module

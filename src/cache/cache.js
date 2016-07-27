@@ -2,6 +2,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
+import EventEmitter from 'events';
+
 import log from '../log';
 
 //------------------------------------------------------------------------------
@@ -13,6 +15,7 @@ export default class Cache {
   constructor(source) {
     this.storage = {};
     this.source = source;
+    this.emitter = new EventEmitter();
   }
 
   set(key, value) {
@@ -25,24 +28,32 @@ export default class Cache {
       defaultValue;
   }
 
+  on(name, listener) {
+    this.emitter.on(name, listener);
+  }
+
   load() {
-    try {
-      this.storage = this.source.read();
-    } catch (err) {
-      // Swallow all read errors and fallback to empty object
-      log('Cache: read error');
-      log(err);
-    }
+    return this.source
+      .read()
+      .then((data) => {
+        this.storage = data;
+        this.emitter.emit('load');
+      })
+      .catch((err) => {
+        // Do not rethrow cache read error, because app can still work
+        log('Cache: read error');
+        log(err);
+      });
   }
 
   save() {
-    try {
-      this.source.write(this.storage);
-    } catch (err) {
-      // Swallow all write errors
-      log('Cache: write error');
-      log(err);
-    }
+    return this.source
+      .write(this.storage)
+      .catch((err) => {
+        // Do not rethrow cache write error, because app can still work
+        log('Cache: write error');
+        log(err);
+      });
   }
 
 }

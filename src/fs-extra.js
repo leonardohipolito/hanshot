@@ -11,8 +11,6 @@ import Jimp from 'jimp';
 // Module
 //------------------------------------------------------------------------------
 
-// TODO: tests pls
-
 export function mkdir(dirPath) {
   return new Promise((resolve, reject) => {
     mkdirp(dirPath, (err) => {
@@ -93,4 +91,44 @@ export function formatFileSize(bytes) {
     return `${(bytes / 1000).toFixed(1)} KB`;
   }
   return `${bytes} B`;
+}
+
+export function readFile(filePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+export function writeFile(filePath, data) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filePath, data, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+}
+
+export function readJSON(filePath) {
+  return readFile(filePath).then((data) => {
+    if (!data.length) {
+      return {};
+    }
+    return JSON.parse(data);
+  });
+}
+
+export function writeJSON(filePath, obj) {
+  return new Promise((resolve) => {
+    resolve(JSON.stringify(obj));
+  })
+    .then((data) => writeFile(filePath, data));
 }

@@ -6,7 +6,7 @@ import * as path from 'path';
 
 import Collection from './collection';
 import { receiveImage } from './store/actions';
-import * as fs from './fs';
+import * as fs from './fs-extra';
 import * as buffer from './buffer';
 import log from './log';
 
@@ -17,10 +17,12 @@ import log from './log';
 export default function galleryFactory(cache, store) {
   const gallery = new Collection();
 
-  // Fill up gallery with cached images
-  const items = cache.get('gallery', []);
-  items.forEach((item) => {
-    gallery.add(item);
+  cache.on('load', () => {
+    // Fill up gallery with cached images
+    const items = cache.get('gallery', []);
+    items.forEach((item) => {
+      gallery.add(item);
+    });
   });
 
   function fetchImage() {

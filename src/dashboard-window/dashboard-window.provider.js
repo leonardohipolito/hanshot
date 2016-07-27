@@ -63,9 +63,11 @@ export default function dashboardWindowFactory(
     }
   }
 
-  if (settings.get('show-on-start')) {
-    open();
-  }
+  settings.on('load', () => {
+    if (settings.get('show-on-start')) {
+      open();
+    }
+  });
 
   return {
     open,

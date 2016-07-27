@@ -2,7 +2,7 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import * as fs from '../fs';
+import * as fs from '../fs-extra';
 import * as clipboard from '../clipboard';
 import log from '../log';
 
