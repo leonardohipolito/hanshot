@@ -1,27 +1,23 @@
-var React = require('react');
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
 
-function Dropdown(props) {
+import React from 'react';
+import IconMenu from 'material-ui/IconMenu';
+import RaisedButton from 'material-ui/RaisedButton';
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
+
+export default function Dropdown(props) {
+
+  var button = <RaisedButton>{' ' + props.title + ' '}</RaisedButton>;
+
   return (
-    <div className="btn-group">
-      <div className="dropdown">
-        <button type="button"
-          className="btn btn-default dropdown-toggle"
-          data-toggle="dropdown"
-        >
-          {' ' + props.title + ' '}
-          <span className="caret"></span>
-        </button>
-        <ul
-          className={[
-            'dropdown-menu',
-            (props.alignMenuRight ? 'dropdown-menu-right' : '')
-          ].join(' ')}
-        >
-          {props.children}
-        </ul>
-      </div>
-    </div>
+    <IconMenu
+      iconButtonElement={button}
+    >
+    </IconMenu>
   );
 }
-
-module.exports = Dropdown;

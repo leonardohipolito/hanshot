@@ -1,15 +1,18 @@
-var React = require('react');
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
 
-function Button(props) {
+import React from 'react';
+import RaisedButton from 'material-ui/RaisedButton';
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
+
+export default function Button(props) {
   return (
-    <button
-      type="button"
-      className="btn btn-default"
-      {...props}
-    >
+    <RaisedButton {...props}>
       {props.children}
-    </button>
+    </RaisedButton>
   );
 }
-
-module.exports = Button;

@@ -19,11 +19,14 @@ export default function Copy(props) {
       onClick={() => {
         viewDispatch(copyImage(props.image.filePath));
       }}
+      {...props}
     >
       Copy
     </Button>
   );
 }
+
+Copy.muiName = 'RaisedButton';
 
 Copy.propTypes = {
   image: React.PropTypes.shape({

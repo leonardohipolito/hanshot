@@ -1,15 +1,13 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
-var viewDispatch = require('../../view-dispatch');
-import appActions from '../../../../actions';
+import viewDispatch from '../../view-dispatch';
+import { copyText } from '../../../../actions';
 
-var Dropdown = require('../common/dropdown.jsx');
+import Dropdown from '../common/dropdown.jsx';
 var DropdownItem = require('../common/dropdown-item.jsx');
 
 //------------------------------------------------------------------------------
@@ -34,7 +32,7 @@ var Urls = React.createClass({
             <DropdownItem
               key={index}
               onClick={function () {
-                viewDispatch(appActions.copyText(url));
+                viewDispatch(copyText(url));
               }}
             >
               {url}

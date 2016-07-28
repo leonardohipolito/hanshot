@@ -1,15 +1,13 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
 import viewDispatch from '../../view-dispatch';
 import * as appActions from '../../../../actions';
 
-var Button = require('../common/button.jsx');
+import Button from '../common/button.jsx';
 var ButtonDropdown = require('../common/button-dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');
 
@@ -17,13 +15,14 @@ var DropdownItem = require('../common/dropdown-item.jsx');
 // Module
 //------------------------------------------------------------------------------
 
-function SnapSelection(props) {
-  var displays = props.displays;
+export default function SnapSelection(props) {
+  const displays = props.displays;
 
   if (displays.length < 2) {
     return (
       <Button
-        onClick={function () {
+        {...props}
+        onClick={() => {
           viewDispatch(appActions.captureSelection());
         }}
       >
@@ -35,33 +34,31 @@ function SnapSelection(props) {
   return (
     <ButtonDropdown
       buttonTitle="Selection"
-      onButtonClick={function () {
+      onButtonClick={() => {
         viewDispatch(appActions.captureSelection());
       }}
     >
-      {displays.map(function (display) {
-        return (
-          <DropdownItem
-            key={display.id}
-            onClick={function () {
-              viewDispatch(appActions.captureSelection(display.id));
-            }}
-          >
-            {display.name}
-          </DropdownItem>
-        );
-      })}
+      {displays.map((display) =>
+        <DropdownItem
+          key={display.id}
+          onClick={() => {
+            viewDispatch(appActions.captureSelection(display.id));
+          }}
+        >
+          {display.name}
+        </DropdownItem>
+      )}
     </ButtonDropdown>
   );
 }
+
+SnapSelection.muiName = 'RaisedButton';
 
 SnapSelection.propTypes = {
   displays: React.PropTypes.arrayOf(
     React.PropTypes.shape({
       id: React.PropTypes.number.isRequired,
-      name: React.PropTypes.string.isRequired
+      name: React.PropTypes.string.isRequired,
     }).isRequired
-  ).isRequired
+  ).isRequired,
 };
-
-module.exports = SnapSelection;

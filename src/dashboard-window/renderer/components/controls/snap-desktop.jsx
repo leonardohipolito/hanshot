@@ -1,15 +1,13 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
 import viewDispatch from '../../view-dispatch';
 import * as appActions from '../../../../actions';
 
-var Button = require('../common/button.jsx');
+import Button from '../common/button.jsx';
 var ButtonDropdown = require('../common/button-dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');
 
@@ -17,13 +15,14 @@ var DropdownItem = require('../common/dropdown-item.jsx');
 // Module
 //------------------------------------------------------------------------------
 
-function SnapDesktop(props) {
-  var displays = props.displays;
+export default function SnapDesktop(props) {
+  const displays = props.displays;
 
   if (displays.length < 2) {
     return (
       <Button
-        onClick={function () {
+        {...props}
+        onClick={() => {
           viewDispatch(appActions.captureDesktop());
         }}
       >
@@ -35,22 +34,20 @@ function SnapDesktop(props) {
   return (
     <ButtonDropdown
       buttonTitle="Desktop"
-      onButtonClick={function () {
+      onButtonClick={() => {
         viewDispatch(appActions.captureDesktop());
       }}
     >
-      {displays.map(function (display) {
-        return (
-          <DropdownItem
-            key={display.id}
-            onClick={function () {
-              viewDispatch(appActions.captureDesktop(display.id));
-            }}
-          >
-            {display.name}
-          </DropdownItem>
-        );
-      })}
+      {displays.map((display) =>
+        <DropdownItem
+          key={display.id}
+          onClick={() => {
+            viewDispatch(appActions.captureDesktop(display.id));
+          }}
+        >
+          {display.name}
+        </DropdownItem>
+      )}
     </ButtonDropdown>
   );
 }
@@ -59,9 +56,9 @@ SnapDesktop.propTypes = {
   displays: React.PropTypes.arrayOf(
     React.PropTypes.shape({
       id: React.PropTypes.number.isRequired,
-      name: React.PropTypes.string.isRequired
+      name: React.PropTypes.string.isRequired,
     }).isRequired
-  ).isRequired
+  ).isRequired,
 };
 
-module.exports = SnapDesktop;
+SnapDesktop.muiName = 'RaisedButton';
