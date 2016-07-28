@@ -13,7 +13,7 @@ export default function cacheService(config) {
   const source = new JSONSource(config.CACHE_PATH);
   const cache = new Cache(source);
 
-  return cache;
+  return cache.load();
 }
 
 cacheService.inject = ['config'];

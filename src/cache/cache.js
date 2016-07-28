@@ -38,6 +38,7 @@ export default class Cache {
       .then((data) => {
         this.storage = data;
         this.emitter.emit('load');
+        return this;
       })
       .catch((err) => {
         // Do not rethrow cache read error, because app can still work

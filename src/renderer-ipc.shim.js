@@ -35,22 +35,3 @@ export default class RendererIpc {
   }
 
 }
-
-
-// export function createIpc(namespace) {
-//   return {
-
-//     onMessage(type, callback) {
-//       electron.ipcRenderer.on(
-//     },
-
-//     offMessage(type, callback) {
-//       electron.ipcRenderer.removeListener(`window:${namespace}:${type}`, callback);
-//     },
-
-//     sendMessage(type, body) {
-//       electron.ipcRenderer.send(`window:${namespace}:${type}`, body);
-//     },
-
-//   };
-// }

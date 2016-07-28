@@ -7,7 +7,7 @@ import log from './log';
 import * as config from './config';
 import * as metadata from './metadata/metadata';
 
-import Container from './container';
+import Container from './container/container';
 import Dispatcher from './dispatcher';
 
 import storeService from './store/store.service';
@@ -88,7 +88,7 @@ export default class App {
       settings: settingsService,
     });
 
-    this.container.registerClass('screen', Screen);
+    this.container.registerConstructor('screen', Screen);
 
     this.container.registerFactories({
       trayMenuFactory,
@@ -151,28 +151,21 @@ export default class App {
 
       this.container.registerFactory(registerName, handlerFactory);
 
-      this.dispatcher.on(type, this.container.get(registerName));
+      this.container
+        .get(registerName)
+        .then(handler => this.dispatcher.on(type, handler));
     });
   }
 
   start() {
-    this.beforeStart()
-      .then(() => {
-        // Instantiate all registered modules, which were not instantiated yet
-        this.container.instantiate();
-        log('started i guess');
-      })
+    // Instantiate all registered modules, which were not instantiated yet
+    this.container
+      .instantiate()
+      .then(() => log('started i guess'))
       .catch((err) => {
-        log('failed to start');
+        log('failed to start i guess');
         log(err);
       });
-  }
-
-  beforeStart() {
-    return Promise.all([
-      this.container.get('cache').load(),
-      this.container.get('settings').load(),
-    ]);
   }
 
 }

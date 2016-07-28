@@ -15,7 +15,7 @@ export default function settingsService(config) {
 
   const settings = new Settings(defaultSource, userSource);
 
-  return settings;
+  return settings.load();
 }
 
 settingsService.inject = ['config'];

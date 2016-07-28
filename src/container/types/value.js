@@ -2,21 +2,16 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { receiveSettings } from '../store/actions';
+import Base from './base';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function settingsProvider(store, settings) {
-  function provideSettings() {
-    store.dispatch(receiveSettings(settings.serialize()));
+export default class Value extends Base {
+
+  resolve(value) {
+    return value;
   }
 
-  // TODO: move call out of here
-  provideSettings();
-
-  return provideSettings;
 }
-
-settingsProvider.inject = ['store', 'settings'];

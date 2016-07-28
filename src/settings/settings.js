@@ -42,6 +42,7 @@ export default class Settings {
       ])
       .then(() => {
         this.emitter.emit('load');
+        return this;
       });
   }
 

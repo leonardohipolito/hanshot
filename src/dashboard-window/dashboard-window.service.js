@@ -63,11 +63,9 @@ export default function dashboardWindowService(
     }
   }
 
-  settings.on('load', () => {
-    if (settings.get('show-on-start')) {
-      open();
-    }
-  });
+  if (settings.get('show-on-start')) {
+    open();
+  }
 
   return {
     open,
