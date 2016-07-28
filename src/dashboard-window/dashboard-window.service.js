@@ -36,9 +36,6 @@ export default function dashboardWindowService(
       } else {
         dispatch(actions.quitApp());
       }
-    });
-
-    dashboardWindow.on('destroy', () => {
       dashboardWindow = null;
     });
 
