@@ -4,7 +4,9 @@
 
 import React from 'react';
 import IconMenu from 'material-ui/IconMenu';
+import ToolbarWrap from './toolbar-wrap.jsx';
 import RaisedButton from 'material-ui/RaisedButton';
+import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
 
 //------------------------------------------------------------------------------
 // Module
@@ -12,12 +14,23 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 export default function Dropdown(props) {
 
-  var button = <RaisedButton>{' ' + props.title + ' '}</RaisedButton>;
+  const button = (
+    <RaisedButton
+      icon={<NavigationExpandMoreIcon />}
+    >
+      URLs
+    </RaisedButton>
+  );
 
   return (
-    <IconMenu
-      iconButtonElement={button}
-    >
-    </IconMenu>
+    <ToolbarWrap>
+      <IconMenu
+        iconButtonElement={button}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+      >
+        {props.children}
+      </IconMenu>
+    </ToolbarWrap>
   );
 }

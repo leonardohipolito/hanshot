@@ -35,7 +35,7 @@ export default function Navbar(props) {
 
   return (
     <Toolbar>
-      <ToolbarGroup firstChild>
+      <ToolbarGroup>
         <SnapDesktop displays={props.displays} />
         <SnapSelection displays={props.displays} />
       </ToolbarGroup>

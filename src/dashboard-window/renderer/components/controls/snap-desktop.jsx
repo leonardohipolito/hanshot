@@ -8,6 +8,7 @@ import viewDispatch from '../../view-dispatch';
 import * as appActions from '../../../../actions';
 
 import Button from '../common/button.jsx';
+import ToolbarWrap from '../common/toolbar-wrap.jsx';
 var ButtonDropdown = require('../common/button-dropdown.jsx');
 var DropdownItem = require('../common/dropdown-item.jsx');
 
@@ -20,14 +21,16 @@ export default function SnapDesktop(props) {
 
   if (displays.length < 2) {
     return (
-      <Button
-        {...props}
-        onClick={() => {
-          viewDispatch(appActions.captureDesktop());
-        }}
-      >
-        Desktop
-      </Button>
+      <ToolbarWrap>
+        <Button
+          {...props}
+          onClick={() => {
+            viewDispatch(appActions.captureDesktop());
+          }}
+        >
+          Desktop
+        </Button>
+      </ToolbarWrap>
     );
   }
 
@@ -60,5 +63,3 @@ SnapDesktop.propTypes = {
     }).isRequired
   ).isRequired,
 };
-
-SnapDesktop.muiName = 'RaisedButton';

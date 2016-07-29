@@ -8,6 +8,7 @@ import viewDispatch from '../../view-dispatch';
 import { copyImage } from '../../../../actions';
 
 import Button from '../common/button.jsx';
+import ToolbarWrap from '../common/toolbar-wrap.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -15,18 +16,18 @@ import Button from '../common/button.jsx';
 
 export default function Copy(props) {
   return (
-    <Button
-      onClick={() => {
-        viewDispatch(copyImage(props.image.filePath));
-      }}
-      {...props}
-    >
-      Copy
-    </Button>
+    <ToolbarWrap>
+      <Button
+        onClick={() => {
+          viewDispatch(copyImage(props.image.filePath));
+        }}
+        {...props}
+      >
+        Copy
+      </Button>
+    </ToolbarWrap>
   );
 }
-
-Copy.muiName = 'RaisedButton';
 
 Copy.propTypes = {
   image: React.PropTypes.shape({

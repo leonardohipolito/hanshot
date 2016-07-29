@@ -47,6 +47,8 @@ export default function Upload(props) {
   );
 }
 
+Upload.muiName = 'RaisedButton';
+
 Upload.defaultProps = {
   image: null,
   metadata: {

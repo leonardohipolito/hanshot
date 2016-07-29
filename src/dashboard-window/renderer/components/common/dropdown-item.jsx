@@ -1,12 +1,21 @@
-var React = require('react');
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+import React from 'react';
+import MenuItem from 'material-ui/MenuItem';
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
 
 function DropdownItem(props) {
   return (
-    <li {...props}>
-      <a href="#">
-        {props.children}
-      </a>
-    </li>
+    <MenuItem
+      {...props}
+    >
+      {props.children}
+    </MenuItem>
   );
 }
 
