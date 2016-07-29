@@ -5,13 +5,8 @@
 import React from 'react';
 
 import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-
-import Button from './button.jsx';
-import Dropdown from './dropdown.jsx';
-import ToolbarWrap from './toolbar-wrap.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -36,11 +31,12 @@ export default function ButtonDropdown(props) {
   );
 
   return (
-    <ToolbarWrap>
+    <div>
       <RaisedButton
         style={{
-          verticalAlign: 'top'
+          verticalAlign: 'top',
         }}
+        onClick={props.onButtonClick}
       >
         {props.buttonTitle}
       </RaisedButton>
@@ -51,7 +47,7 @@ export default function ButtonDropdown(props) {
       >
         {props.children}
       </IconMenu>
-    </ToolbarWrap>
+    </div>
   );
 }
 

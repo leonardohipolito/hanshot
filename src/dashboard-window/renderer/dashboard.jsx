@@ -13,7 +13,7 @@ import DashboardCss from './dashboard.css';
 import RendererIpc from '../../renderer-ipc.shim';
 
 import Navbar from './components/navbar.jsx';
-var Image = require('./components/image.jsx');
+import Image from './components/image.jsx';
 var AlertArea = require('./components/alert-area.jsx');
 
 //------------------------------------------------------------------------------

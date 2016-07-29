@@ -5,12 +5,12 @@
 import React from 'react';
 
 import viewDispatch from '../../view-dispatch';
-import * as appActions from '../../../../actions';
+import { captureDesktop } from '../../../../actions';
 
 import Button from '../common/button.jsx';
+import ButtonDropdown from '../common/button-dropdown.jsx';
+import DropdownItem from '../common/dropdown-item.jsx';
 import ToolbarWrap from '../common/toolbar-wrap.jsx';
-var ButtonDropdown = require('../common/button-dropdown.jsx');
-var DropdownItem = require('../common/dropdown-item.jsx');
 
 //------------------------------------------------------------------------------
 // Module
@@ -25,7 +25,7 @@ export default function SnapDesktop(props) {
         <Button
           {...props}
           onClick={() => {
-            viewDispatch(appActions.captureDesktop());
+            viewDispatch(captureDesktop());
           }}
         >
           Desktop
@@ -35,23 +35,25 @@ export default function SnapDesktop(props) {
   }
 
   return (
-    <ButtonDropdown
-      buttonTitle="Desktop"
-      onButtonClick={() => {
-        viewDispatch(appActions.captureDesktop());
-      }}
-    >
-      {displays.map((display) =>
-        <DropdownItem
-          key={display.id}
-          onClick={() => {
-            viewDispatch(appActions.captureDesktop(display.id));
-          }}
-        >
-          {display.name}
-        </DropdownItem>
-      )}
-    </ButtonDropdown>
+    <ToolbarWrap>
+      <ButtonDropdown
+        buttonTitle="Desktop"
+        onButtonClick={() => {
+          viewDispatch(captureDesktop());
+        }}
+      >
+        {displays.map((display) =>
+          <DropdownItem
+            key={display.id}
+            onClick={() => {
+              viewDispatch(captureDesktop(display.id));
+            }}
+          >
+            {display.name}
+          </DropdownItem>
+        )}
+      </ButtonDropdown>
+    </ToolbarWrap>
   );
 }
 
