@@ -1,65 +1,48 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
 import viewDispatch from '../view-dispatch';
-import * as appActions from '../../../actions';
+import { closeAlert } from '../../../actions';
 
-var Alert = require('./alert.jsx');
+import Alert from './alert.jsx';
+import FlatButton from 'material-ui/FlatButton';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-var AlertArea = React.createClass({
-  getDefaultProps: function () {
-    return {
-      alerts: []
-    };
-  },
-  render: function () {
-    return (
-      <div className="error-container">
-        {this.props.alerts.map(function (alert) {
-          return (
-            <Alert
-              key={alert.id}
-              type={alert.type}
-              onClose={function () {
-                viewDispatch(appActions.closeAlert(alert.id))
-              }}
-            >
-              <p>
-                {alert.message}
-              </p>
-              <p>
-                {(alert.buttons || []).map(function (button, index) {
-                  return [
-                    <button
-                      className={'btn btn-' + button.type}
-                      onClick={function () {
-                        if (button.role === 'appAction') {
-                          viewDispatch(button.appAction);
-                        }
-                        viewDispatch(appActions.closeAlert(alert.id));
-                      }}
-                    >
-                      {button.title}
-                    </button>,
-                    ' '
-                  ];
-                })}
-              </p>
-            </Alert>
-          );
-        })}
-      </div>
-    );
-  }
-});
+export default function AlertArea(props) {
+  return (
+    <div className="error-container">
+      {props.alerts.map((alert) =>
+        <Alert
+          key={alert.id}
+          message={alert.message}
+        >
+          {(alert.buttons || []).map((button) =>
+            [
+              <FlatButton
+                label={button.title}
+                secondary
+                onClick={() => {
+                  if (button.role === 'appAction') {
+                    viewDispatch(button.appAction);
+                  }
+                  viewDispatch(closeAlert(alert.id));
+                }}
+              />,
+              ' ',
+            ]
+          )}
+        </Alert>
+      )}
+    </div>
+  );
+}
 
-module.exports = AlertArea;
+AlertArea.defaultProps = {
+  alerts: [],
+};

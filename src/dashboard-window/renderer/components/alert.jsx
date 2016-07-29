@@ -1,20 +1,31 @@
-var React = require('react');
+//------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
 
-function Alert(props) {
+import React from 'react';
 
-  var type = props.type || 'danger';
+import { Card, CardHeader, CardActions } from 'material-ui/Card';
+import Avatar from 'material-ui/Avatar';
+
+//------------------------------------------------------------------------------
+// Module
+//------------------------------------------------------------------------------
+
+export default function Alert(props) {
+  const type = props.type || 'danger';
 
   return (
-    <div className={'alert alert-dismissible alert-' + type}>
-      <button
-        type="button" className="close"
-        onClick={props.onClose}
-      >
-        <span>&times;</span>
-      </button>
-      {props.children}
-    </div>
+    <Card
+      style={{
+        marginBottom: '10px',
+      }}
+    >
+      <CardHeader
+        title={props.message}
+      />
+      <CardActions>
+        {props.children}
+      </CardActions>
+    </Card>
   );
 }
-
-module.exports = Alert;

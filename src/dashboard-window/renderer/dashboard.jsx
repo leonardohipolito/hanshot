@@ -2,19 +2,17 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-
-
 
 import DashboardCss from './dashboard.css';
 import RendererIpc from '../../renderer-ipc.shim';
 
 import Navbar from './components/navbar.jsx';
 import Image from './components/image.jsx';
-var AlertArea = require('./components/alert-area.jsx');
+import AlertArea from './components/alert-area.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -26,21 +24,28 @@ injectTapEventPlugin();
 
 const ipc = new RendererIpc('dashboard');
 
-var Dashboard = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  componentWillMount: function () {
+class Dashboard extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {};
+    this.onStateUpdated = this.onStateUpdated.bind(this);
+  }
+
+  componentWillMount() {
     ipc.onMessage('state-updated', this.onStateUpdated);
     ipc.sendMessage('ready');
-  },
-  componentWillUnmount: function () {
+  }
+
+  componentWillUnmount() {
     ipc.offMessage('state-updated', this.onStateUpdated);
-  },
-  onStateUpdated: function (state) {
+  }
+
+  onStateUpdated(state) {
     this.setState(state);
-  },
-  render: function () {
+  }
+
+  render() {
     console.log(this.state);
     return (
       <MuiThemeProvider>
@@ -62,7 +67,8 @@ var Dashboard = React.createClass({
       </MuiThemeProvider>
     );
   }
-});
+
+}
 
 ReactDOM.render(
   <Dashboard />,
