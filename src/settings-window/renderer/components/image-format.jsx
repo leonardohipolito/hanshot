@@ -1,71 +1,69 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
 import viewDispatch from '../view-dispatch';
-import * as appActions from '../../../actions';
+import { updateSetting } from '../../../actions';
+import debounce from '../../../utils/debounce';
 
-var Range = require('./common/range.jsx');
-var Select = require('./common/select.jsx');
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import Slider from 'material-ui/Slider';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-// Container component
-var ImageFormat = React.createClass({
-  render: function () {
-
-    var formats = this.props.metadata.imageFormats;
-    if (!(formats && formats.length)) {
-      return null;
-    }
-
-    return (
-      <div>
-        <h4>Image format</h4>
-        <div className="form-group">
-          <Select
-            value={this.props.settings['image-format']}
-            onChange={function (value) {
-              viewDispatch(appActions.updateSetting('image-format', value));
-            }}
-          >
-            {formats.map(function (format) {
-              return (
-                <option key={format.id} value={format.id}>
-                  {format.name}
-                </option>
-              );
-            })}
-          </Select>
-        </div>
-        {(function () {
-          if (this.props.settings['image-format'] === 'jpg') {
-            return (
-              <div className="form-group">
-                Quality
-                {' '}
-                <Range
-                  initialValue={this.props.settings['jpg-quality']}
-                  min={0}
-                  max={100}
-                  step={10}
-                  onChange={function (value) {
-                    viewDispatch(appActions.updateSetting('jpg-quality', value));
-                  }}
-                />
-              </div>
-            );
-          }
-        }).call(this)}
-      </div>
-    );
+export default function ImageFormat(props) {
+  const formats = props.metadata.imageFormats;
+  if (!(formats && formats.length)) {
+    return null;
   }
-});
 
-module.exports = ImageFormat;
+  return (
+    <div>
+      <h4>Image format</h4>
+      <SelectField
+        value={props.settings['image-format']}
+        onChange={(event, index, value) => {
+          viewDispatch(updateSetting('image-format', value));
+        }}
+        style={{
+          width: '60px',
+        }}
+      >
+        {formats.map((format) =>
+          <MenuItem
+            key={format.id}
+            value={format.id}
+            primaryText={format.name}
+          />
+        )}
+      </SelectField>
+      {(() => {
+        if (props.settings['image-format'] === 'jpg') {
+          return (
+            <div className="form-group">
+              Quality
+              <Slider
+                min={0}
+                max={100}
+                step={1}
+                value={props.settings['jpg-quality']}
+                onChange={debounce((event, value) => {
+                  viewDispatch(updateSetting('jpg-quality', value));
+                }, 200)}
+                style={{
+                  width: 200,
+                }}
+              />
+            </div>
+          );
+        }
+        return null;
+      })()}
+    </div>
+  );
+}

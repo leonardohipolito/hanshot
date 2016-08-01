@@ -1,52 +1,51 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
+import React from 'react';
 
 import viewDispatch from '../view-dispatch';
-import * as appActions from '../../../actions';
+import { updateSetting, showDialogToPickSaveDir } from '../../../actions';
 
-var Checkbox = require('./common/checkbox.jsx');
+import Checkbox from 'material-ui/Checkbox';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-// Container component
-var Save = React.createClass({
-  render: function () {
-    return (
-      <div>
-        <h4>Save</h4>
-        <div className="form-group">
-          <Checkbox
-            checked={this.props.settings['save-dir-selected']}
-            onChange={function (value) {
-              viewDispatch(appActions.updateSetting('save-dir-selected', value));
+export default function Save(props) {
+  return (
+    <div>
+      <h4>Save</h4>
+      <div className="form-group">
+        <Checkbox
+          label="Auto save to directory"
+          checked={props.settings['save-dir-selected']}
+          onCheck={(event, value) => {
+            viewDispatch(updateSetting('save-dir-selected', value));
+          }}
+        />
+        <div
+          className={props.settings['save-dir-selected'] ? '' : 'disabled-area'}
+        >
+          <TextField
+            disabled
+            hintText={props.settings['save-dir-path']}
+            name="save-path-dir"
+          />
+          <br />
+          <RaisedButton
+            disabled={!props.settings['save-dir-selected']}
+            onClick={() => {
+              viewDispatch(showDialogToPickSaveDir());
             }}
           >
-            Auto save to directory
-          </Checkbox>
-          <div
-            className={this.props.settings['save-dir-selected'] ? '' : 'disabled-area'}
-          >
-            Directory: {this.props.settings['save-dir-path']}
-            <button className="btn btn-default"
-              disabled={!this.props.settings['save-dir-selected']}
-              onClick={function () {
-                viewDispatch(appActions.showDialogToPickSaveDir());
-              }}
-            >
-              Change
-            </button>
-          </div>
+            Change
+          </RaisedButton>
         </div>
       </div>
-    );
-  }
-});
-
-module.exports = Save;
+    </div>
+  );
+}

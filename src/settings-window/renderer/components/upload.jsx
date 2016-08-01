@@ -1,55 +1,42 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
-var _ = require('lodash');
+import React from 'react';
 
 import viewDispatch from '../view-dispatch';
-import * as appActions from '../../../actions';
+import { updateSetting } from '../../../actions';
 
-var Radio = require('./common/radio.jsx');
+import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-// Container component
-var Upload = React.createClass({
-  render: function () {
-
-    console.log(this.props);
-
-    var hosts = this.props.metadata.uploadHosts;
-    if (!(hosts && hosts.length)) {
-      return null;
-    }
-
-    return (
-      <div>
-        <h4>Upload</h4>
-        <div className="form-group">
-          {hosts.map(function (host) {
-            return (
-              <Radio
-                key={host.id}
-                value={host.id}
-                name="upload-host"
-                checked={host.id === this.props.settings['default-uploader']}
-                onChange={function (value) {
-                  viewDispatch(appActions.updateSetting('default-uploader', value));
-                }}
-              >
-                {host.name}
-              </Radio>
-            );
-          }, this)}
-        </div>
-      </div>
-    );
+export default function Upload(props) {
+  const hosts = props.metadata.uploadHosts;
+  if (!(hosts && hosts.length)) {
+    return null;
   }
-});
 
-module.exports = Upload;
+  return (
+    <div>
+      <h4>Upload</h4>
+      <RadioButtonGroup
+        name="upload"
+        valueSelected={props.settings['default-uploader']}
+        onChange={(event, value) => {
+          viewDispatch(updateSetting('default-uploader', value));
+        }}
+      >
+        {hosts.map((host) =>
+          <RadioButton
+            label={host.name}
+            key={host.id}
+            value={host.id}
+          />
+        )}
+      </RadioButtonGroup>
+    </div>
+  );
+}

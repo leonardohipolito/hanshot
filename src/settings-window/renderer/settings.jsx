@@ -2,63 +2,80 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-var React = require('react');
-var ReactDOM = require('react-dom');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import SettingsCss from './settings.css';
 import RendererIpc from '../../renderer-ipc.shim';
 
-var ImageFormat = require('./components/image-format.jsx');
-var Behavior = require('./components/behavior.jsx');
-var Save = require('./components/save.jsx');
-var Upload = require('./components/upload.jsx');
+import ImageFormat from './components/image-format.jsx';
+import Behavior from './components/behavior.jsx';
+import Save from './components/save.jsx';
+import Upload from './components/upload.jsx';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+injectTapEventPlugin();
+
 const ipc = new RendererIpc('settings');
 
-var Settings = React.createClass({
-  getInitialState: function () {
-    return {
+class Settings extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
       settings: {},
-      metadata: {}
+      metadata: {},
     };
-  },
-  componentWillMount: function () {
+    this.onStateUpdated = this.onStateUpdated.bind(this);
+  }
+
+  componentWillMount() {
     ipc.onMessage('state-updated', this.onStateUpdated);
     ipc.sendMessage('ready');
-  },
-  componentWillUnmount: function () {
+  }
+
+  componentWillUnmount() {
     ipc.offMessage('state-updated', this.onStateUpdated);
-  },
-  onStateUpdated: function (state) {
+  }
+
+  onStateUpdated(state) {
     this.setState(state);
-  },
-  render: function () {
+  }
+
+  render() {
+    console.log(this.state);
     return (
-      <div className="container-fluid">
-        <form>
-          <ImageFormat
-            settings={this.state.settings}
-            metadata={this.state.metadata}
-          />
-          <Behavior
-            settings={this.state.settings}
-          />
-          <Save
-            settings={this.state.settings}
-          />
-          <Upload
-            settings={this.state.settings}
-            metadata={this.state.metadata}
-          />
-        </form>
-      </div>
+      <MuiThemeProvider>
+        <div className="container-fluid">
+          <form>
+            <ImageFormat
+              settings={this.state.settings}
+              metadata={this.state.metadata}
+            />
+            <Behavior
+              settings={this.state.settings}
+            />
+            <Save
+              settings={this.state.settings}
+            />
+            <Upload
+              settings={this.state.settings}
+              metadata={this.state.metadata}
+            />
+          </form>
+        </div>
+      </MuiThemeProvider>
     );
   }
-});
+
+}
 
 ReactDOM.render(
   <Settings />,
