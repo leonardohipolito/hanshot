@@ -24,7 +24,6 @@ export default function ImageFormat(props) {
 
   return (
     <div>
-      <h4>Image format</h4>
       <SelectField
         value={props.settings['image-format']}
         onChange={(event, index, value) => {

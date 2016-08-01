@@ -21,7 +21,6 @@ export default function Upload(props) {
 
   return (
     <div>
-      <h4>Upload</h4>
       <RadioButtonGroup
         name="upload"
         valueSelected={props.settings['default-uploader']}

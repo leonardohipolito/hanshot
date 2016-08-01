@@ -16,7 +16,6 @@ import Checkbox from 'material-ui/Checkbox';
 export default function Behavior(props) {
   return (
     <div>
-      <h4>Behavior</h4>
       <div className="form-group">
         <Checkbox
           label="Close dashboard before capture"

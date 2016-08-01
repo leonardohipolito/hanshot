@@ -15,6 +15,9 @@ import Behavior from './components/behavior.jsx';
 import Save from './components/save.jsx';
 import Upload from './components/upload.jsx';
 
+import { List, ListItem, MakeSelectable } from 'material-ui/List';
+const SelectableList = MakeSelectable(List);
+
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
@@ -25,11 +28,18 @@ injectTapEventPlugin();
 
 const ipc = new RendererIpc('settings');
 
+const SECTION_IMAGE_FORMAT = 'SECTION_IMAGE_FORMAT';
+const SECTION_BEHAVIOR = 'SECTION_BEHAVIOR';
+const SECTION_SAVE = 'SECTION_SAVE';
+const SECTION_UPLOAD = 'SECTION_UPLOAD';
+
+
 class Settings extends React.Component {
 
   constructor() {
     super();
     this.state = {
+      activeSection: SECTION_IMAGE_FORMAT,
       settings: {},
       metadata: {},
     };
@@ -51,25 +61,76 @@ class Settings extends React.Component {
 
   render() {
     console.log(this.state);
+
+    let section = null;
+
+    if (this.state.activeSection === SECTION_IMAGE_FORMAT) {
+      section = (
+        <ImageFormat
+          settings={this.state.settings}
+          metadata={this.state.metadata}
+        />
+      );
+    } else if (this.state.activeSection === SECTION_BEHAVIOR) {
+      section = (
+        <Behavior
+          settings={this.state.settings}
+        />
+      );
+    } else if (this.state.activeSection === SECTION_SAVE) {
+      section = (
+        <Save
+          settings={this.state.settings}
+        />
+      );
+    } else if (this.state.activeSection === SECTION_UPLOAD) {
+      section = (
+        <Upload
+          settings={this.state.settings}
+          metadata={this.state.metadata}
+        />
+      );
+    }
+
     return (
       <MuiThemeProvider>
-        <div className="container-fluid">
-          <form>
-            <ImageFormat
-              settings={this.state.settings}
-              metadata={this.state.metadata}
+        <div>
+          <SelectableList
+            value={this.state.activeSection}
+            onChange={(event, value) => {
+              this.setState({ activeSection: value });
+            }}
+            style={{
+              width: 200,
+              float: 'left',
+              border: '1px solid #d9d9d9',
+            }}
+          >
+            <ListItem
+              value={SECTION_IMAGE_FORMAT}
+              primaryText="Image Format"
             />
-            <Behavior
-              settings={this.state.settings}
+            <ListItem
+              value={SECTION_BEHAVIOR}
+              primaryText="Behavior"
             />
-            <Save
-              settings={this.state.settings}
+            <ListItem
+              value={SECTION_SAVE}
+              primaryText="Save"
             />
-            <Upload
-              settings={this.state.settings}
-              metadata={this.state.metadata}
+            <ListItem
+              value={SECTION_UPLOAD}
+              primaryText="Upload"
             />
-          </form>
+          </SelectableList>
+          <div
+            style={{
+              marginLeft: 230,
+              paddingTop: 20,
+            }}
+          >
+            {section}
+          </div>
         </div>
       </MuiThemeProvider>
     );

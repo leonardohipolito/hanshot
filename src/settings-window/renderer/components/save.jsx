@@ -18,7 +18,6 @@ import TextField from 'material-ui/TextField';
 export default function Save(props) {
   return (
     <div>
-      <h4>Save</h4>
       <div className="form-group">
         <Checkbox
           label="Auto save to directory"
