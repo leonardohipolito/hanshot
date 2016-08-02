@@ -1,11 +1,18 @@
 //------------------------------------------------------------------------------
+// Requirements
+//------------------------------------------------------------------------------
+
+import { showDashboardSettings } from '../store/actions';
+
+//------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function openPreferencesHandler(preferencesWindow) {
-  return function openPreferences() {
-    preferencesWindow.show();
+export default function openSettingsHandler(store, dashboardWindow) {
+  return function openSettings() {
+    store.dispatch(showDashboardSettings());
+    dashboardWindow.show();
   };
 }
 
-openPreferencesHandler.inject = ['settingsWindow'];
+openSettingsHandler.inject = ['store', 'dashboardWindow'];

@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from '../view-dispatch';
-import { openImageContextMenu } from '../../../actions';
+import viewDispatch from '../../view-dispatch';
+import { openImageContextMenu } from '../../../../actions';
 
 import { Card, CardHeader, CardText } from 'material-ui/Card';
 import BrokenImageIcon from 'material-ui/svg-icons/image/broken-image';

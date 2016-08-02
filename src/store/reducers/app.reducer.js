@@ -9,6 +9,7 @@ import displaysReducer from './displays.reducer';
 import imageReducer from './image.reducer';
 import metadataReducer from './metadata.reducer';
 import settingsReducer from './settings.reducer';
+import dashboardReducer from './dashboard.reducer';
 
 //------------------------------------------------------------------------------
 // Module
@@ -20,4 +21,5 @@ export default Redux.combineReducers({
   image: imageReducer,
   metadata: metadataReducer,
   settings: settingsReducer,
+  dashboard: dashboardReducer,
 });

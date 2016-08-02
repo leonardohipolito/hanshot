@@ -7,12 +7,13 @@ import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import DashboardCss from './dashboard.css';
 import RendererIpc from '../../renderer-ipc.shim';
+import { DASHBOARD_PAGE_GALLERY, DASHBOARD_PAGE_SETTINGS } from '../../constants';
 
-import Navbar from './components/navbar.jsx';
-import Image from './components/image.jsx';
-import AlertArea from './components/alert-area.jsx';
+import DashboardCss from './dashboard.css';
+
+import Gallery from './components/gallery/gallery.jsx';
+import Settings from './components/settings/settings.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -28,7 +29,9 @@ class Dashboard extends React.Component {
 
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      dashboard: {},
+    };
     this.onStateUpdated = this.onStateUpdated.bind(this);
   }
 
@@ -47,23 +50,19 @@ class Dashboard extends React.Component {
 
   render() {
     console.log(this.state);
+
+    const activePage = this.state.dashboard.activePage;
+
+    let page = null;
+    if (activePage === DASHBOARD_PAGE_GALLERY) {
+      page = <Gallery {...this.state} />;
+    } else if (activePage === DASHBOARD_PAGE_SETTINGS) {
+      page = <Settings {...this.state} />;
+    }
+
     return (
       <MuiThemeProvider>
-        <div className="dashboard-container">
-          <Navbar
-            displays={this.state.displays}
-            metadata={this.state.metadata}
-            image={this.state.image}
-          />
-          <div className="dashboard-content">
-            <AlertArea
-              alerts={this.state.alerts}
-            />
-            <Image
-              image={this.state.image}
-            />
-          </div>
-        </div>
+        {page}
       </MuiThemeProvider>
     );
   }

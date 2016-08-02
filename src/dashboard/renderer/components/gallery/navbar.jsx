@@ -3,14 +3,15 @@
 //------------------------------------------------------------------------------
 
 import React from 'react';
+
 import Toolbar from 'material-ui/Toolbar';
 import ToolbarGroup from 'material-ui/Toolbar/ToolbarGroup';
 
-import SnapDesktop from './controls/snap-desktop.jsx';
-import SnapSelection from './controls/snap-selection.jsx';
-import Upload from './controls/upload.jsx';
-import Copy from './controls/copy.jsx';
-import Urls from './controls/urls.jsx';
+import SnapDesktop from './snap-desktop.jsx';
+import SnapSelection from './snap-selection.jsx';
+import Upload from './upload.jsx';
+import Copy from './copy.jsx';
+import Urls from './urls.jsx';
 
 //------------------------------------------------------------------------------
 // Module

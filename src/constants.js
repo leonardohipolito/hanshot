@@ -12,3 +12,6 @@ export const IMAGE_SOURCE_SELECTION = 'selection';
 
 export const UPLOADER_IMGUR = 'imgur';
 export const UPLOADER_DROPBOX = 'dropbox';
+
+export const DASHBOARD_PAGE_GALLERY = 'gallery';
+export const DASHBOARD_PAGE_SETTINGS = 'settings';

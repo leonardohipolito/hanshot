@@ -9,6 +9,8 @@ export const RECEIVE_IMAGE = 'RECEIVE_IMAGE';
 export const RECEIVE_METADATA = 'RECEIVE_METADATA';
 export const RECEIVE_SETTINGS = 'RECEIVE_SETTINGS';
 export const UPDATE_SETTING = 'UPDATE_SETTING';
+export const SHOW_DASHBOARD_GALLERY = 'SHOW_DASHBOARD_GALLERY';
+export const SHOW_DASHBOARD_SETTINGS = 'SHOW_DASHBOARD_SETTINGS';
 
 //------------------------------------------------------------------------------
 // Action creators
@@ -61,5 +63,17 @@ export function updateSetting(key, value) {
     type: UPDATE_SETTING,
     key,
     value,
+  };
+}
+
+export function showDashboardGallery() {
+  return {
+    type: SHOW_DASHBOARD_GALLERY,
+  };
+}
+
+export function showDashboardSettings() {
+  return {
+    type: SHOW_DASHBOARD_SETTINGS,
   };
 }

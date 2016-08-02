@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from '../view-dispatch';
-import { closeAlert } from '../../../actions';
+import viewDispatch from '../../view-dispatch';
+import { closeAlert } from '../../../../actions';
 
 import Alert from './alert.jsx';
 import FlatButton from 'material-ui/FlatButton';

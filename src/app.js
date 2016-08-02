@@ -17,16 +17,14 @@ import settingsService from './settings/settings.service';
 import Screen from './screen';
 
 import trayMenuFactory from './tray/tray-menu.factory';
-import dashboardWindowMenuFactory from './dashboard-window/dashboard-window-menu.factory';
-import settingsWindowMenuFactory from './settings-window/settings-window-menu.factory';
+import dashboardWindowMenuFactory from './dashboard/dashboard-window-menu.factory';
 import contextMenuFactory from './context-menu.factory';
 
 import galleryService from './gallery/gallery.service';
 import savePathFactoryProvider from './save-path.factory';
 import uploaderFactoryProvider from './uploaders/uploader.factory';
 import trayService from './tray/tray.service';
-import dashboardWindowService from './dashboard-window/dashboard-window.service';
-import settingsWindowService from './settings-window/settings-window.service';
+import dashboardWindowService from './dashboard/dashboard-window.service';
 import selectionWindowService from './selection/selection-window.service';
 
 import settingsProvider from './settings/settings.provider';
@@ -93,7 +91,6 @@ export default class App {
     this.container.registerFactories({
       trayMenuFactory,
       dashboardWindowMenuFactory,
-      settingsWindowMenuFactory,
       contextMenuFactory,
     });
 
@@ -103,7 +100,6 @@ export default class App {
       uploaderFactory: uploaderFactoryProvider,
       tray: trayService,
       dashboardWindow: dashboardWindowService,
-      settingsWindow: settingsWindowService,
       selectionWindow: selectionWindowService,
     });
   }

@@ -14,7 +14,7 @@ export default class DashboardWindow extends Window {
   constructor() {
     super(
       'dashboard',
-      `file://${SOURCE_PATH}/dashboard-window/renderer/dashboard.html`
+      `file://${SOURCE_PATH}/dashboard/renderer/dashboard.html`
     );
   }
 

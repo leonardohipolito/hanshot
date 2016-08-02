@@ -4,9 +4,9 @@
 
 import React from 'react';
 
-import viewDispatch from '../view-dispatch';
-import { updateSetting } from '../../../actions';
-import debounce from '../../../utils/debounce';
+import viewDispatch from '../../view-dispatch';
+import { updateSetting } from '../../../../actions';
+import debounce from '../../../../utils/debounce';
 
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';

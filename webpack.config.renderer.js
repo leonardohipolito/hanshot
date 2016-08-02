@@ -8,11 +8,7 @@ module.exports = {
   entry: {
 
     'dashboard-window': [
-      './src/dashboard-window/renderer/dashboard.jsx',
-    ],
-
-    'settings-window': [
-      './src/settings-window/renderer/settings.jsx',
+      './src/dashboard/renderer/dashboard.jsx',
     ],
 
     'selection': [

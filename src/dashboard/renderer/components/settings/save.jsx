@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from '../view-dispatch';
-import { updateSetting, showDialogToPickSaveDir } from '../../../actions';
+import viewDispatch from '../../view-dispatch';
+import { updateSetting, showDialogToPickSaveDir } from '../../../../actions';
 
 import Checkbox from 'material-ui/Checkbox';
 import RaisedButton from 'material-ui/RaisedButton';

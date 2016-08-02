@@ -3,17 +3,19 @@
 //------------------------------------------------------------------------------
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 
-import SettingsCss from './settings.css';
-import RendererIpc from '../../renderer-ipc.shim';
+import { openDashboard } from '../../../../actions';
+import viewDispatch from '../../view-dispatch';
 
-import ImageFormat from './components/image-format.jsx';
-import Behavior from './components/behavior.jsx';
-import Save from './components/save.jsx';
-import Upload from './components/upload.jsx';
+import Toolbar from 'material-ui/Toolbar';
+import ToolbarGroup from 'material-ui/Toolbar/ToolbarGroup';
+import FlatButton from 'material-ui/FlatButton';
+import NavigateBeforeIcon from 'material-ui/svg-icons/image/navigate-before';
+
+import ImageFormat from './image-format.jsx';
+import Behavior from './behavior.jsx';
+import Save from './save.jsx';
+import Upload from './upload.jsx';
 
 import { List, ListItem, MakeSelectable } from 'material-ui/List';
 const SelectableList = MakeSelectable(List);
@@ -22,78 +24,64 @@ const SelectableList = MakeSelectable(List);
 // Module
 //------------------------------------------------------------------------------
 
-// Needed for onTouchTap
-// http://stackoverflow.com/a/34015469/988941
-injectTapEventPlugin();
-
-const ipc = new RendererIpc('settings');
-
 const SECTION_IMAGE_FORMAT = 'SECTION_IMAGE_FORMAT';
 const SECTION_BEHAVIOR = 'SECTION_BEHAVIOR';
 const SECTION_SAVE = 'SECTION_SAVE';
 const SECTION_UPLOAD = 'SECTION_UPLOAD';
 
-
-class Settings extends React.Component {
+export default class Settings extends React.Component {
 
   constructor() {
     super();
     this.state = {
       activeSection: SECTION_IMAGE_FORMAT,
-      settings: {},
-      metadata: {},
     };
-    this.onStateUpdated = this.onStateUpdated.bind(this);
-  }
-
-  componentWillMount() {
-    ipc.onMessage('state-updated', this.onStateUpdated);
-    ipc.sendMessage('ready');
-  }
-
-  componentWillUnmount() {
-    ipc.offMessage('state-updated', this.onStateUpdated);
-  }
-
-  onStateUpdated(state) {
-    this.setState(state);
   }
 
   render() {
-    console.log(this.state);
-
     let section = null;
-
     if (this.state.activeSection === SECTION_IMAGE_FORMAT) {
       section = (
         <ImageFormat
-          settings={this.state.settings}
-          metadata={this.state.metadata}
+          settings={this.props.settings}
+          metadata={this.props.metadata}
         />
       );
     } else if (this.state.activeSection === SECTION_BEHAVIOR) {
       section = (
         <Behavior
-          settings={this.state.settings}
+          settings={this.props.settings}
         />
       );
     } else if (this.state.activeSection === SECTION_SAVE) {
       section = (
         <Save
-          settings={this.state.settings}
+          settings={this.props.settings}
         />
       );
     } else if (this.state.activeSection === SECTION_UPLOAD) {
       section = (
         <Upload
-          settings={this.state.settings}
-          metadata={this.state.metadata}
+          settings={this.props.settings}
+          metadata={this.props.metadata}
         />
       );
     }
 
+
     return (
-      <MuiThemeProvider>
+      <div>
+        <Toolbar>
+          <ToolbarGroup firstChild>
+            <FlatButton
+              label="Back to Dashboard"
+              icon={<NavigateBeforeIcon />}
+              onClick={() => {
+                viewDispatch(openDashboard());
+              }}
+            />
+          </ToolbarGroup>
+        </Toolbar>
         <div>
           <SelectableList
             value={this.state.activeSection}
@@ -132,13 +120,8 @@ class Settings extends React.Component {
             {section}
           </div>
         </div>
-      </MuiThemeProvider>
+      </div>
     );
   }
 
 }
-
-ReactDOM.render(
-  <Settings />,
-  document.getElementById('settings')
-);
