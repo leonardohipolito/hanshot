@@ -70,7 +70,13 @@ export default class Settings extends React.Component {
 
 
     return (
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
         <Toolbar>
           <ToolbarGroup firstChild>
             <FlatButton
@@ -82,16 +88,19 @@ export default class Settings extends React.Component {
             />
           </ToolbarGroup>
         </Toolbar>
-        <div>
+        <div
+          style={{
+            display: 'flex',
+            flex: '1',
+          }}
+        >
           <SelectableList
             value={this.state.activeSection}
             onChange={(event, value) => {
               this.setState({ activeSection: value });
             }}
             style={{
-              width: 200,
-              float: 'left',
-              border: '1px solid #d9d9d9',
+              borderRight: '1px solid #d9d9d9',
             }}
           >
             <ListItem
@@ -113,8 +122,8 @@ export default class Settings extends React.Component {
           </SelectableList>
           <div
             style={{
-              marginLeft: 230,
-              paddingTop: 20,
+              paddingLeft: 20,
+              flex: 1,
             }}
           >
             {section}

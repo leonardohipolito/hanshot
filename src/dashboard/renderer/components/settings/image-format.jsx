@@ -22,47 +22,52 @@ export default function ImageFormat(props) {
     return null;
   }
 
+  let options = null;
+  if (props.settings['image-format'] === 'jpg') {
+    options = (
+      <div>
+        <h4>Quality</h4>
+        <p>
+          <Slider
+            min={0}
+            max={100}
+            step={1}
+            value={props.settings['jpg-quality']}
+            onChange={debounce((event, value) => {
+              viewDispatch(updateSetting('jpg-quality', value));
+            }, 200)}
+            style={{
+              width: 200,
+            }}
+          />
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <SelectField
-        value={props.settings['image-format']}
-        onChange={(event, index, value) => {
-          viewDispatch(updateSetting('image-format', value));
-        }}
-        style={{
-          width: '60px',
-        }}
-      >
-        {formats.map((format) =>
-          <MenuItem
-            key={format.id}
-            value={format.id}
-            primaryText={format.name}
-          />
-        )}
-      </SelectField>
-      {(() => {
-        if (props.settings['image-format'] === 'jpg') {
-          return (
-            <div className="form-group">
-              Quality
-              <Slider
-                min={0}
-                max={100}
-                step={1}
-                value={props.settings['jpg-quality']}
-                onChange={debounce((event, value) => {
-                  viewDispatch(updateSetting('jpg-quality', value));
-                }, 200)}
-                style={{
-                  width: 200,
-                }}
-              />
-            </div>
-          );
-        }
-        return null;
-      })()}
+      <h4>Format</h4>
+      <p>
+        <SelectField
+          value={props.settings['image-format']}
+          onChange={(event, index, value) => {
+            viewDispatch(updateSetting('image-format', value));
+          }}
+          style={{
+            width: '60px',
+          }}
+        >
+          {formats.map((format) =>
+            <MenuItem
+              key={format.id}
+              value={format.id}
+              primaryText={format.name}
+            />
+          )}
+        </SelectField>
+      </p>
+      {options}
     </div>
   );
 }

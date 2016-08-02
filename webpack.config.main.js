@@ -1,14 +1,11 @@
 const path = require('path');
 
-// const nodeExternals = require('webpack-node-externals');
-
-
 module.exports = {
 
   entry: {
 
     main: [
-      './src/main.js'
+      './src/main.js',
     ],
 
   },
@@ -57,10 +54,5 @@ module.exports = {
     //  true: node.js __dirname - relative path from start directory ???
     __dirname: false,
   },
-
-  externals: [
-    // Do not include node_modules in a bundle
-    // nodeExternals()
-  ],
 
 };

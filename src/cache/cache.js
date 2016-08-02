@@ -2,8 +2,6 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import EventEmitter from 'events';
-
 import log from '../log';
 
 //------------------------------------------------------------------------------
@@ -15,7 +13,6 @@ export default class Cache {
   constructor(source) {
     this.storage = {};
     this.source = source;
-    this.emitter = new EventEmitter();
   }
 
   set(key, value) {
@@ -28,16 +25,11 @@ export default class Cache {
       defaultValue;
   }
 
-  on(name, listener) {
-    this.emitter.on(name, listener);
-  }
-
   load() {
     return this.source
       .read()
       .then((data) => {
         this.storage = data;
-        this.emitter.emit('load');
         return this;
       })
       .catch((err) => {

@@ -2,8 +2,6 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import EventEmitter from 'events';
-
 import log from '../log';
 
 //------------------------------------------------------------------------------
@@ -17,7 +15,6 @@ export default class Settings {
     this.userStorage = {};
     this.defaultSource = defaultSource;
     this.userSource = userSource;
-    this.emitter = new EventEmitter();
   }
 
   set(key, value) {
@@ -41,13 +38,8 @@ export default class Settings {
         this.loadUserSource(),
       ])
       .then(() => {
-        this.emitter.emit('load');
         return this;
       });
-  }
-
-  on(name, listener) {
-    this.emitter.on(name, listener);
   }
 
   loadDefaultSource() {

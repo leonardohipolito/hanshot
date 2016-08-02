@@ -8,6 +8,7 @@ import viewDispatch from '../../view-dispatch';
 import { updateSetting } from '../../../../actions';
 
 import Checkbox from 'material-ui/Checkbox';
+import Divider from 'material-ui/Divider';
 
 //------------------------------------------------------------------------------
 // Module
@@ -16,34 +17,40 @@ import Checkbox from 'material-ui/Checkbox';
 export default function Behavior(props) {
   return (
     <div>
-      <div className="form-group">
+      <h4>Main window</h4>
+      <p>
         <Checkbox
-          label="Close dashboard before capture"
+          label="Close main window before capture"
           checked={props.settings['close-before-capture']}
           onCheck={(event, isChecked) => {
             viewDispatch(updateSetting('close-before-capture', isChecked));
           }}
         />
-      </div>
-      <div className="form-group">
         <Checkbox
-          label="Open dashboard after capture"
+          label="Open main window after capture"
           checked={props.settings['open-after-capture']}
           onCheck={(event, isChecked) => {
             viewDispatch(updateSetting('open-after-capture', isChecked));
           }}
         />
-      </div>
-      <div className="form-group">
         <Checkbox
-          label="Minimize app to tray when closing dashboard"
+          label="Minimize app to tray when closing main window"
           checked={props.settings['tray-on-close']}
           onCheck={(event, isChecked) => {
             viewDispatch(updateSetting('tray-on-close', isChecked));
           }}
         />
-      </div>
-      <div className="form-group">
+        <Checkbox
+          label="Show main window on app start"
+          checked={props.settings['show-on-start']}
+          onCheck={(event, isChecked) => {
+            viewDispatch(updateSetting('show-on-start', isChecked));
+          }}
+        />
+      </p>
+      <Divider />
+      <h4>Upload</h4>
+      <p>
         <Checkbox
           label="Upload after capture"
           checked={props.settings['upload-after-capture']}
@@ -51,16 +58,7 @@ export default function Behavior(props) {
             viewDispatch(updateSetting('upload-after-capture', isChecked));
           }}
         />
-      </div>
-      <div className="form-group">
-        <Checkbox
-          label="Show dashboard on app start"
-          checked={props.settings['show-on-start']}
-          onCheck={(event, isChecked) => {
-            viewDispatch(updateSetting('show-on-start', isChecked));
-          }}
-        />
-      </div>
+      </p>
     </div>
   );
 }

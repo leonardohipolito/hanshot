@@ -9,7 +9,6 @@ import { updateSetting, showDialogToPickSaveDir } from '../../../../actions';
 
 import Checkbox from 'material-ui/Checkbox';
 import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
 
 //------------------------------------------------------------------------------
 // Module
@@ -18,7 +17,7 @@ import TextField from 'material-ui/TextField';
 export default function Save(props) {
   return (
     <div>
-      <div className="form-group">
+      <p>
         <Checkbox
           label="Auto save to directory"
           checked={props.settings['save-dir-selected']}
@@ -29,11 +28,15 @@ export default function Save(props) {
         <div
           className={props.settings['save-dir-selected'] ? '' : 'disabled-area'}
         >
-          <TextField
-            disabled
-            hintText={props.settings['save-dir-path']}
-            name="save-path-dir"
-          />
+          <p
+            style={{
+              color: '#a2a2a2',
+              borderBottom: '1px solid #e8e8e8',
+              margin: '20px 0 0 0',
+            }}
+          >
+            {props.settings['save-dir-path']}
+          </p>
           <br />
           <RaisedButton
             disabled={!props.settings['save-dir-selected']}
@@ -44,7 +47,7 @@ export default function Save(props) {
             Change
           </RaisedButton>
         </div>
-      </div>
+      </p>
     </div>
   );
 }
