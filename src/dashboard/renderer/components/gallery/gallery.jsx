@@ -18,6 +18,7 @@ export default function Gallery(props) {
       <Navbar
         metadata={props.metadata}
         image={props.image}
+        displays={props.displays}
       />
       <div className="dashboard-content">
         <AlertArea

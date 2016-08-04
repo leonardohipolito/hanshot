@@ -2,30 +2,23 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import { receiveDisplays } from '../actions';
+import { receiveDisplays } from '../store/actions';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
 export default function displaysProvider(store, screen) {
-  function fetchDisplays() {
-    return receiveDisplays(screen.getDisplayList());
+  function provideDisplays() {
+    store.dispatch(receiveDisplays(screen.getDisplayList()));
   }
 
-  screen.on('display-added', () => {
-    store.dispatch(fetchDisplays());
-  });
+  // TODO: move listeners out of here
+  screen.on('display-added', provideDisplays);
+  screen.on('display-removed', provideDisplays);
+  screen.on('display-updated', provideDisplays);
 
-  screen.on('display-removed', () => {
-    store.dispatch(fetchDisplays());
-  });
-
-  screen.on('display-updated', () => {
-    store.dispatch(fetchDisplays());
-  });
-
-  return fetchDisplays;
+  return provideDisplays;
 }
 
 displaysProvider.inject = ['store', 'screen'];

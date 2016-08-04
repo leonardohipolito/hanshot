@@ -27,7 +27,7 @@ export default function ImageFormat(props) {
     options = (
       <div>
         <h4>Quality</h4>
-        <p>
+        <div className="paragraph">
           <Slider
             min={0}
             max={100}
@@ -40,7 +40,7 @@ export default function ImageFormat(props) {
               width: 200,
             }}
           />
-        </p>
+        </div>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function ImageFormat(props) {
   return (
     <div>
       <h4>Format</h4>
-      <p>
+      <div className="paragraph">
         <SelectField
           value={props.settings['image-format']}
           onChange={(event, index, value) => {
@@ -66,7 +66,7 @@ export default function ImageFormat(props) {
             />
           )}
         </SelectField>
-      </p>
+      </div>
       {options}
     </div>
   );

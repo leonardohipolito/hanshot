@@ -23,7 +23,6 @@ export default function SnapDesktop(props) {
     return (
       <ToolbarWrap>
         <Button
-          {...props}
           onClick={() => {
             viewDispatch(captureDesktop());
           }}

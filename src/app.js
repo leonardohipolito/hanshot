@@ -27,9 +27,10 @@ import trayService from './tray/tray.service';
 import dashboardWindowService from './dashboard/dashboard-window.service';
 import selectionWindowService from './selection/selection-window.service';
 
-import settingsProvider from './settings/settings.provider';
+import displaysProvider from './screen/displays.provider';
 import imageProvider from './gallery/image.provider';
 import metadataProvider from './metadata/metadata.provider';
+import settingsProvider from './settings/settings.provider';
 
 import * as types from './actions';
 
@@ -106,9 +107,10 @@ export default class App {
 
   registerProviders() {
     const providers = {
-      settings: settingsProvider,
+      displays: displaysProvider,
       image: imageProvider,
       metadata: metadataProvider,
+      settings: settingsProvider,
     };
 
     Object.keys(providers).forEach((type) => {

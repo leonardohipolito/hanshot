@@ -8,7 +8,6 @@ import viewDispatch from '../../view-dispatch';
 import { updateSetting } from '../../../../actions';
 
 import Checkbox from 'material-ui/Checkbox';
-import Divider from 'material-ui/Divider';
 
 //------------------------------------------------------------------------------
 // Module
@@ -18,7 +17,7 @@ export default function Behavior(props) {
   return (
     <div>
       <h4>Main window</h4>
-      <p>
+      <div className="paragraph">
         <Checkbox
           label="Close main window before capture"
           checked={props.settings['close-before-capture']}
@@ -47,10 +46,10 @@ export default function Behavior(props) {
             viewDispatch(updateSetting('show-on-start', isChecked));
           }}
         />
-      </p>
-      <Divider />
+      </div>
+      <div className="hr"></div>
       <h4>Upload</h4>
-      <p>
+      <div className="paragraph">
         <Checkbox
           label="Upload after capture"
           checked={props.settings['upload-after-capture']}
@@ -58,7 +57,7 @@ export default function Behavior(props) {
             viewDispatch(updateSetting('upload-after-capture', isChecked));
           }}
         />
-      </p>
+      </div>
     </div>
   );
 }

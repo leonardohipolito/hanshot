@@ -23,7 +23,6 @@ export default function SnapSelection(props) {
     return (
       <ToolbarWrap>
         <Button
-          {...props}
           onClick={() => {
             viewDispatch(captureSelection());
           }}

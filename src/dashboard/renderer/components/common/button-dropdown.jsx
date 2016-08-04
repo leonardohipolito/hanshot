@@ -13,7 +13,6 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 //------------------------------------------------------------------------------
 
 export default function ButtonDropdown(props) {
-
   const icon = (
     <RaisedButton
       style={{
@@ -50,5 +49,3 @@ export default function ButtonDropdown(props) {
     </div>
   );
 }
-
-ButtonDropdown.muiName = 'RaisedButton';

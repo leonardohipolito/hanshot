@@ -30,7 +30,6 @@ export default function Upload(props) {
     <ToolbarWrap>
       <ButtonDropdown
         buttonTitle="Upload"
-        alignMenuRight
         onButtonClick={() => {
           viewDispatch(uploadImage(image.filePath));
         }}
@@ -49,8 +48,6 @@ export default function Upload(props) {
     </ToolbarWrap>
   );
 }
-
-Upload.muiName = 'RaisedButton';
 
 Upload.defaultProps = {
   image: null,

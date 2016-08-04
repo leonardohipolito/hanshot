@@ -16,38 +16,36 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 export default function Save(props) {
   return (
-    <div>
-      <p>
-        <Checkbox
-          label="Auto save to directory"
-          checked={props.settings['save-dir-selected']}
-          onCheck={(event, value) => {
-            viewDispatch(updateSetting('save-dir-selected', value));
+    <div className="paragraph">
+      <Checkbox
+        label="Auto save to directory"
+        checked={props.settings['save-dir-selected']}
+        onCheck={(event, value) => {
+          viewDispatch(updateSetting('save-dir-selected', value));
+        }}
+      />
+      <div
+        className={props.settings['save-dir-selected'] ? '' : 'disabled-area'}
+      >
+        <div className="paragraph"
+          style={{
+            color: '#a2a2a2',
+            borderBottom: '1px solid #e8e8e8',
+            margin: '20px 0 0 0',
           }}
-        />
-        <div
-          className={props.settings['save-dir-selected'] ? '' : 'disabled-area'}
         >
-          <p
-            style={{
-              color: '#a2a2a2',
-              borderBottom: '1px solid #e8e8e8',
-              margin: '20px 0 0 0',
-            }}
-          >
-            {props.settings['save-dir-path']}
-          </p>
-          <br />
-          <RaisedButton
-            disabled={!props.settings['save-dir-selected']}
-            onClick={() => {
-              viewDispatch(showDialogToPickSaveDir());
-            }}
-          >
-            Change
-          </RaisedButton>
+          {props.settings['save-dir-path']}
         </div>
-      </p>
+        <br />
+        <RaisedButton
+          disabled={!props.settings['save-dir-selected']}
+          onClick={() => {
+            viewDispatch(showDialogToPickSaveDir());
+          }}
+        >
+          Change
+        </RaisedButton>
+      </div>
     </div>
   );
 }
