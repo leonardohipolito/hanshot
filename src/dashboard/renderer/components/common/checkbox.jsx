@@ -8,14 +8,23 @@ import React from 'react';
 // Module
 //------------------------------------------------------------------------------
 
-export default function Button(props) {
+export default function Checkbox(props) {
   return (
-    <button {...props}>
-      {props.children}
-    </button>
+    <label>
+      <input
+        type="checkbox"
+        checked={props.checked}
+        onChange={(event) => {
+          props.onChange(event, event.target.checked);
+        }}
+      />
+      {props.text}
+    </label>
   );
 }
 
-Button.propTypes = {
-  children: React.PropTypes.node,
+Checkbox.propTypes = {
+  text: React.PropTypes.string,
+  checked: React.PropTypes.bool,
+  onChange: React.PropTypes.func,
 };

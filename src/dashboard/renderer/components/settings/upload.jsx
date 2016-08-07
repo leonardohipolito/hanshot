@@ -7,7 +7,7 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { updateSetting } from '../../../../actions';
 
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
+import Radio from '../common/radio.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -22,21 +22,23 @@ export default function Upload(props) {
   return (
     <div>
       <h4>Default uploader</h4>
-      <RadioButtonGroup
-        name="upload"
-        valueSelected={props.settings['default-uploader']}
-        onChange={(event, value) => {
-          viewDispatch(updateSetting('default-uploader', value));
-        }}
-      >
-        {hosts.map((host) =>
-          <RadioButton
-            label={host.name}
-            key={host.id}
-            value={host.id}
-          />
-        )}
-      </RadioButtonGroup>
+      {hosts.map((host) =>
+        <Radio
+          key={host.id}
+          value={host.id}
+          text={host.name}
+          checked={host.id === props.settings['default-uploader']}
+          name="default-uploader"
+          onChange={(event, value) => {
+            viewDispatch(updateSetting('default-uploader', value));
+          }}
+        />
+      )}
     </div>
   );
 }
+
+Upload.propTypes = {
+  settings: React.PropTypes.object,
+  metadata: React.PropTypes.object,
+};

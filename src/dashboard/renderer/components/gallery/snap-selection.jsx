@@ -21,38 +21,34 @@ export default function SnapSelection(props) {
 
   if (displays.length < 2) {
     return (
-      <ToolbarWrap>
-        <Button
-          onClick={() => {
-            viewDispatch(captureSelection());
-          }}
-        >
-          Selection
-        </Button>
-      </ToolbarWrap>
+      <Button
+        onClick={() => {
+          viewDispatch(captureSelection());
+        }}
+      >
+        Selection
+      </Button>
     );
   }
 
   return (
-    <ToolbarWrap>
-      <ButtonDropdown
-        buttonTitle="Selection"
-        onButtonClick={() => {
-          viewDispatch(captureSelection());
-        }}
-      >
-        {displays.map((display) =>
-          <DropdownItem
-            key={display.id}
-            onClick={() => {
-              viewDispatch(captureSelection(display.id));
-            }}
-          >
-            {display.name}
-          </DropdownItem>
-        )}
-      </ButtonDropdown>
-    </ToolbarWrap>
+    <ButtonDropdown
+      buttonTitle="Selection"
+      onButtonClick={() => {
+        viewDispatch(captureSelection());
+      }}
+    >
+      {displays.map((display) =>
+        <DropdownItem
+          key={display.id}
+          onClick={() => {
+            viewDispatch(captureSelection(display.id));
+          }}
+        >
+          {display.name}
+        </DropdownItem>
+      )}
+    </ButtonDropdown>
   );
 }
 

@@ -6,11 +6,10 @@ import React from 'react';
 
 import viewDispatch from '../../view-dispatch';
 import { updateSetting } from '../../../../actions';
-import debounce from '../../../../utils/debounce';
 
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import Slider from 'material-ui/Slider';
+import Select from '../common/select.jsx';
+import Option from '../common/option.jsx';
+import Range from '../common/range.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -28,14 +27,14 @@ export default function ImageFormat(props) {
       <div>
         <h4>Quality</h4>
         <div className="paragraph">
-          <Slider
+          <Range
             min={0}
             max={100}
-            step={1}
+            step={10}
             value={props.settings['jpg-quality']}
-            onChange={debounce((event, value) => {
+            onChange={(value) => {
               viewDispatch(updateSetting('jpg-quality', value));
-            }, 200)}
+            }}
             style={{
               width: 200,
             }}
@@ -49,25 +48,27 @@ export default function ImageFormat(props) {
     <div>
       <h4>Format</h4>
       <div className="paragraph">
-        <SelectField
+        <Select
           value={props.settings['image-format']}
-          onChange={(event, index, value) => {
+          onChange={(event, value) => {
             viewDispatch(updateSetting('image-format', value));
-          }}
-          style={{
-            width: '60px',
           }}
         >
           {formats.map((format) =>
-            <MenuItem
+            <Option
               key={format.id}
               value={format.id}
-              primaryText={format.name}
+              text={format.name}
             />
           )}
-        </SelectField>
+        </Select>
       </div>
       {options}
     </div>
   );
 }
+
+ImageFormat.propTypes = {
+  settings: React.PropTypes.object,
+  metadata: React.PropTypes.object,
+};

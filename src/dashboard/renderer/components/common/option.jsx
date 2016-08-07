@@ -8,14 +8,17 @@ import React from 'react';
 // Module
 //------------------------------------------------------------------------------
 
-export default function Button(props) {
+export default function Option(props) {
   return (
-    <button {...props}>
-      {props.children}
-    </button>
+    <option
+      value={props.value}
+    >
+      {props.text}
+    </option>
   );
 }
 
-Button.propTypes = {
-  children: React.PropTypes.node,
+Option.propTypes = {
+  value: React.PropTypes.string,
+  text: React.PropTypes.string,
 };

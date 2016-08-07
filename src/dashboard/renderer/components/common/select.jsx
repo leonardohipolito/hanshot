@@ -8,14 +8,22 @@ import React from 'react';
 // Module
 //------------------------------------------------------------------------------
 
-export default function Button(props) {
+export default function Select(props) {
   return (
-    <button {...props}>
+    <select
+      value={props.value}
+      onChange={(event) => {
+        const target = event.target;
+        const value = target.options[target.selectedIndex].value;
+        props.onChange(event, value);
+      }}
+    >
       {props.children}
-    </button>
+    </select>
   );
 }
 
-Button.propTypes = {
+Select.propTypes = {
   children: React.PropTypes.node,
+  onChange: React.PropTypes.func,
 };

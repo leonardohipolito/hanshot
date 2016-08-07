@@ -7,8 +7,8 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { updateSetting, showDialogToPickSaveDir } from '../../../../actions';
 
-import Checkbox from 'material-ui/Checkbox';
-import RaisedButton from 'material-ui/RaisedButton';
+import Checkbox from '../common/checkbox.jsx';
+import Button from '../common/button.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -18,9 +18,9 @@ export default function Save(props) {
   return (
     <div className="paragraph">
       <Checkbox
-        label="Auto save to directory"
+        text="Auto save to directory"
         checked={props.settings['save-dir-selected']}
-        onCheck={(event, value) => {
+        onChange={(event, value) => {
           viewDispatch(updateSetting('save-dir-selected', value));
         }}
       />
@@ -37,14 +37,14 @@ export default function Save(props) {
           {props.settings['save-dir-path']}
         </div>
         <br />
-        <RaisedButton
+        <Button
           disabled={!props.settings['save-dir-selected']}
           onClick={() => {
             viewDispatch(showDialogToPickSaveDir());
           }}
         >
           Change
-        </RaisedButton>
+        </Button>
       </div>
     </div>
   );
