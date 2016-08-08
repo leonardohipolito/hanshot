@@ -8,9 +8,9 @@ import viewDispatch from '../../view-dispatch';
 import { captureSelection } from '../../../../actions';
 
 import Button from '../common/button.jsx';
-import ButtonDropdown from '../common/button-dropdown.jsx';
+import ButtonGroup from '../common/button-group.jsx';
+import Dropdown from '../common/dropdown.jsx';
 import DropdownItem from '../common/dropdown-item.jsx';
-import ToolbarWrap from '../common/toolbar-wrap.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -18,37 +18,36 @@ import ToolbarWrap from '../common/toolbar-wrap.jsx';
 
 export default function SnapSelection(props) {
   const displays = props.displays;
-
-  if (displays.length < 2) {
-    return (
-      <Button
-        onClick={() => {
-          viewDispatch(captureSelection());
-        }}
-      >
-        Selection
-      </Button>
-    );
-  }
-
-  return (
-    <ButtonDropdown
-      buttonTitle="Selection"
-      onButtonClick={() => {
+  const button = (
+    <Button
+      onClick={() => {
         viewDispatch(captureSelection());
       }}
     >
-      {displays.map((display) =>
-        <DropdownItem
-          key={display.id}
-          onClick={() => {
-            viewDispatch(captureSelection(display.id));
-          }}
-        >
-          {display.name}
-        </DropdownItem>
-      )}
-    </ButtonDropdown>
+      Selection
+    </Button>
+  );
+
+  if (displays.length < 2) {
+    return button;
+  }
+
+  return (
+    <ButtonGroup>
+      {button}
+      <Dropdown>
+        {displays.map((display) =>
+          <DropdownItem
+            key={display.id}
+            onClick={() => {
+              viewDispatch(captureSelection(display.id));
+            }}
+          >
+            {display.name}
+          </DropdownItem>
+        )}
+      </Dropdown>
+    </ButtonGroup>
   );
 }
 

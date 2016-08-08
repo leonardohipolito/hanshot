@@ -8,17 +8,14 @@ import React from 'react';
 // Module
 //------------------------------------------------------------------------------
 
-export default function DropdownItem(props) {
+export default function ButtonGroup(props) {
   return (
-    <li
-      onClick={props.onClick}
-    >
+    <div className="button-group">
       {props.children}
-    </li>
+    </div>
   );
 }
 
-DropdownItem.propTypes = {
+ButtonGroup.propTypes = {
   children: React.PropTypes.node,
-  onClick: React.PropTypes.func,
 };

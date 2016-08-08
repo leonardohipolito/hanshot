@@ -4,9 +4,6 @@
 
 import React from 'react';
 
-import Toolbar from 'material-ui/Toolbar';
-import ToolbarGroup from 'material-ui/Toolbar/ToolbarGroup';
-
 import SnapDesktop from './snap-desktop.jsx';
 import SnapSelection from './snap-selection.jsx';
 import Upload from './upload.jsx';
@@ -23,25 +20,25 @@ export default function Navbar(props) {
   let imageControls;
   if (props.image) {
     imageControls = (
-      <ToolbarGroup>
+      <div className="pull-right">
         <Urls image={props.image} />
         <Copy image={props.image} />
         <Upload
           metadata={props.metadata}
           image={props.image}
         />
-      </ToolbarGroup>
+      </div>
     );
   }
 
   return (
-    <Toolbar>
-      <ToolbarGroup>
+    <div className="navbar">
+      <div className="pull-left">
         <SnapDesktop displays={props.displays} />
         <SnapSelection displays={props.displays} />
-      </ToolbarGroup>
+      </div>
       {imageControls}
-    </Toolbar>
+    </div>
   );
 }
 

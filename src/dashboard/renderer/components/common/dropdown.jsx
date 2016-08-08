@@ -4,34 +4,99 @@
 
 import React from 'react';
 
-import IconMenu from 'material-ui/IconMenu';
-import ToolbarWrap from './toolbar-wrap.jsx';
-import RaisedButton from 'material-ui/RaisedButton';
-import NavigationExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
+import Button from './button.jsx';
+import DropdownItem from './dropdown-item.jsx';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default function Dropdown(props) {
+export default class Dropdown extends React.Component {
 
-  const button = (
-    <RaisedButton
-      icon={<NavigationExpandMoreIcon />}
-    >
-      URLs
-    </RaisedButton>
-  );
+  constructor(props) {
+    super(props);
 
-  return (
-    <ToolbarWrap>
-      <IconMenu
-        iconButtonElement={button}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+    this.state = {
+      isOpen: false,
+    };
+
+    this.handleToggle = this.handleToggle.bind(this);
+    this.handleDocumentClick = this.handleDocumentClick.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('click', this.handleDocumentClick, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.handleDocumentClick);
+  }
+
+  handleDocumentClick(event) {
+    const isDropdown = event.target === this.refs.dropdown;
+    const isDropdownMember = this.refs.dropdown.contains(event.target);
+    if (!(isDropdown || isDropdownMember)) {
+      this.hide();
+    }
+  }
+
+  handleToggle() {
+    this.toggle();
+  }
+
+  toggle() {
+    this.setState({ isOpen: !this.state.isOpen });
+  }
+
+  hide() {
+    this.setState({ isOpen: false });
+  }
+
+  render() {
+    const className = ['dropdown'];
+    if (this.state.isOpen) {
+      className.push('dropdown-is-open');
+    }
+    if (this.props.menuLeft) {
+      className.push('dropdown-menu-left');
+    }
+
+    return (
+      <div
+        ref="dropdown"
+        className={className.join(' ')}
       >
-        {props.children}
-      </IconMenu>
-    </ToolbarWrap>
-  );
+        <Button
+          onClick={this.handleToggle}
+        >
+          {this.props.title}
+        </Button>
+        <ul>
+          {React.Children.map(this.props.children, (child) => {
+            if (child.type !== DropdownItem) {
+              return child;
+            }
+            return React.cloneElement(child, {
+              onClick: () => {
+                this.hide();
+                child.props.onClick();
+              },
+            });
+          })}
+        </ul>
+      </div>
+    );
+  }
+
 }
+
+Dropdown.propTypes = {
+  title: React.PropTypes.string,
+  menuLeft: React.PropTypes.bool,
+  children: React.PropTypes.node,
+};
+
+Dropdown.defaultProps = {
+  title: '',
+  menuLeft: false
+};

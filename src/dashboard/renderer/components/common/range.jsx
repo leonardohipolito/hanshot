@@ -4,6 +4,8 @@
 
 import React from 'react';
 
+import Button from './button.jsx';
+
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
@@ -20,50 +22,50 @@ export default class Range extends React.Component {
   }
 
   handleDecrement() {
-    const newValue = this.state.value - this.props.step;
+    let newValue = this.state.value - this.props.step;
     if (newValue < this.props.min) {
-      return;
+      newValue = this.props.min;
     }
     this.setState({ value: newValue });
     this.props.onChange(newValue);
   }
 
   handleIncrement() {
-    const newValue = this.state.value + this.props.step;
+    let newValue = this.state.value + this.props.step;
     if (newValue > this.props.max) {
-      return;
+      newValue = this.props.max;
     }
     this.setState({ value: newValue });
     this.props.onChange(newValue);
   }
 
   isDecrementAvailable() {
-    return this.state.value - this.props.step >= this.props.min;
+    return this.state.value > this.props.min;
   }
 
   isIncrementAvailable() {
-    return this.state.value + this.props.step <= this.props.max;
+    return this.state.value < this.props.max;
   }
 
   render() {
     return (
-      <span>
-        <button
+      <div className="range">
+        <Button
           disabled={!this.isDecrementAvailable()}
           onClick={this.handleDecrement}
         >
           &lt;
-        </button>
-        <span>
+        </Button>
+        <div className="range-value">
           {this.state.value}
-        </span>
-        <button
+        </div>
+        <Button
           disabled={!this.isIncrementAvailable()}
           onClick={this.handleIncrement}
         >
           &gt;
-        </button>
-      </span>
+        </Button>
+      </div>
     );
   }
 

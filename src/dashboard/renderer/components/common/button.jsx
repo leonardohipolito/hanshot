@@ -10,12 +10,18 @@ import React from 'react';
 
 export default function Button(props) {
   return (
-    <button {...props}>
+    <button
+      className="button"
+      disabled={props.disabled}
+      onClick={props.onClick}
+    >
       {props.children}
     </button>
   );
 }
 
 Button.propTypes = {
+  disabled: React.PropTypes.bool,
   children: React.PropTypes.node,
+  onClick: React.PropTypes.func,
 };

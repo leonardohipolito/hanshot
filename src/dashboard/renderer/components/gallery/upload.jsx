@@ -7,9 +7,10 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { uploadImage } from '../../../../actions';
 
-import ButtonDropdown from '../common/button-dropdown.jsx';
+import Button from '../common/button.jsx';
+import ButtonGroup from '../common/button-group.jsx';
+import Dropdown from '../common/dropdown.jsx';
 import DropdownItem from '../common/dropdown-item.jsx';
-import ToolbarWrap from '../common/toolbar-wrap.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -27,12 +28,16 @@ export default function Upload(props) {
   }
 
   return (
-    <ToolbarWrap>
-      <ButtonDropdown
-        buttonTitle="Upload"
-        onButtonClick={() => {
+    <ButtonGroup>
+      <Button
+        onClick={() => {
           viewDispatch(uploadImage(image.filePath));
         }}
+      >
+        Upload
+      </Button>
+      <Dropdown
+        menuLeft
       >
         {hosts.map((host) =>
           <DropdownItem
@@ -44,10 +49,15 @@ export default function Upload(props) {
             {host.name}
           </DropdownItem>
         )}
-      </ButtonDropdown>
-    </ToolbarWrap>
+      </Dropdown>
+    </ButtonGroup>
   );
 }
+
+Upload.propTypes = {
+  image: React.PropTypes.object,
+  metadata: React.PropTypes.object,
+};
 
 Upload.defaultProps = {
   image: null,

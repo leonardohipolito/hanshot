@@ -22,19 +22,24 @@ export default function Urls(props) {
   }
 
   return (
-    <Dropdown>
-      {image.publicUrls.map((url, index) => {
-        return (
-          <DropdownItem
-            key={index}
-            onClick={() => {
-              viewDispatch(copyText(url));
-            }}
-          >
-            {url}
-          </DropdownItem>
-        );
-      })}
+    <Dropdown
+      menuLeft
+      title="URLs"
+    >
+      {image.publicUrls.map((url, index) =>
+        <DropdownItem
+          key={index}
+          onClick={() => {
+            viewDispatch(copyText(url));
+          }}
+        >
+          {url}
+        </DropdownItem>
+      )}
     </Dropdown>
   );
 }
+
+Urls.propTypes = {
+  image: React.PropTypes.object,
+};

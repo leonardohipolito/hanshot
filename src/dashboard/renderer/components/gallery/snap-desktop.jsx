@@ -8,7 +8,8 @@ import viewDispatch from '../../view-dispatch';
 import { captureDesktop } from '../../../../actions';
 
 import Button from '../common/button.jsx';
-import ButtonDropdown from '../common/button-dropdown.jsx';
+import ButtonGroup from '../common/button-group.jsx';
+import Dropdown from '../common/dropdown.jsx';
 import DropdownItem from '../common/dropdown-item.jsx';
 
 //------------------------------------------------------------------------------
@@ -18,36 +19,36 @@ import DropdownItem from '../common/dropdown-item.jsx';
 export default function SnapDesktop(props) {
   const displays = props.displays;
 
-  if (displays.length < 2) {
-    return (
-      <Button
-        onClick={() => {
-          viewDispatch(captureDesktop());
-        }}
-      >
-        Desktop
-      </Button>
-    );
-  }
-
-  return (
-    <ButtonDropdown
-      buttonTitle="Desktop"
-      onButtonClick={() => {
+  const button = (
+    <Button
+      onClick={() => {
         viewDispatch(captureDesktop());
       }}
     >
-      {displays.map((display) =>
-        <DropdownItem
-          key={display.id}
-          onClick={() => {
-            viewDispatch(captureDesktop(display.id));
-          }}
-        >
-          {display.name}
-        </DropdownItem>
-      )}
-    </ButtonDropdown>
+      Desktop
+    </Button>
+  );
+
+  if (displays.length < 2) {
+    return button;
+  }
+
+  return (
+    <ButtonGroup>
+      {button}
+      <Dropdown>
+        {displays.map((display) =>
+          <DropdownItem
+            key={display.id}
+            onClick={() => {
+              viewDispatch(captureDesktop(display.id));
+            }}
+          >
+            {display.name}
+          </DropdownItem>
+        )}
+      </Dropdown>
+    </ButtonGroup>
   );
 }
 

@@ -2,7 +2,7 @@ html, body, #dashboard {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-family: sans-serif;
 }
 
@@ -25,14 +25,123 @@ h4 {
   background-color: #e0e0e0;
 }
 
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.button {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 7px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+.button:hover {
+  background: #eee;
+}
+
+.button[disabled] {
+  background: #fdfcfc;
+  cursor: not-allowed;
+}
+
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdown > button::after {
+  content: ' ▾';
+}
+
+.dropdown > ul {
+  display: none;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+  list-style-type: none;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-top: 3px;
+  box-shadow: 0 1px 5px #eee;
+}
+
+.dropdown.dropdown-is-open > ul {
+  display: block;
+}
+
+.dropdown.dropdown-menu-left > ul {
+  right: 0;
+}
+
+.dropdown > ul > li {
+  padding: 5px 10px;
+}
+
+.dropdown > ul > li:hover {
+  background: #eee;
+  cursor: pointer;
+}
+
+.button-group {
+  display: inline-block;
+}
+
+.button-group button {
+  border-radius: 0;
+  margin-left: -1px;
+  margin-right: 0;
+}
+
+.button-group > button:first-child {
+  border-radius: 3px 0 0 3px;
+  margin-left: 0px;
+}
+
+.button-group > button:last-child {
+  border-radius: 0 3px 3px 0;
+}
+
+.button-group > .dropdown:first-child > button {
+  border-radius: 3px 0 0 3px;
+  margin-left: 0px;
+}
+
+.button-group > .dropdown:last-child > button {
+  border-radius: 0 3px 3px 0;
+}
+
+.range > button {
+  margin: 0;
+}
+.range > .range-value {
+  margin: 10px;
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+}
+
+.navbar {
+  flex: 0;
+  background: #eee;
+  padding: 10px;
+}
+
 .dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-.dashboard-navbar {
-  flex: 0;
-}
+
 .dashboard-content {
   flex: 1;
   padding: 15px;

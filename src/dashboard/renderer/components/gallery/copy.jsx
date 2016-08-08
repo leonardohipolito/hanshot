@@ -8,7 +8,6 @@ import viewDispatch from '../../view-dispatch';
 import { copyImage } from '../../../../actions';
 
 import Button from '../common/button.jsx';
-import ToolbarWrap from '../common/toolbar-wrap.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -16,15 +15,13 @@ import ToolbarWrap from '../common/toolbar-wrap.jsx';
 
 export default function Copy(props) {
   return (
-    <ToolbarWrap>
-      <Button
-        onClick={() => {
-          viewDispatch(copyImage(props.image.filePath));
-        }}
-      >
-        Copy
-      </Button>
-    </ToolbarWrap>
+    <Button
+      onClick={() => {
+        viewDispatch(copyImage(props.image.filePath));
+      }}
+    >
+      Copy
+    </Button>
   );
 }
 
