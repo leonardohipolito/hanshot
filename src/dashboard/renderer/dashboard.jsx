@@ -14,6 +14,7 @@ import DashboardCss from './dashboard.css';
 
 import Gallery from './components/gallery/gallery.jsx';
 import Settings from './components/settings/settings.jsx';
+import { Router, Route } from './components/common/router.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -51,18 +52,16 @@ class Dashboard extends React.Component {
   render() {
     console.log(this.state);
 
-    const activePage = this.state.dashboard.activePage;
-
-    let page = null;
-    if (activePage === DASHBOARD_PAGE_GALLERY) {
-      page = <Gallery {...this.state} />;
-    } else if (activePage === DASHBOARD_PAGE_SETTINGS) {
-      page = <Settings {...this.state} />;
-    }
-
     return (
       <MuiThemeProvider>
-        {page}
+        <Router value={this.state.dashboard.activePage}>
+          <Route value={DASHBOARD_PAGE_GALLERY}>
+            <Gallery {...this.state} />
+          </Route>
+          <Route value={DASHBOARD_PAGE_SETTINGS}>
+            <Settings {...this.state} />
+          </Route>
+        </Router>
       </MuiThemeProvider>
     );
   }

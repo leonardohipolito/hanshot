@@ -4,6 +4,7 @@
 
 import React from 'react';
 
+import Navbar from '../common/navbar.jsx';
 import SnapDesktop from './snap-desktop.jsx';
 import SnapSelection from './snap-selection.jsx';
 import Upload from './upload.jsx';
@@ -15,7 +16,7 @@ import Urls from './urls.jsx';
 //------------------------------------------------------------------------------
 
 // TODO: do not use navbar in data flow, just as a component container
-export default function Navbar(props) {
+export default function GalleryNavbar(props) {
   // TODO: looks bad
   let imageControls;
   if (props.image) {
@@ -32,17 +33,17 @@ export default function Navbar(props) {
   }
 
   return (
-    <div className="navbar">
+    <Navbar>
       <div className="pull-left">
         <SnapDesktop displays={props.displays} />
         <SnapSelection displays={props.displays} />
       </div>
       {imageControls}
-    </div>
+    </Navbar>
   );
 }
 
-Navbar.defaultProps = {
+GalleryNavbar.defaultProps = {
   displays: [],
   metadata: {},
 };

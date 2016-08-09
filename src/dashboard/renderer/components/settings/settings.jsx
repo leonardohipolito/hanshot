@@ -4,21 +4,14 @@
 
 import React from 'react';
 
-import { openDashboard } from '../../../../actions';
-import viewDispatch from '../../view-dispatch';
+import { Menu, MenuItem } from '../common/menu.jsx';
+import { Router, Route } from '../common/router.jsx';
 
-import Toolbar from 'material-ui/Toolbar';
-import ToolbarGroup from 'material-ui/Toolbar/ToolbarGroup';
-import FlatButton from 'material-ui/FlatButton';
-import NavigateBeforeIcon from 'material-ui/svg-icons/image/navigate-before';
-
+import SettingsNavbar from './settings-navbar.jsx';
 import ImageFormat from './image-format.jsx';
 import Behavior from './behavior.jsx';
 import Save from './save.jsx';
 import Upload from './upload.jsx';
-
-import { List, ListItem, MakeSelectable } from 'material-ui/List';
-const SelectableList = MakeSelectable(List);
 
 //------------------------------------------------------------------------------
 // Module
@@ -39,36 +32,6 @@ export default class Settings extends React.Component {
   }
 
   render() {
-    let section = null;
-    if (this.state.activeSection === SECTION_IMAGE_FORMAT) {
-      section = (
-        <ImageFormat
-          settings={this.props.settings}
-          metadata={this.props.metadata}
-        />
-      );
-    } else if (this.state.activeSection === SECTION_BEHAVIOR) {
-      section = (
-        <Behavior
-          settings={this.props.settings}
-        />
-      );
-    } else if (this.state.activeSection === SECTION_SAVE) {
-      section = (
-        <Save
-          settings={this.props.settings}
-        />
-      );
-    } else if (this.state.activeSection === SECTION_UPLOAD) {
-      section = (
-        <Upload
-          settings={this.props.settings}
-          metadata={this.props.metadata}
-        />
-      );
-    }
-
-
     return (
       <div
         style={{
@@ -77,56 +40,64 @@ export default class Settings extends React.Component {
           height: '100%',
         }}
       >
-        <Toolbar>
-          <ToolbarGroup firstChild>
-            <FlatButton
-              label="Back to Dashboard"
-              icon={<NavigateBeforeIcon />}
-              onClick={() => {
-                viewDispatch(openDashboard());
-              }}
-            />
-          </ToolbarGroup>
-        </Toolbar>
+        <SettingsNavbar />
         <div
           style={{
             display: 'flex',
             flex: '1',
           }}
         >
-          <SelectableList
-            value={this.state.activeSection}
-            onChange={(event, value) => {
-              this.setState({ activeSection: value });
-            }}
-            style={{
-              borderRight: '1px solid #d9d9d9',
-            }}
-          >
-            <ListItem
-              value={SECTION_IMAGE_FORMAT}
-              primaryText="Image Format"
-            />
-            <ListItem
-              value={SECTION_BEHAVIOR}
-              primaryText="Behavior"
-            />
-            <ListItem
-              value={SECTION_SAVE}
-              primaryText="Save"
-            />
-            <ListItem
-              value={SECTION_UPLOAD}
-              primaryText="Upload"
-            />
-          </SelectableList>
+          <div className="sidebar">
+            <Menu
+              value={this.state.activeSection}
+              onSelect={(value) => {
+                this.setState({ activeSection: value });
+              }}
+            >
+              <MenuItem value={SECTION_IMAGE_FORMAT}>
+                Image Format
+              </MenuItem>
+              <MenuItem value={SECTION_BEHAVIOR}>
+                Behavior
+              </MenuItem>
+              <MenuItem value={SECTION_SAVE}>
+                Save
+              </MenuItem>
+              <MenuItem value={SECTION_UPLOAD}>
+                Upload
+              </MenuItem>
+            </Menu>
+          </div>
           <div
             style={{
               paddingLeft: 20,
               flex: 1,
             }}
           >
-            {section}
+            <Router value={this.state.activeSection}>
+              <Route value={SECTION_IMAGE_FORMAT}>
+                <ImageFormat
+                  settings={this.props.settings}
+                  metadata={this.props.metadata}
+                />
+              </Route>
+              <Route value={SECTION_BEHAVIOR}>
+                <Behavior
+                  settings={this.props.settings}
+                />
+              </Route>
+              <Route value={SECTION_SAVE}>
+                <Save
+                  settings={this.props.settings}
+                />
+              </Route>
+              <Route value={SECTION_UPLOAD}>
+                <Upload
+                  settings={this.props.settings}
+                  metadata={this.props.metadata}
+                />
+              </Route>
+            </Router>
           </div>
         </div>
       </div>
@@ -134,3 +105,8 @@ export default class Settings extends React.Component {
   }
 
 }
+
+Settings.propTypes = {
+  settings: React.PropTypes.object,
+  metadata: React.PropTypes.object,
+};
