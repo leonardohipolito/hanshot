@@ -8,7 +8,7 @@ import viewDispatch from '../../view-dispatch';
 import { closeAlert } from '../../../../actions';
 
 import Alert from './alert.jsx';
-import FlatButton from 'material-ui/FlatButton';
+import Button from '../common/button.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -24,16 +24,16 @@ export default function AlertArea(props) {
         >
           {(alert.buttons || []).map((button) =>
             [
-              <FlatButton
-                label={button.title}
-                secondary
+              <Button
                 onClick={() => {
                   if (button.role === 'appAction') {
                     viewDispatch(button.appAction);
                   }
                   viewDispatch(closeAlert(alert.id));
                 }}
-              />,
+              >
+                {button.title}
+              </Button>,
               ' ',
             ]
           )}
@@ -42,6 +42,10 @@ export default function AlertArea(props) {
     </div>
   );
 }
+
+AlertArea.propTypes = {
+  alerts: React.PropTypes.array,
+};
 
 AlertArea.defaultProps = {
   alerts: [],

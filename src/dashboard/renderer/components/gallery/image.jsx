@@ -7,9 +7,6 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { openImageContextMenu } from '../../../../actions';
 
-import { Card, CardHeader, CardText } from 'material-ui/Card';
-import BrokenImageIcon from 'material-ui/svg-icons/image/broken-image';
-
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
@@ -25,31 +22,17 @@ export default function Image(props) {
           fontSize: '20px',
         }}
       >
-        <BrokenImageIcon
-          style={{
-            width: '40px',
-            height: '40px',
-            verticalAlign: 'middle',
-            color: '#ccc',
-            marginTop: '-5px',
-          }}
-        />
         No recent screenshots
       </center>
     );
   }
 
   return (
-    <Card
-      className="image-container"
-    >
-      <CardHeader
-        title={image.fileName}
-        className="image-title"
-      />
-      <div
-        className="image-content"
-      >
+    <div className="image-container">
+      <div className="image-title">
+        {image.fileName}
+      </div>
+      <div className="image-content">
         <div
           className="image"
           onContextMenu={() => {
@@ -62,7 +45,7 @@ export default function Image(props) {
           }}
         ></div>
       </div>
-      <CardText>
+      <div className="image-info">
         <span>
           {image.width} x {image.height} pixels
         </span>
@@ -70,10 +53,14 @@ export default function Image(props) {
         <span>
           {image.fileSizeHuman}
         </span>
-      </CardText>
-    </Card>
+      </div>
+    </div>
   );
 }
+
+Image.propTypes = {
+  image: React.PropTypes.object,
+};
 
 Image.defaultProps = {
   image: null,

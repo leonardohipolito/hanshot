@@ -4,28 +4,24 @@
 
 import React from 'react';
 
-import { Card, CardHeader, CardActions } from 'material-ui/Card';
-import Avatar from 'material-ui/Avatar';
-
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
 export default function Alert(props) {
-  const type = props.type || 'danger';
-
   return (
-    <Card
-      style={{
-        marginBottom: '10px',
-      }}
-    >
-      <CardHeader
-        title={props.message}
-      />
-      <CardActions>
+    <div className="alert">
+      <p>
+        {props.message}
+      </p>
+      <p>
         {props.children}
-      </CardActions>
-    </Card>
+      </p>
+    </div>
   );
 }
+
+Alert.propTypes = {
+  message: React.PropTypes.string,
+  children: React.PropTypes.node,
+};
