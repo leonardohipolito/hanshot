@@ -9,8 +9,7 @@ import { captureSelection } from '../../../../actions';
 
 import Button from '../common/button.jsx';
 import ButtonGroup from '../common/button-group.jsx';
-import Dropdown from '../common/dropdown.jsx';
-import DropdownItem from '../common/dropdown-item.jsx';
+import { Dropdown, DropdownItem } from '../common/dropdown.jsx';
 
 //------------------------------------------------------------------------------
 // Module

@@ -5,13 +5,28 @@
 import React from 'react';
 
 import Button from './button.jsx';
-import DropdownItem from './dropdown-item.jsx';
 
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-export default class Dropdown extends React.Component {
+export function DropdownItem(props) {
+  return (
+    <li
+      onClick={props.onClick}
+    >
+      {props.children}
+    </li>
+  );
+}
+
+DropdownItem.propTypes = {
+  children: React.PropTypes.node,
+  onClick: React.PropTypes.func,
+};
+
+
+export class Dropdown extends React.Component {
 
   constructor(props) {
     super(props);
@@ -98,5 +113,5 @@ Dropdown.propTypes = {
 
 Dropdown.defaultProps = {
   title: '',
-  menuLeft: false
+  menuLeft: false,
 };

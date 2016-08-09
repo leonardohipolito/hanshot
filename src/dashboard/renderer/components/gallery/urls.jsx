@@ -7,8 +7,7 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { copyText } from '../../../../actions';
 
-import Dropdown from '../common/dropdown.jsx';
-import DropdownItem from '../common/dropdown-item.jsx';
+import { Dropdown, DropdownItem } from '../common/dropdown.jsx';
 
 //------------------------------------------------------------------------------
 // Module
