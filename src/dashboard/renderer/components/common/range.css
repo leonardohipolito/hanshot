@@ -1,0 +1,10 @@
+.range > .button {
+  margin: 0;
+}
+
+.range > .range-value {
+  margin: 10px;
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+}

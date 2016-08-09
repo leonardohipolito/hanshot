@@ -1,0 +1,23 @@
+.sidebar {
+  border-right: 1px solid #d9d9d9;
+}
+
+.sidebar > ul {
+  margin: 0;
+  padding: 10px 0 0 0;
+  list-style-type: none;
+}
+
+.sidebar > ul > li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.sidebar > ul > li:hover,
+.sidebar > ul > li.active {
+  background: var(--hover-color);
+}
+
+.disabled-area {
+  opacity: .4;
+}

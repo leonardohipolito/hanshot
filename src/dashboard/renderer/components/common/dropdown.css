@@ -1,0 +1,39 @@
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdown > button::after {
+  content: ' ▾';
+}
+
+.dropdown > ul {
+  display: none;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+  list-style-type: none;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-top: 3px;
+  box-shadow: 0 1px 5px #eee;
+}
+
+.dropdown.dropdown-is-open > ul {
+  display: block;
+}
+
+.dropdown.dropdown-menu-left > ul {
+  right: 0;
+}
+
+.dropdown > ul > li {
+  padding: 5px 10px;
+}
+
+.dropdown > ul > li:hover {
+  background: var(--hover-color);
+  cursor: pointer;
+}

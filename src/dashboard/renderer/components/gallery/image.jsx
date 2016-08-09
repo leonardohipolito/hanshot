@@ -7,6 +7,8 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { openImageContextMenu } from '../../../../actions';
 
+import './image.css';
+
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------

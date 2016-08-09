@@ -13,6 +13,8 @@ import Behavior from './behavior.jsx';
 import Save from './save.jsx';
 import Upload from './upload.jsx';
 
+import './settings.css';
+
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
