@@ -2,8 +2,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-import createWindow from '../window.shim';
+import Window from '../window.shim';
 import * as screen from '../screen.shim';
+import { SOURCE_PATH } from '../config';
 
 //------------------------------------------------------------------------------
 // Public Interface
@@ -35,17 +36,21 @@ export default function createNotification(text = 'undefined', options = {
     },
   };
 
-  const window = createWindow('notification', {
-    width,
-    height,
-    x: locations[location].x,
-    y: locations[location].y,
-    transparent: true,
-    frame: false,
-    skipTaskbar: true,
-    alwaysOnTop: true,
-    show: false,
-  });
+  const window = new Window(
+    'notification',
+    `file://${SOURCE_PATH}/notification/renderer/notification.html`,
+    {
+      width,
+      height,
+      x: locations[location].x,
+      y: locations[location].y,
+      transparent: true,
+      frame: false,
+      skipTaskbar: true,
+      alwaysOnTop: true,
+      show: false,
+    }
+  );
 
   window.on('load', () => {
     window.sendMessage('text-updated', text);
@@ -56,8 +61,6 @@ export default function createNotification(text = 'undefined', options = {
     location = location === LOCATION_TOP ? LOCATION_BOTTOM : LOCATION_TOP;
     window.setPosition(locations[location].x, locations[location].y);
   });
-
-  window.load(`file://${__dirname}/renderer/notification.html`);
 
   if (options.delay) {
     setTimeout(() => {

@@ -2,21 +2,16 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-// import * as clipboard from '../clipboard';
-
-
-// var notify = require('../../notification');
-// var storeActions = require('../../store/actions');
-// var alertFactory = require('../../factories/alert');
-// var notificationFactory = require('../../factories/notification');
-
 import * as path from 'path';
 
-import log from '../log';
 import * as fs from '../fs-extra';
 import * as clipboard from '../clipboard';
+import log from '../log';
+
+import notify from '../notification';
+import * as notificationMessages from '../notification/messages';
+import * as alertMessages from '../alerts';
 import { showAlert, openDashboard } from '../actions';
-import * as alerts from '../alerts';
 
 //------------------------------------------------------------------------------
 // Module
@@ -30,7 +25,7 @@ export default function uploadImageHandler(
 
     if (!uploader.isAuthorized()) {
       log('not auth i guess');
-      dispatch(showAlert(alerts.uploaderAuth(uploader.id, uploader.name)));
+      dispatch(showAlert(alertMessages.uploaderAuth(uploader.id, uploader.name)));
       dispatch(openDashboard());
       return;
     }
@@ -49,7 +44,7 @@ export default function uploadImageHandler(
           gallery.updateBy('filePath', filePath, imageData);
         }
 
-//       notify(notificationFactory.screenshotUploaded());
+        notify(notificationMessages.screenshotUploaded());
 
         log('uploaded i guess');
         log(link);

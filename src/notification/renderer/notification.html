@@ -3,39 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Hanshot - Notification</title>
-
-  <style>
-
-    html, body {
-      padding: 0;
-      margin: 0;
-      height: 100%;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-
-    #container {
-      box-sizing: border-box;
-      height: 100%;
-      background: #000;
-      opacity: 0.85;
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 14px;
-      line-height: 20px;
-      color: #fff;
-    }
-
-  </style>
-
 </head>
 <body>
 
-  <div id="container"></div>
+<div id="notification"></div>
 
-  <script>
-    require('babel-register');
-    require('./notification');
-  </script>
+<script>
+
+  function writeScript(url) {
+    const script = document.createElement('script');
+    script.src = url;
+    document.write(script.outerHTML);
+  }
+
+  if (process.env.HANSHOT_HOT) {
+    writeScript('http://localhost:4000/webpack-dev-server.js');
+    writeScript('http://localhost:4000/dist/notification.dist.js');
+  } else {
+    writeScript('../../../dist/notification.dist.js');
+  }
+</script>
 
 </body>
 </html>

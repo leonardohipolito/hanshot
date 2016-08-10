@@ -12,6 +12,10 @@ module.exports = {
       './src/selection/renderer/selection.js',
     ],
 
+    notification: [
+      './src/notification/renderer/notification.js',
+    ],
+
   },
 
   output: {

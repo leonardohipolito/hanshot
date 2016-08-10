@@ -6,24 +6,23 @@
 </head>
 <body>
 
-  <div id="dashboard"></div>
+<div id="dashboard"></div>
 
-  <script>
+<script>
 
-    function writeScript(url) {
-      var script = document.createElement('script');
-      script.src = url;
-      document.write(script.outerHTML);
-    }
+  function writeScript(url) {
+    const script = document.createElement('script');
+    script.src = url;
+    document.write(script.outerHTML);
+  }
 
-    if (process.env.HANSHOT_HOT) {
-      writeScript('http://localhost:4000/webpack-dev-server.js');
-      writeScript('http://localhost:4000/dist/dashboard-window.dist.js');
-    } else {
-      writeScript('../../../dist/dashboard-window.dist.js');
-    }
-
-  </script>
+  if (process.env.HANSHOT_HOT) {
+    writeScript('http://localhost:4000/webpack-dev-server.js');
+    writeScript('http://localhost:4000/dist/dashboard-window.dist.js');
+  } else {
+    writeScript('../../../dist/dashboard-window.dist.js');
+  }
+</script>
 
 </body>
 </html>

@@ -1,13 +1,12 @@
-'use strict';
-
 //------------------------------------------------------------------------------
 // Module
 //------------------------------------------------------------------------------
 
-exports.screenshotSaved = function () {
+export function screenshotSaved() {
   return 'Screenshot saved';
-};
+}
 
-exports.screenshotUploaded = function () {
-  return '<b>Screenshot uploaded</b><br>Public URL is in clipboard';
-};
+export function screenshotUploaded() {
+  return '<b>Screenshot uploaded</b><br>Public URL copied to clipboard';
+}
+

@@ -21,7 +21,7 @@ export default function Behavior(props) {
         <Checkbox
           text="Close main window before capture"
           checked={props.settings['close-before-capture']}
-          onCheck={(event, isChecked) => {
+          onChange={(event, isChecked) => {
             viewDispatch(updateSetting('close-before-capture', isChecked));
           }}
         />
@@ -29,7 +29,7 @@ export default function Behavior(props) {
         <Checkbox
           text="Open main window after capture"
           checked={props.settings['open-after-capture']}
-          onCheck={(event, isChecked) => {
+          onChange={(event, isChecked) => {
             viewDispatch(updateSetting('open-after-capture', isChecked));
           }}
         />
@@ -37,7 +37,7 @@ export default function Behavior(props) {
         <Checkbox
           text="Minimize app to tray when closing main window"
           checked={props.settings['tray-on-close']}
-          onCheck={(event, isChecked) => {
+          onChange={(event, isChecked) => {
             viewDispatch(updateSetting('tray-on-close', isChecked));
           }}
         />
@@ -45,7 +45,7 @@ export default function Behavior(props) {
         <Checkbox
           text="Show main window on app start"
           checked={props.settings['show-on-start']}
-          onCheck={(event, isChecked) => {
+          onChange={(event, isChecked) => {
             viewDispatch(updateSetting('show-on-start', isChecked));
           }}
         />
@@ -56,7 +56,7 @@ export default function Behavior(props) {
         <Checkbox
           text="Upload after capture"
           checked={props.settings['upload-after-capture']}
-          onCheck={(event, isChecked) => {
+          onChange={(event, isChecked) => {
             viewDispatch(updateSetting('upload-after-capture', isChecked));
           }}
         />
