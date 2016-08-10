@@ -9,6 +9,9 @@ import { updateSetting, showDialogToPickSaveDir } from '../../../../actions';
 
 import Checkbox from '../common/checkbox.jsx';
 import Button from '../common/button.jsx';
+import DisabledArea from '../common/disabled-area.jsx';
+
+import './save.css';
 
 //------------------------------------------------------------------------------
 // Module
@@ -24,28 +27,23 @@ export default function Save(props) {
           viewDispatch(updateSetting('save-dir-selected', value));
         }}
       />
-      <div
-        className={props.settings['save-dir-selected'] ? '' : 'disabled-area'}
-      >
-        <div className="paragraph"
-          style={{
-            color: '#a2a2a2',
-            borderBottom: '1px solid #e8e8e8',
-            margin: '20px 0 0 0',
-          }}
-        >
+      <DisabledArea active={!props.settings['save-dir-selected']}>
+        <div className="save-directory-path">
           {props.settings['save-dir-path']}
         </div>
         <br />
         <Button
-          disabled={!props.settings['save-dir-selected']}
           onClick={() => {
             viewDispatch(showDialogToPickSaveDir());
           }}
         >
           Change
         </Button>
-      </div>
+      </DisabledArea>
     </div>
   );
 }
+
+Save.propTypes = {
+  settings: React.PropTypes.object,
+};

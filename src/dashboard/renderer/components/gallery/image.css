@@ -1,11 +1,4 @@
-.image-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .image-title {
-  flex: 0;
   padding: 10px;
   border-bottom: 1px solid #eee;
 }
@@ -17,13 +10,7 @@
   position: relative;
 }
 
-.image-info {
-  flex: 0;
-  padding: 10px;
-  border-top: 1px solid #eee;
-}
-
-.image {
+.image-content .image {
   position: absolute;
   top: 0;
   right: 0;
@@ -33,4 +20,15 @@
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
+}
+
+.image-info {
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.image-missing {
+  margin: auto;
+  color: #ccc;
+  font-size: 20px;
 }

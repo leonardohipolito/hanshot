@@ -2,26 +2,26 @@
   display: inline-block;
 }
 
-.button-group button {
+.button-group .button {
   border-radius: 0;
   margin-left: -1px;
   margin-right: 0;
 }
 
-.button-group > button:first-child {
-  border-radius: var(--border-radius) 0 0 var(--border-radius);
+.button-group > .button:first-child {
+  border-radius: var(--button-border-radius) 0 0 var(--button-border-radius);
   margin-left: 0px;
 }
 
-.button-group > button:last-child {
-  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+.button-group > .button:last-child {
+  border-radius: 0 var(--button-border-radius) var(--button-border-radius) 0;
 }
 
-.button-group > .dropdown:first-child > button {
-  border-radius: var(--border-radius) 0 0 var(--border-radius);
+.button-group > .dropdown:first-child > .button {
+  border-radius: var(--button-border-radius) 0 0 var(--button-border-radius);
   margin-left: 0px;
 }
 
-.button-group > .dropdown:last-child > button {
-  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+.button-group > .dropdown:last-child > .button {
+  border-radius: 0 var(--button-border-radius) var(--button-border-radius) 0;
 }

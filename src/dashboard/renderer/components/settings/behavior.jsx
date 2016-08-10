@@ -64,3 +64,7 @@ export default function Behavior(props) {
     </div>
   );
 }
+
+Behavior.propTypes = {
+  settings: React.PropTypes.object,
+};

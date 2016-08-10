@@ -8,11 +8,11 @@ import ReactDOM from 'react-dom';
 import RendererIpc from '../../renderer-ipc.shim';
 import { DASHBOARD_PAGE_GALLERY, DASHBOARD_PAGE_SETTINGS } from '../../constants';
 
-import DashboardCss from './dashboard.css';
-
 import Gallery from './components/gallery/gallery.jsx';
 import Settings from './components/settings/settings.jsx';
 import { Router, Route } from './components/common/router.jsx';
+
+import './dashboard.css';
 
 //------------------------------------------------------------------------------
 // Module

@@ -35,9 +35,6 @@ export default function ImageFormat(props) {
             onChange={(value) => {
               viewDispatch(updateSetting('jpg-quality', value));
             }}
-            style={{
-              width: 200,
-            }}
           />
         </div>
       </div>

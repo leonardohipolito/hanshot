@@ -16,7 +16,7 @@ import Button from '../common/button.jsx';
 
 export default function AlertArea(props) {
   return (
-    <div className="error-container">
+    <div className="alert-area">
       {props.alerts.map((alert) =>
         <Alert
           key={alert.id}

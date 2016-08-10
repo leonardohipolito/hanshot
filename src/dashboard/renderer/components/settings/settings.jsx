@@ -6,6 +6,7 @@ import React from 'react';
 
 import { Menu, MenuItem } from '../common/menu.jsx';
 import { Router, Route } from '../common/router.jsx';
+import { RowContainer, ColumnContainer } from '../common/grid.jsx';
 
 import SettingsNavbar from './settings-navbar.jsx';
 import ImageFormat from './image-format.jsx';
@@ -35,21 +36,10 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-        }}
-      >
+      <ColumnContainer>
         <SettingsNavbar />
-        <div
-          style={{
-            display: 'flex',
-            flex: '1',
-          }}
-        >
-          <div className="sidebar">
+        <RowContainer>
+          <div className="settings-sidebar">
             <Menu
               value={this.state.activeSection}
               onSelect={(value) => {
@@ -70,12 +60,7 @@ export default class Settings extends React.Component {
               </MenuItem>
             </Menu>
           </div>
-          <div
-            style={{
-              paddingLeft: 20,
-              flex: 1,
-            }}
-          >
+          <div className="settings-content">
             <Router value={this.state.activeSection}>
               <Route value={SECTION_IMAGE_FORMAT}>
                 <ImageFormat
@@ -101,8 +86,8 @@ export default class Settings extends React.Component {
               </Route>
             </Router>
           </div>
-        </div>
-      </div>
+        </RowContainer>
+      </ColumnContainer>
     );
   }
 

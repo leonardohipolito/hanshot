@@ -7,6 +7,8 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { openImageContextMenu } from '../../../../actions';
 
+import { ColumnContainer } from '../common/grid.jsx';
+
 import './image.css';
 
 //------------------------------------------------------------------------------
@@ -17,20 +19,14 @@ export default function Image(props) {
   const image = props.image;
   if (!image) {
     return (
-      <center
-        style={{
-          margin: 'auto',
-          color: '#ccc',
-          fontSize: '20px',
-        }}
-      >
+      <center className="image-missing">
         No recent screenshots
       </center>
     );
   }
 
   return (
-    <div className="image-container">
+    <ColumnContainer>
       <div className="image-title">
         {image.fileName}
       </div>
@@ -56,7 +52,7 @@ export default function Image(props) {
           {image.fileSizeHuman}
         </span>
       </div>
-    </div>
+    </ColumnContainer>
   );
 }
 

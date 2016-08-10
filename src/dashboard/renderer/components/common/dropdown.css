@@ -16,9 +16,12 @@
   list-style-type: none;
   background: #fff;
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
+  border-radius: 3px;
   margin-top: 3px;
   box-shadow: 0 1px 5px #eee;
+  max-width: 300px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .dropdown.dropdown-is-open > ul {

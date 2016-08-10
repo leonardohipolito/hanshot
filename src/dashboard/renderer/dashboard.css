@@ -1,16 +1,27 @@
 :root {
   --border-color: #ccc;
-  --hover-color: #eee;
-  --border-radius: 3px;
   --font-size: 14px;
+  --hover-color: #eee;
+  --button-border-radius: 3px;
 }
 
-html, body, #dashboard {
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
   font-size: var(--font-size);
   font-family: sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#dashboard {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 h4, h5, h6 {
@@ -42,35 +53,4 @@ p {
 
 .pull-right {
   float: right;
-}
-
-.navbar {
-  flex: 0;
-  background: #eee;
-  padding: 10px;
-}
-
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.dashboard-content {
-  flex: 1;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-}
-
-.error-container {
-  flex: 0;
-}
-
-.fixed-dropdown {
-  max-width: 400px;
-}
-.fixed-dropdown li a {
-  text-overflow: ellipsis;
-  overflow: hidden;
 }

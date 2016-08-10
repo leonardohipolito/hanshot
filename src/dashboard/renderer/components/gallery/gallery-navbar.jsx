@@ -43,6 +43,12 @@ export default function GalleryNavbar(props) {
   );
 }
 
+GalleryNavbar.propTypes = {
+  image: React.PropTypes.object,
+  metadata: React.PropTypes.object,
+  displays: React.PropTypes.array,
+};
+
 GalleryNavbar.defaultProps = {
   displays: [],
   metadata: {},

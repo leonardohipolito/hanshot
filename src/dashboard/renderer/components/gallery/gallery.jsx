@@ -4,9 +4,13 @@
 
 import React from 'react';
 
+import { ColumnContainer } from '../common/grid.jsx';
+
 import GalleryNavbar from './gallery-navbar.jsx';
 import Image from './image.jsx';
 import AlertArea from './alert-area.jsx';
+
+import './gallery.css';
 
 //------------------------------------------------------------------------------
 // Module
@@ -14,20 +18,27 @@ import AlertArea from './alert-area.jsx';
 
 export default function Gallery(props) {
   return (
-    <div className="dashboard-container">
+    <ColumnContainer>
       <GalleryNavbar
         metadata={props.metadata}
         image={props.image}
         displays={props.displays}
       />
-      <div className="dashboard-content">
+      <ColumnContainer className="gallery-content">
         <AlertArea
           alerts={props.alerts}
         />
         <Image
           image={props.image}
         />
-      </div>
-    </div>
+      </ColumnContainer>
+    </ColumnContainer>
   );
 }
+
+Gallery.propTypes = {
+  image: React.PropTypes.object,
+  metadata: React.PropTypes.object,
+  displays: React.PropTypes.array,
+  alerts: React.PropTypes.array,
+};

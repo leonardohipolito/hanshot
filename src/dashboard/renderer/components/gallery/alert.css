@@ -5,9 +5,11 @@
   border-color: #ebccd1;
   border-radius: 4px;
 }
+
 .alert > p + p {
   margin-top: 5px;
 }
+
 .alert > p {
   margin-bottom: 0;
 }

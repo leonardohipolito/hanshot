@@ -30,6 +30,7 @@ MenuItem.propTypes = {
   onClick: React.PropTypes.func,
 };
 
+// --
 
 export function Menu(props) {
   return (

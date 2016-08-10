@@ -27,6 +27,7 @@ DropdownItem.propTypes = {
   onClick: React.PropTypes.func,
 };
 
+//------------------------------------------------------------------------------
 
 export class Dropdown extends React.Component {
 
