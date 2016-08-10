@@ -34,6 +34,14 @@ module.exports = {
     ],
   },
 
+  resolve: {
+    root: path.join(__dirname, 'src'),
+    alias: {
+      'app/actions': 'actions.js',
+      'app/dashboard/dispatch': 'dashboard/renderer/view-dispatch.js',
+    },
+  },
+
   target: 'electron',
 
 };

@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import { openDashboard } from '../../../../actions';
-import viewDispatch from '../../view-dispatch';
+import viewDispatch from 'app/dashboard/dispatch';
+import { openDashboard } from 'app/actions';
 
 import Navbar from '../common/navbar.jsx';
 import Button from '../common/button.jsx';

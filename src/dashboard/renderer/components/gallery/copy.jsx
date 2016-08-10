@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from '../../view-dispatch';
-import { copyImage } from '../../../../actions';
+import viewDispatch from 'app/dashboard/dispatch';
+import { copyImage } from 'app/actions';
 
 import Button from '../common/button.jsx';
 

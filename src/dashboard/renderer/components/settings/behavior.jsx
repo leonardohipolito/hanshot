@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from '../../view-dispatch';
-import { updateSetting } from '../../../../actions';
+import viewDispatch from 'app/dashboard/dispatch';
+import { updateSetting } from 'app/actions';
 
 import Checkbox from '../common/checkbox.jsx';
 

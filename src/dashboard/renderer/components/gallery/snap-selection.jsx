@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from '../../view-dispatch';
-import { captureSelection } from '../../../../actions';
+import viewDispatch from 'app/dashboard/dispatch';
+import { captureSelection } from 'app/actions';
 
 import Button from '../common/button.jsx';
 import ButtonGroup from '../common/button-group.jsx';
