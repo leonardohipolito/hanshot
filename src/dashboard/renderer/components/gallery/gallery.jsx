@@ -18,13 +18,13 @@ import './gallery.css';
 
 export default function Gallery(props) {
   return (
-    <ColumnContainer>
+    <ColumnContainer className="gallery">
       <GalleryNavbar
         metadata={props.metadata}
         image={props.image}
         displays={props.displays}
       />
-      <ColumnContainer className="gallery-content">
+      <ColumnContainer className="content">
         <AlertArea
           alerts={props.alerts}
         />

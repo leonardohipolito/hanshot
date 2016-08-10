@@ -8,7 +8,24 @@ import React from 'react';
 // Module
 //------------------------------------------------------------------------------
 
-export default function Select(props) {
+export function Option(props) {
+  return (
+    <option
+      value={props.value}
+    >
+      {props.text}
+    </option>
+  );
+}
+
+Option.propTypes = {
+  value: React.PropTypes.string,
+  text: React.PropTypes.string,
+};
+
+//------------------------------------------------------------------------------
+
+export function Select(props) {
   return (
     <select
       value={props.value}

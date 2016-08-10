@@ -19,7 +19,7 @@ import './save.css';
 
 export default function Save(props) {
   return (
-    <div className="paragraph">
+    <div className="paragraph save">
       <Checkbox
         text="Auto save to directory"
         checked={props.settings['save-dir-selected']}
@@ -28,7 +28,7 @@ export default function Save(props) {
         }}
       />
       <DisabledArea active={!props.settings['save-dir-selected']}>
-        <div className="save-directory-path">
+        <div className="directory-path">
           {props.settings['save-dir-path']}
         </div>
         <br />

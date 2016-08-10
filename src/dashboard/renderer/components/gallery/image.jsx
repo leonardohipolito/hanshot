@@ -19,20 +19,22 @@ export default function Image(props) {
   const image = props.image;
   if (!image) {
     return (
-      <center className="image-missing">
-        No recent screenshots
-      </center>
+      <ColumnContainer className="image">
+        <center className="missing">
+          No recent screenshots
+        </center>
+      </ColumnContainer>
     );
   }
 
   return (
-    <ColumnContainer>
-      <div className="image-title">
+    <ColumnContainer className="image">
+      <div className="title">
         {image.fileName}
       </div>
-      <div className="image-content">
+      <div className="wrapper">
         <div
-          className="image"
+          className="picture"
           onContextMenu={() => {
             viewDispatch(openImageContextMenu(image.filePath));
           }}
@@ -43,7 +45,7 @@ export default function Image(props) {
           }}
         ></div>
       </div>
-      <div className="image-info">
+      <div className="info">
         <span>
           {image.width} x {image.height} pixels
         </span>

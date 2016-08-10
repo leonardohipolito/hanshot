@@ -1,23 +1,23 @@
-.settings-sidebar {
+.settings .sidebar {
   border-right: 1px solid #d9d9d9;
 }
 
-.settings-sidebar > ul {
+.settings .sidebar > ul {
   margin: 0;
   padding: 10px 0 0 0;
   list-style-type: none;
 }
 
-.settings-sidebar > ul > li {
+.settings .sidebar > ul > li {
   padding: 10px;
   cursor: pointer;
 }
 
-.settings-sidebar > ul > li:hover,
-.settings-sidebar > ul > li.active {
+.settings .sidebar > ul > li:hover,
+.settings .sidebar > ul > li.active {
   background: var(--hover-color);
 }
 
-.settings-content {
+.settings .content {
   padding-left: 20px;
 }

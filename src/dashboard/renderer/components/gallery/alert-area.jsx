@@ -7,7 +7,7 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { closeAlert } from '../../../../actions';
 
-import Alert from './alert.jsx';
+import Alert from '../common/alert.jsx';
 import Button from '../common/button.jsx';
 
 //------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ import Button from '../common/button.jsx';
 
 export default function AlertArea(props) {
   return (
-    <div className="alert-area">
+    <div>
       {props.alerts.map((alert) =>
         <Alert
           key={alert.id}

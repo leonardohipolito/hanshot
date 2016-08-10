@@ -1,16 +1,16 @@
-.image-title {
+.gallery .image .title {
   padding: 10px;
   border-bottom: 1px solid #eee;
 }
 
-.image-content {
+.gallery .image .wrapper {
   flex: 1;
   padding: 0;
   margin: 15px;
   position: relative;
 }
 
-.image-content .image {
+.gallery .image .wrapper .picture {
   position: absolute;
   top: 0;
   right: 0;
@@ -22,12 +22,12 @@
   background-position: center center;
 }
 
-.image-info {
+.gallery .image .info {
   padding: 10px;
   border-top: 1px solid #eee;
 }
 
-.image-missing {
+.gallery .image .missing {
   margin: auto;
   color: #ccc;
   font-size: 20px;

@@ -36,10 +36,10 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <ColumnContainer>
+      <ColumnContainer className="settings">
         <SettingsNavbar />
         <RowContainer>
-          <div className="settings-sidebar">
+          <div className="sidebar">
             <Menu
               value={this.state.activeSection}
               onSelect={(value) => {
@@ -60,7 +60,7 @@ export default class Settings extends React.Component {
               </MenuItem>
             </Menu>
           </div>
-          <div className="settings-content">
+          <div className="content">
             <Router value={this.state.activeSection}>
               <Route value={SECTION_IMAGE_FORMAT}>
                 <ImageFormat

@@ -7,8 +7,7 @@ import React from 'react';
 import viewDispatch from '../../view-dispatch';
 import { updateSetting } from '../../../../actions';
 
-import Select from '../common/select.jsx';
-import Option from '../common/option.jsx';
+import { Select, Option } from '../common/select.jsx';
 import Range from '../common/range.jsx';
 
 //------------------------------------------------------------------------------
