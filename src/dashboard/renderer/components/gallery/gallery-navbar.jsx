@@ -10,6 +10,7 @@ import SnapSelection from './snap-selection.jsx';
 import Upload from './upload.jsx';
 import Copy from './copy.jsx';
 import Urls from './urls.jsx';
+import Edit from './edit.jsx';
 
 //------------------------------------------------------------------------------
 // Module
@@ -28,6 +29,7 @@ export default function GalleryNavbar(props) {
           metadata={props.metadata}
           image={props.image}
         />
+        <Edit image={props.image} />
       </div>
     );
   }

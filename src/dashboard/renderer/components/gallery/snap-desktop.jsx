@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from 'app/dashboard/dispatch';
-import { captureDesktop } from 'app/actions';
+import viewDispatch from '~/dashboard/renderer/view-dispatch.js';
+import { captureDesktop } from '~/actions';
 
 import Button from '../common/button.jsx';
 import ButtonGroup from '../common/button-group.jsx';

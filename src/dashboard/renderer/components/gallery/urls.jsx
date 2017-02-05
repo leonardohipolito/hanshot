@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from 'app/dashboard/dispatch';
-import { copyText } from 'app/actions';
+import viewDispatch from '~/dashboard/renderer/view-dispatch.js';
+import { copyText } from '~/actions';
 
 import { Dropdown, DropdownItem } from '../common/dropdown.jsx';
 

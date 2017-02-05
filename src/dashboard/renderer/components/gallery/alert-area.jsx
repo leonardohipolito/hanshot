@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from 'app/dashboard/dispatch';
-import { closeAlert } from 'app/actions';
+import viewDispatch from '~/dashboard/renderer/view-dispatch.js';
+import { closeAlert } from '~/actions';
 
 import Alert from '../common/alert.jsx';
 import Button from '../common/button.jsx';

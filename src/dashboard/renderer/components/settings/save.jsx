@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from 'app/dashboard/dispatch';
-import { updateSetting, showDialogToPickSaveDir } from 'app/actions';
+import viewDispatch from '~/dashboard/renderer/view-dispatch.js';
+import { updateSetting, showDialogToPickSaveDir } from '~/actions';
 
 import Checkbox from '../common/checkbox.jsx';
 import Button from '../common/button.jsx';

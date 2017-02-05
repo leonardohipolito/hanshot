@@ -1,6 +1,11 @@
+// Webpack config for Electron renderer processes
+
 const path = require('path');
 
-module.exports = {
+const baseConfig = require('./base.config');
+
+// Simple extend works for now
+module.exports = Object.assign(baseConfig, {
 
   entry: {
 
@@ -38,17 +43,13 @@ module.exports = {
     ],
   },
 
-  resolve: {
-    modules: [
-      path.join(__dirname, '..', 'src'),
-      'node_modules',
-    ],
-    alias: {
-      'app/actions': 'actions.js',
-      'app/dashboard/dispatch': 'dashboard/renderer/view-dispatch.js',
-    },
-  },
+  resolve: Object.assign(baseConfig.resolve, {
+    alias: Object.assign(baseConfig.resolve.alias, {
+      'app/actions': 'src/actions.js',
+      'app/dashboard/dispatch': 'src/dashboard/renderer/view-dispatch.js',
+    }),
+  }),
 
   target: 'electron-renderer',
 
-};
+});

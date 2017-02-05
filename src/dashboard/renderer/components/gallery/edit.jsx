@@ -5,7 +5,7 @@
 import React from 'react';
 
 import viewDispatch from '~/dashboard/renderer/view-dispatch.js';
-import { copyImage } from '~/actions';
+import { openEditor } from '~/actions';
 
 import Button from '../common/button.jsx';
 
@@ -13,19 +13,19 @@ import Button from '../common/button.jsx';
 // Module
 //------------------------------------------------------------------------------
 
-export default function Copy(props) {
+export default function Edit(props) {
   return (
     <Button
       onClick={() => {
-        viewDispatch(copyImage(props.image.filePath));
+        viewDispatch(openEditor(props.image.filePath));
       }}
     >
-      Copy
+      Edit
     </Button>
   );
 }
 
-Copy.propTypes = {
+Edit.propTypes = {
   image: React.PropTypes.shape({
     filePath: React.PropTypes.string.isRequired,
   }).isRequired,

@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import viewDispatch from 'app/dashboard/dispatch';
-import { openImageContextMenu } from 'app/actions';
+import viewDispatch from '~/dashboard/renderer/view-dispatch.js';
+import { openImageContextMenu } from '~/actions';
 
 import { ColumnContainer } from '../common/grid.jsx';
 

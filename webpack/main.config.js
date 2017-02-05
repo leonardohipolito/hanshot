@@ -1,6 +1,11 @@
+// Webpack config for Electron main process
+
 const path = require('path');
 
-module.exports = {
+const baseConfig = require('./base.config');
+
+// Simple extend works for now
+module.exports = Object.assign(baseConfig, {
 
   entry: {
 
@@ -25,13 +30,6 @@ module.exports = {
     ],
   },
 
-  resolve: {
-    modules: [
-      path.join(__dirname, 'src'),
-      'node_modules',
-    ],
-  },
-
   target: 'electron',
 
-};
+});
