@@ -25,27 +25,30 @@ module.exports = {
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
+        use: ['babel-loader'],
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
 
   resolve: {
-    root: path.join(__dirname, 'src'),
+    modules: [
+      path.join(__dirname, '..', 'src'),
+      'node_modules',
+    ],
     alias: {
       'app/actions': 'actions.js',
       'app/dashboard/dispatch': 'dashboard/renderer/view-dispatch.js',
     },
   },
 
-  target: 'electron',
+  target: 'electron-renderer',
 
 };
